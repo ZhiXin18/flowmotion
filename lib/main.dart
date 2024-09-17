@@ -1,5 +1,6 @@
 import 'package:flowmotion/screens/homeScreen.dart';
 import 'package:flowmotion/screens/loginScreen.dart';
+import 'package:flowmotion/screens/profileScreen.dart';
 import 'package:flowmotion/screens/registerScreen.dart';
 import 'package:flowmotion/widgets/splashScreen.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
           '/register': (context) => const RegisterScreen(),
           '/login': (context) => const LoginScreen(),
           '/home': (context) => const HomeScreen(),
+          '/profile': (context) => const ProfileScreen(),
         }
     );
   }

@@ -24,7 +24,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           break;
         case 1:
           //if (newUser == true) {
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pushReplacementNamed(context, '/profile');
          // } else {
            // Navigator.pushReplacementNamed(context, '/exercise');
          // }

@@ -20,7 +20,7 @@ class _SplashPageState extends State<SplashPage> {
   void navigateToPage() {
     Navigator.pushReplacement(
       (context),
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => HomeScreen()),
     );
   }
 
