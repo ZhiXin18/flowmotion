@@ -1,7 +1,7 @@
-import 'package:flowmotion/screens/home.dart';
-import 'package:flowmotion/screens/login.dart';
-import 'package:flowmotion/screens/register.dart';
-import 'package:flowmotion/widgets/splash_page.dart';
+import 'package:flowmotion/screens/homeScreen.dart';
+import 'package:flowmotion/screens/loginScreen.dart';
+import 'package:flowmotion/screens/registerScreen.dart';
+import 'package:flowmotion/widgets/splashScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {

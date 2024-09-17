@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:flowmotion/screens/loginScreen.dart';
+import 'package:flowmotion/screens/registerScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flowmotion/screens/home.dart';
+import 'package:flowmotion/screens/homeScreen.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -18,7 +20,7 @@ class _SplashPageState extends State<SplashPage> {
   void navigateToPage() {
     Navigator.pushReplacement(
       (context),
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+      MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 
