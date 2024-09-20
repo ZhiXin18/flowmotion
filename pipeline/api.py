@@ -4,9 +4,10 @@
 # Traffic Images API Client
 #
 
-from typing import Dict, List
-import httpx
 import asyncio
+from typing import Dict, List
+
+import httpx
 
 from model import Camera, Location
 
