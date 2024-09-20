@@ -42,7 +42,7 @@ class TrafficImageAPI:
             cameras:
                 List of traffic cameras to retrieve traffic images from.
         Returns:
-            JPEG image of the traffic camera retrieved from each given Camera.f
+            List of JPEG image bytes camera captured by each given Camera.
         """
 
         async def fetch():
