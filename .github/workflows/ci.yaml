@@ -3,6 +3,7 @@
 # CI/CD Pipeline
 #
 
+name: Flowmotion CI/CD
 on:
   push: {}
 jobs:

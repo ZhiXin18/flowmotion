@@ -4,10 +4,11 @@
 # Traffic Images API Client
 #
 
-import pytest
 import json
 from pathlib import Path
 from typing import Dict
+
+import pytest
 
 from api import TrafficImageAPI, parse_cameras
 from model import Camera
