@@ -5,7 +5,6 @@
 #
 
 import asyncio
-from typing import Dict, List
 
 import httpx
 
