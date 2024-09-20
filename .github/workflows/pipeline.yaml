@@ -1,0 +1,28 @@
+#
+# Flowmotion
+# Pipeline
+# Scheduled Workflow
+#
+
+name: Flowmotion Pipeline
+on:
+  schedule:
+    # run every 15 minutes
+    - cron: "*/15 * * * *"
+jobs:
+  run-pipeline:
+    defaults:
+      run:
+        working-directory: pipeline
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10.13"
+          # cache pip dependencies
+          cache: "pip"
+      - name: Install Pip dependencies
+        run: pip install -r requirements.txt
+      - name: Run Pipeline
+        run: python pipeline.py
