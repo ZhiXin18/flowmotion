@@ -1,0 +1,1054 @@
+{
+  "items": [
+    {
+      "timestamp": "2024-09-20T18:24:30+08:00",
+      "cameras": [
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/eb803990-2f2d-4f82-9625-e86839257d52.jpg",
+          "location": { "latitude": 1.29531332, "longitude": 103.871146 },
+          "camera_id": "1001",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "7c2fb5215844fe098d4357fc91a6cff5"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/71b17ac2-dcce-4d02-bca9-b0bdcdd62080.jpg",
+          "location": { "latitude": 1.319541067, "longitude": 103.8785627 },
+          "camera_id": "1002",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "363b09759bf6e3356cfcb82077094a66"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/d06ee948-029d-4c31-bf32-5b792d8aee77.jpg",
+          "location": { "latitude": 1.323957439, "longitude": 103.8728576 },
+          "camera_id": "1003",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "ed14f9911a25e3229b59c7ae49a67943"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/09704806-450a-45dd-a47f-e7c673af9df6.jpg",
+          "location": { "latitude": 1.319535712, "longitude": 103.8750668 },
+          "camera_id": "1004",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "72f1b69beafad5f5f165e48d1e28e921"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/5993178a-2b93-48e4-9706-5ca9ca0cffa5.jpg",
+          "location": { "latitude": 1.363519886, "longitude": 103.905394 },
+          "camera_id": "1005",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "47be4c377a72813d024279b53fc6f512"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/4c5c8bc2-0f00-4bb6-be25-1abee23b2ee0.jpg",
+          "location": { "latitude": 1.357098686, "longitude": 103.902042 },
+          "camera_id": "1006",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "cb3388dab8ba18febbd40a4a44779dba"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/204f24ee-f28e-4d2b-b911-5abd2dab3d54.jpg",
+          "location": { "latitude": 1.365434, "longitude": 103.953997 },
+          "camera_id": "1111",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "32eed8ad42f9eb860c19cc9fb4f0029a"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/5393b4f8-fd85-4be8-90f1-152023057cbf.jpg",
+          "location": { "latitude": 1.3605, "longitude": 103.961412 },
+          "camera_id": "1112",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "d9ee00306f8db63191b9409d172b4291"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/35695e09-1cc5-4eb3-8b37-84619fff0606.jpg",
+          "location": { "latitude": 1.317036, "longitude": 103.988598 },
+          "camera_id": "1113",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "8b690fbb396b6e347c85fba3a487ebaf"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/4102f016-9790-4f41-bd08-089c56947736.jpg",
+          "location": {
+            "latitude": 1.27414394350065,
+            "longitude": 103.851316802547
+          },
+          "camera_id": "1501",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "25784e2cd53ddef0d320f56a431b932c"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/ddc4da9d-5e35-4c8b-b580-f275d91c98de.jpg",
+          "location": {
+            "latitude": 1.27135090682664,
+            "longitude": 103.861828440597
+          },
+          "camera_id": "1502",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "2abed0f080514468d3237108e33e9587"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/dad9510c-0ada-4e89-b939-b1442bd8d038.jpg",
+          "location": {
+            "latitude": 1.27066408655104,
+            "longitude": 103.856977943394
+          },
+          "camera_id": "1503",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "0838077b7d9882cc84cad7fd418d6257"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/11c89488-1996-4022-a314-600286265a58.jpg",
+          "location": {
+            "latitude": 1.29409891409364,
+            "longitude": 103.876056196568
+          },
+          "camera_id": "1504",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "01614df2a925626cef0e73753e883ccb"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/4108008e-e391-49e4-a72b-380ee4229837.jpg",
+          "location": {
+            "latitude": 1.2752977149006,
+            "longitude": 103.866390381759
+          },
+          "camera_id": "1505",
+          "image_metadata": {
+            "height": 240,
+            "width": 320,
+            "md5": "49d8858bfc18fa04f1b9ffe2b6b33680"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/5f1c7b17-cdae-4188-9a47-04bb96cff0aa.jpg",
+          "location": { "latitude": 1.323604823, "longitude": 103.8587802 },
+          "camera_id": "1701",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "ba84f6e2f1518d2f00de2ae3ecb3d0f1"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/8980497e-a6ff-4b07-a79f-4d24e545d8b6.jpg",
+          "location": { "latitude": 1.34355015, "longitude": 103.8601984 },
+          "camera_id": "1702",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "4e13275ad22d3faa0df20ddb1895631f"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/915fd4ef-2b6f-4686-965b-a9cb3fe1e943.jpg",
+          "location": {
+            "latitude": 1.32814722194857,
+            "longitude": 103.862203282048
+          },
+          "camera_id": "1703",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "3d38dc4df062d1f5055279203e8ee17c"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/f1b90efa-ce7f-42c1-9212-fc84d768f384.jpg",
+          "location": {
+            "latitude": 1.28569398886979,
+            "longitude": 103.837524510188
+          },
+          "camera_id": "1704",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "5fa5d2447021619862f0f6ac61ca05e4"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/bf5432af-b3c6-4bbf-b9ac-969abf9d29d7.jpg",
+          "location": { "latitude": 1.375925022, "longitude": 103.8587986 },
+          "camera_id": "1705",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "8c2f8d5717406b810dceb4028cdaea83"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/e4ad19bd-2710-47bb-89de-57c04cd7c384.jpg",
+          "location": { "latitude": 1.38861, "longitude": 103.85806 },
+          "camera_id": "1706",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "958ec542ae3eba7184b92176b5addde3"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/908c8d18-d7c3-48b4-a6ef-cd044f607aaa.jpg",
+          "location": {
+            "latitude": 1.28036584335876,
+            "longitude": 103.830451146503
+          },
+          "camera_id": "1707",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "8f79d2b9e60cd04371372c4388dd4a96"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/76811759-36c6-4a23-a117-0a37a3325208.jpg",
+          "location": {
+            "latitude": 1.31384231654635,
+            "longitude": 103.845603032574
+          },
+          "camera_id": "1709",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "10727788f75d439348ae0fb7035148a2"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/c3b73963-ccab-4992-b22f-23e7671e5d55.jpg",
+          "location": { "latitude": 1.35296, "longitude": 103.85719 },
+          "camera_id": "1711",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "2d343037c3b720b8aed0962f1321aaa7"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/1be958b8-20fa-4c67-9e3e-7da414bbc945.jpg",
+          "location": { "latitude": 1.447023728, "longitude": 103.7716543 },
+          "camera_id": "2701",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "df065bc3352c16a55fbe5bcd05bf47b6"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/99e62d9d-d4da-4c8e-be86-160979333121.jpg",
+          "location": { "latitude": 1.445554109, "longitude": 103.7683397 },
+          "camera_id": "2702",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "7883abe4ae3d301b07bfb2765a1e3e04"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/385d27f4-6224-4e13-a172-573912837148.jpg",
+          "location": {
+            "latitude": 1.35047790791386,
+            "longitude": 103.791033581325
+          },
+          "camera_id": "2703",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "f0aeaee40148f8700ed30535b23b6bf9"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/21d28209-6cd3-4592-a701-1c64ab60cfe6.jpg",
+          "location": { "latitude": 1.429588536, "longitude": 103.769311 },
+          "camera_id": "2704",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "d3726bbc08bf2b30615473f460d3b818"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/d88702c2-8b27-4119-a833-9c271661603b.jpg",
+          "location": { "latitude": 1.36728572, "longitude": 103.7794698 },
+          "camera_id": "2705",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "b1f722863b90d808e8ebdf24c45acb74"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/bbf65e3e-9d61-4c44-b5d3-ddd6e9aeb8d8.jpg",
+          "location": { "latitude": 1.414142, "longitude": 103.771168 },
+          "camera_id": "2706",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "002a7a244148e1fbdcab09e0a7327a87"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/c230aeb0-31dc-4f1a-a910-68f5ef95ed77.jpg",
+          "location": { "latitude": 1.3983, "longitude": 103.774247 },
+          "camera_id": "2707",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "d1ee7f311e17f90782492530a134cf41"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/7def7681-a0db-4f08-bca9-5879e013eec5.jpg",
+          "location": { "latitude": 1.3865, "longitude": 103.7747 },
+          "camera_id": "2708",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "31ecd503719d75588a36de99a3776fff"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/4b7262ad-dde6-41f3-aa1b-b0dca38e4162.jpg",
+          "location": { "latitude": 1.33831, "longitude": 103.98032 },
+          "camera_id": "3702",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "9ae83bd0d88e90ff02954dc6565363d9"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/a861362a-d182-49dd-baeb-6b75a8bed4b7.jpg",
+          "location": {
+            "latitude": 1.2958550156561,
+            "longitude": 103.880314665981
+          },
+          "camera_id": "3704",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "b8b04591cc4ec15a14978752b515c26a"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/dba7e513-6d3d-455b-b36a-8e51e9fe3a3f.jpg",
+          "location": { "latitude": 1.32743, "longitude": 103.97383 },
+          "camera_id": "3705",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "eb62a07d434350653ca8b98890649680"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/7588c2d1-7f0b-46f8-b9c5-a332e307d945.jpg",
+          "location": { "latitude": 1.309330837, "longitude": 103.9350504 },
+          "camera_id": "3793",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "cc242a0589657f9552e87a47c7e50280"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/f0c3d444-a8ac-4518-97d4-f6bdfd64106b.jpg",
+          "location": {
+            "latitude": 1.30145145166066,
+            "longitude": 103.910596320237
+          },
+          "camera_id": "3795",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "38fa03942c4ab02729668d95db0046b4"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/4e7280e5-4158-44f8-b9ed-4342950206c9.jpg",
+          "location": { "latitude": 1.297512569, "longitude": 103.8983019 },
+          "camera_id": "3796",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "6bc7791c0ef9db36e5f0e279fda51ace"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/08a37e6c-97aa-4af7-99a7-a9db5feb7926.jpg",
+          "location": {
+            "latitude": 1.29565733262976,
+            "longitude": 103.885283049309
+          },
+          "camera_id": "3797",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "4c3e59d30243ed91db2b7a406cbbbb15"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/c2c03e0b-59be-4a32-89ec-5e50d1439678.jpg",
+          "location": { "latitude": 1.29158484, "longitude": 103.8615987 },
+          "camera_id": "3798",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "df632c32f4bb80db15661216be2654d6"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/957e6acb-e763-45ef-a206-14824e6db328.jpg",
+          "location": { "latitude": 1.2871, "longitude": 103.79633 },
+          "camera_id": "4701",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "8a5dc2caf6ecbbe82805cac4224ec74e"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/484abed9-2441-4a65-8b99-59673e2d4d8f.jpg",
+          "location": { "latitude": 1.27237, "longitude": 103.8324 },
+          "camera_id": "4702",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "cb1825c9bfac441d10186d27a274cefc"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/35a69213-7fea-4995-9f75-3e06d12014a9.jpg",
+          "location": { "latitude": 1.348697862, "longitude": 103.6350413 },
+          "camera_id": "4703",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "171826690067eb220b4cde6ea0f590de"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/3a1230cd-42c1-486c-b43a-d99c5b0c7b2d.jpg",
+          "location": { "latitude": 1.27877, "longitude": 103.82375 },
+          "camera_id": "4704",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "a20e71d9f30c197a3ed528f4fc4e8956"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/a3590c7e-93f2-46f4-9c97-d9c944c443d6.jpg",
+          "location": { "latitude": 1.32618, "longitude": 103.73028 },
+          "camera_id": "4705",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "cbf882b5b1564d17bde492cb91f3322a"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/d36c3a20-7db7-42a4-8883-801739f3664b.jpg",
+          "location": { "latitude": 1.29792, "longitude": 103.78205 },
+          "camera_id": "4706",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "e099d8cbdc6ccfe5a98a11c98d262775"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/597e580e-cb53-4975-b537-63598d9be2d5.jpg",
+          "location": {
+            "latitude": 1.33344648135658,
+            "longitude": 103.652700847056
+          },
+          "camera_id": "4707",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "7b5aebb1a379f874659a26bf53e3b00e"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/ba0ac5bb-4afe-4344-931d-bc02c417d46f.jpg",
+          "location": { "latitude": 1.29939, "longitude": 103.7799 },
+          "camera_id": "4708",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "fcd88f939a4ea81253a1c2a4711fb511"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/e497c801-c67c-47e1-aa02-2fe911378aa1.jpg",
+          "location": { "latitude": 1.312019, "longitude": 103.763002 },
+          "camera_id": "4709",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "2b06da5eb20907e0101ccd25c0d5c05e"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/26b827a5-9c1a-4e30-9249-1da857742d92.jpg",
+          "location": { "latitude": 1.32153, "longitude": 103.75273 },
+          "camera_id": "4710",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "699fcc08cd842d1dedb27c5d26c12993"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/eee9f888-30ea-4f4e-82df-e3c2b6ff5a14.jpg",
+          "location": { "latitude": 1.341244001, "longitude": 103.6439134 },
+          "camera_id": "4712",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "86824e8e6cc9ba52fd4940eaab78bf3c"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/c31c5909-5ecb-4566-9e62-8c53be8414a0.jpg",
+          "location": { "latitude": 1.347645829, "longitude": 103.6366955 },
+          "camera_id": "4713",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "37f4982d90c57ac450bc10c7347d3be7"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/321e52fb-e04e-4e8b-bee6-cb63af65a583.jpg",
+          "location": { "latitude": 1.31023, "longitude": 103.76438 },
+          "camera_id": "4714",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "d46194aad5aa34c9494c1dd72aa8d2d2"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/e9532540-8ffb-4e71-aabe-99720abcf413.jpg",
+          "location": { "latitude": 1.32227, "longitude": 103.67453 },
+          "camera_id": "4716",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "7b930ccec471f91d9fccf8f3eda4ab79"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/ccda04f3-98ac-462d-8271-ac7123765e81.jpg",
+          "location": {
+            "latitude": 1.25999999687243,
+            "longitude": 103.823611110166
+          },
+          "camera_id": "4798",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "517384c6b62725a1e6bd4ff130e45b78"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/e7d20d25-9947-4e21-b948-fd6978aaf9c2.jpg",
+          "location": {
+            "latitude": 1.26027777363278,
+            "longitude": 103.823888890049
+          },
+          "camera_id": "4799",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "93dc8abe5d28a6732509434172b91c89"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/9565ea01-1406-478e-9144-c3cee49bc34a.jpg",
+          "location": { "latitude": 1.3309693, "longitude": 103.9168616 },
+          "camera_id": "5794",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "04ab3a081090bb29facf155452abcb8e"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/fdc87bd0-9131-467a-8911-68e2bd4e3ed5.jpg",
+          "location": { "latitude": 1.326024822, "longitude": 103.905625 },
+          "camera_id": "5795",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "5c0fa050b9a3cce5df85712d85c07fca"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/68290f06-c6b5-493e-8ed7-fcb278a67be5.jpg",
+          "location": { "latitude": 1.322875288, "longitude": 103.8910793 },
+          "camera_id": "5797",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "9cc083c3c414e725816fce2b23a5d784"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/db26b6d6-4f15-46ce-8e5b-9fa87615ce76.jpg",
+          "location": {
+            "latitude": 1.32036078126842,
+            "longitude": 103.877174116489
+          },
+          "camera_id": "5798",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "90e4bb833f2d6a0626624c35dc78f3cd"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/2d2c2035-285b-4c8e-9a8e-8208fd550fc9.jpg",
+          "location": { "latitude": 1.328171608, "longitude": 103.8685191 },
+          "camera_id": "5799",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "b0e83690293880ccf1115088f13c8cd1"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/dfdb85dc-1c45-4a7d-aeae-87cf1be53cf2.jpg",
+          "location": { "latitude": 1.329334, "longitude": 103.858222 },
+          "camera_id": "6701",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "7b07df22ad420c25cc19d6ef035fef8f"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/ba1e7ae3-88da-4ac1-a2b8-529153c38bcd.jpg",
+          "location": { "latitude": 1.328899, "longitude": 103.84121 },
+          "camera_id": "6703",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "0646a42e266593fd17865a9c8caa8660"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/1cfcbaec-9f71-4849-9761-e487e3ad77ab.jpg",
+          "location": {
+            "latitude": 1.32657403632366,
+            "longitude": 103.826857295633
+          },
+          "camera_id": "6704",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "5597660b5cc9dcad1a69f303f6339426"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/6197075f-373e-473c-88f8-a6e57a4347d6.jpg",
+          "location": { "latitude": 1.332124, "longitude": 103.81768 },
+          "camera_id": "6705",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "a24b8499672fbc58fbbb1be0c2c573ad"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/d4a27cb0-4623-4062-aa52-340e9ddd91d9.jpg",
+          "location": { "latitude": 1.349428893, "longitude": 103.7952799 },
+          "camera_id": "6706",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "111892c5825a4298ef8b76c6226eac6b"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/928d06a8-d283-4827-9966-da5ba87f7e6f.jpg",
+          "location": { "latitude": 1.345996, "longitude": 103.69016 },
+          "camera_id": "6708",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "bf5407f1ea5ffa2de1913f44598ca6a9"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/935b633d-8735-4f9a-8412-02e5888418dd.jpg",
+          "location": { "latitude": 1.344205, "longitude": 103.78577 },
+          "camera_id": "6710",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "732bded1ab3250c30a2b1e21714921d2"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/014f51ac-2569-40a5-a438-22cb06110c3c.jpg",
+          "location": { "latitude": 1.33771, "longitude": 103.977827 },
+          "camera_id": "6711",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "a1d9f8516a68aa51bdf745e33b6b3ec2"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/4cc4fe33-6582-4d49-9fe1-634f72380b8f.jpg",
+          "location": { "latitude": 1.332691, "longitude": 103.770278 },
+          "camera_id": "6712",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "49585b9a11aa7d25d04125a9d1907bd2"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/7491dd88-85b7-4f39-84fd-cb55832f87cc.jpg",
+          "location": { "latitude": 1.340298, "longitude": 103.945652 },
+          "camera_id": "6713",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "026985fc2b15f5275d9b791d56e396ff"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/084c405a-d65f-4dcc-92b4-67df305d7c06.jpg",
+          "location": { "latitude": 1.361742, "longitude": 103.703341 },
+          "camera_id": "6714",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "b0a78bbd0db7a634657ac579018c05eb"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/d492017f-fc47-4963-b642-9e29f2a3b009.jpg",
+          "location": { "latitude": 1.356299, "longitude": 103.716071 },
+          "camera_id": "6715",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "dbe7cc18c24bc5c7b8e0afd9edf90c6e"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/6dced034-d25c-4a79-a69c-45d870da936e.jpg",
+          "location": { "latitude": 1.322893, "longitude": 103.6635051 },
+          "camera_id": "6716",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "8c819bb914ce099e5e1f8bf2359f5b6a"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/457d9e67-9bca-4b3e-ab20-a5b41326f18e.jpg",
+          "location": { "latitude": 1.354245, "longitude": 103.963782 },
+          "camera_id": "7791",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "558cd8d5c4259af130902f12a0d3d95a"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/3623af70-71fa-419e-8b5d-4c6e22547066.jpg",
+          "location": { "latitude": 1.37704704, "longitude": 103.92946983 },
+          "camera_id": "7793",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "e97fb4744872584a5f6ea16fb24b81f0"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/a43c4db1-f3f5-4e07-836a-fc5951b58e5f.jpg",
+          "location": { "latitude": 1.37988658, "longitude": 103.92009174 },
+          "camera_id": "7794",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "9f71398b24c166dfd4ca243030e63416"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/f7b0a910-9b4a-4029-997d-bd923b69bbae.jpg",
+          "location": { "latitude": 1.38432741, "longitude": 103.91585701 },
+          "camera_id": "7795",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "4f7a9770a4e26a2677ff2bc1f5a741c2"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/cd139122-bd7d-4ec1-a114-7e4aca899619.jpg",
+          "location": { "latitude": 1.39559294, "longitude": 103.90515712 },
+          "camera_id": "7796",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "fe649836e266c246d612521ad7fa38e9"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/bb770e3b-72e1-4efd-8d6e-aff4ea853d70.jpg",
+          "location": { "latitude": 1.40002575, "longitude": 103.85702534 },
+          "camera_id": "7797",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "06460710ecc82efd6d219d95c98a0510"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/2a9f74db-3346-463e-9b09-2707bc44f189.jpg",
+          "location": { "latitude": 1.39748842, "longitude": 103.85400467 },
+          "camera_id": "7798",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "d84b8ef36d2cde0c259fe36a9a154cb9"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/da956760-23f6-4abb-af87-e3f3a7bf99cb.jpg",
+          "location": { "latitude": 1.38647, "longitude": 103.74143 },
+          "camera_id": "8701",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "5e23c8b708b7651764a23ce8e9855b57"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/d91cca41-b45e-4c4c-b332-b6a128f48c65.jpg",
+          "location": { "latitude": 1.39059, "longitude": 103.7717 },
+          "camera_id": "8702",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "237452651a25eac440af243fef44cc64"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/03fcf67c-7e96-4053-aef8-133b0873bccc.jpg",
+          "location": { "latitude": 1.3899, "longitude": 103.74843 },
+          "camera_id": "8704",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "2525d439126f93dc9d633ebdfdaf3917"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/a1f650c9-b87c-4628-906e-f060c3e640d5.jpg",
+          "location": { "latitude": 1.3664, "longitude": 103.70899 },
+          "camera_id": "8706",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "c8d4df9152aefebb1a9167beeabeef14"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/ad94ad87-e0f9-4389-90ed-50c2d8b3b2be.jpg",
+          "location": { "latitude": 1.39466333, "longitude": 103.83474601 },
+          "camera_id": "9701",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "f5358210e561328fc9d0ca5fc807de6f"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/57d43c09-2140-4c08-8144-11ea973f9e21.jpg",
+          "location": { "latitude": 1.39474081, "longitude": 103.81797086 },
+          "camera_id": "9702",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "3559934ec5a5b80cc66fcc2014dfac1d"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/7f7a4b08-ecc7-4dcc-9bfe-8f07006752e6.jpg",
+          "location": { "latitude": 1.422857, "longitude": 103.773005 },
+          "camera_id": "9703",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "bfb3668c48ee7ac4d21eaaa8d19084df"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/19c04e1b-ae53-49b3-90fd-37614d460c01.jpg",
+          "location": { "latitude": 1.42214311, "longitude": 103.79542062 },
+          "camera_id": "9704",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "c750fe1b08968a3bcb8c9bc701493802"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/e4d23c58-6440-4eba-922c-1214d8a1e41a.jpg",
+          "location": { "latitude": 1.42627712, "longitude": 103.78716637 },
+          "camera_id": "9705",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "76a265c8ce9113aaadb70c14235c9e60"
+          }
+        },
+        {
+          "timestamp": "2024-09-20T18:21:10+08:00",
+          "image": "https://images.data.gov.sg/api/traffic-images/2024/09/c6b43822-e03e-4ce5-8221-8aa2bbde43ed.jpg",
+          "location": { "latitude": 1.41270056, "longitude": 103.80642712 },
+          "camera_id": "9706",
+          "image_metadata": {
+            "height": 1080,
+            "width": 1920,
+            "md5": "d9493590bcd5d19d0906be7404b17b6a"
+          }
+        }
+      ]
+    }
+  ],
+  "api_info": { "status": "healthy" }
+}

@@ -1,0 +1,8 @@
+#
+# Flowmotion
+# Pipeline
+# Project Config
+#
+
+[tool.isort]
+profile = "black"
