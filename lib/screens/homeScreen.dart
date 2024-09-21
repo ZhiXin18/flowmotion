@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/widget_keys.dart';
 import '../widgets/navigationBar.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -8,6 +9,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: WidgetKeys.homeScreen,
       backgroundColor: Colors.white,
       bottomNavigationBar: MyBottomNavigationBar(selectedIndexNavBar: 0),
       appBar: AppBar(
