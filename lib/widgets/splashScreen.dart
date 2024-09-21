@@ -7,12 +7,12 @@ import 'package:flowmotion/screens/loginScreen.dart';
 import 'package:flowmotion/screens/registerScreen.dart';
 import 'package:flowmotion/screens/homeScreen.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashScreen extends StatefulWidget {
   @override
-  _SplashPageState createState() => _SplashPageState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashPageState extends State<SplashPage> {
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
