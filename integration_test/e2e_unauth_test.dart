@@ -49,8 +49,7 @@ void main() {
       await loginRobot.enterPassword(TestAuthInfo.unauthTestEmailEnv);
       await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
-      await Future.delayed(const Duration(seconds: 2));
-      loginRobot.verifyError();
+      await loginRobot.verifyErrorMessage('The supplied credentials are incorrect. Please try again.');
     });
   });
 }
