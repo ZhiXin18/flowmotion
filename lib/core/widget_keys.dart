@@ -14,6 +14,4 @@ class WidgetKeys {
 
   //home screen widgets
   static const Key homeScreen = Key('homeScreen');
-
-  //profile screen widgets
 }
