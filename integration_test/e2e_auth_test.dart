@@ -12,7 +12,7 @@ void main() {
 
   group('E2E - ', () {
     testWidgets("Authorized Login Flow", (tester) async {
-      await tester.pumpWidget(app.MyApp());
+      await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
       await tester.pumpAndSettle(const Duration(seconds: 4));
