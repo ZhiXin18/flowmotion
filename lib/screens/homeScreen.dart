@@ -46,11 +46,7 @@ class HomeScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Image.asset(
-                    'assets/map_preview.png', // Replace with your map image
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
+                  Container(),
                   SizedBox(height: 10),
                   GestureDetector(
                     onTap: () {
@@ -86,16 +82,17 @@ class HomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Home Card
-                _buildSavedPlaceCard(
+                /*_buildSavedPlaceCard(
                   "Home",
                   "assets/home_map_preview.png", // Replace with your map image
-                ),
+                ),*/
                 SizedBox(width: 10),
                 // Work Card
-                _buildSavedPlaceCard(
+                /*_buildSavedPlaceCard(
                   "Work",
                   "assets/work_map_preview.png", // Replace with your map image
-                ),
+                ),*/
+                Container(),
               ],
             ),
             SizedBox(height: 20),
