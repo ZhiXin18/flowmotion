@@ -1,10 +1,9 @@
 import 'package:flowmotion/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import '../core/widget_keys.dart';
 import '../firebase_options.dart';
-
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
-//import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 
 import '../screens/registerScreen.dart';
 import '../components/background.dart';
@@ -22,37 +21,108 @@ Future<void> main() async {
 }
 
 class LoginScreen extends StatefulWidget {
+  final FirebaseAuth? auth; // Add this line to accept an optional FirebaseAuth instance
+
+  LoginScreen({Key? key, this.auth}) : super(key: key); // Modify the constructor
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   int _success = 1;
   String _userEmail = "";
+  String _errorMessage = '';
+
+  // Validation method
+  bool _validateInputs() {
+    if (_emailController.text.isEmpty) {
+      _showErrorDialog('Please enter your email.');
+      return false;
+    }
+    if (_passwordController.text.isEmpty) {
+      _showErrorDialog('Please enter your password.');
+      return false;
+    }
+    return true;
+  }
+
+  // Show error dialog if inputs are missing
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        key: WidgetKeys.loginErrorDialog,
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _signIn() async {
-    final User? user = (await _auth.signInWithEmailAndPassword(email: _emailController.text, password: _passwordController.text)).user;
+    if (!_validateInputs()) {
+      return; // Stop registration if inputs are not valid
+    }
 
-    if(user != null) {
+    try {
+      final User? user = (await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      )).user;
+
+      if (user != null) {
+        setState(() {
+          _success = 2;
+          _userEmail = user.email!;
+          Navigator.of(context).pushNamed('/home');
+        });
+      } else {
+        setState(() {
+          _success = 3;
+
+        });
+      }
+    } on FirebaseAuthException catch (e) {
+      // Catch Firebase specific authentication errors
+      if (e.code == 'invalid-credential') {
+        setState(() {
+          _showErrorDialog('The supplied credentials are incorrect or expired. Please try again.');
+        });
+      } else if (e.code == 'user-not-found') {
+        setState(() {
+          _showErrorDialog('The supplied credentials are incorrect. Please try again.');
+        });
+      } else if (e.code == 'wrong-password') {
+        setState(() {
+          _showErrorDialog('The supplied credentials are incorrect. Please try again.');
+
+        });
+      } else {
+        setState(() {
+          _showErrorDialog('The supplied credentials are incorrect. Please try again.');
+        });
+      }
+    } catch (e) {
+      // Handle any other types of errors
       setState(() {
-        _success = 2;
-        _userEmail = user.email!;
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-      });
-    } else {
-      setState(() {
-        _success = 3;
+        _errorMessage = 'An error occurred. Please try again.';
       });
     }
   }
 
   @override
   void dispose() {
-    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -63,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
+      key: WidgetKeys.loginScreen,
       body: Background(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -87,6 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
+                key: WidgetKeys.loginEmailController,
                 controller: _emailController,
                 decoration: InputDecoration(
                     labelText: "Email"
@@ -100,6 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
+                key: WidgetKeys.loginPasswordController,
                 controller: _passwordController,
                 decoration: InputDecoration(
                     labelText: "Password"
@@ -133,6 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: Alignment.centerRight,
               margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: ElevatedButton(
+                key: WidgetKeys.loginButton,
                 onPressed: () {
                   _signIn();
                 },
