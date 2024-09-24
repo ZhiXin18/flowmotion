@@ -60,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
         content: Text(message),
         actions: [
           TextButton(
+            key: WidgetKeys.loginErrorOK,
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -97,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Catch Firebase specific authentication errors
       if (e.code == 'invalid-credential') {
         setState(() {
-          _showErrorDialog('The supplied credentials are incorrect or expired. Please try again.');
+          _showErrorDialog('The supplied credentials are incorrect. Please try again.');
         });
       } else if (e.code == 'user-not-found') {
         setState(() {
@@ -244,6 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: Alignment.centerRight,
               margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: GestureDetector(
+                key: WidgetKeys.goRegisterButton,
                 onTap: () => {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()))
                 },
