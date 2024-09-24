@@ -20,11 +20,11 @@ class MyApp extends StatelessWidget {
         theme: ThemeData.light(),
         initialRoute: '/',
         routes: {
-          '/': (context) => SplashPage(),
-          '/register': (context) => RegisterScreen(),
+          '/': (context) => SplashScreen(),
+          '/register': (context) => const RegisterScreen(),
           '/login': (context) => LoginScreen(),
-          '/home': (context) => HomeScreen(),
-          '/profile': (context) => ProfileScreen(),
+          '/home': (context) => const HomeScreen(),
+          '/profile': (context) => const ProfileScreen(),
         }
     );
   }
