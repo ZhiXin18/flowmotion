@@ -1,3 +1,4 @@
+import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:flowmotion/main.dart' as app;
@@ -10,12 +11,39 @@ void main() {
   late LoginRobot loginRobot;
 
   group('E2E - ', () {
+    testWidgets('Login form validation - empty fields', (WidgetTester tester) async {
+      await tester.pumpWidget(const app.MyApp());
+      loginRobot = LoginRobot(tester: tester);
+
+      await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
+      loginRobot.verify(); // Verify it's at login screen
+
+      await loginRobot.tapLoginButton();
+      await loginRobot.verifyErrorMessage('Please enter your email.'); // Expect email error message first
+
+      // Test 2: Password field empty, email filled
+      await loginRobot.enterEmail('test@example.com');
+      await loginRobot.tapLoginButton();
+      await loginRobot.verifyErrorMessage('Please enter your password.');
+
+      // Clear input fields after closing the dialog
+      await loginRobot.clearInputFields();
+
+      // Test 3: Email field empty, password filled
+      await loginRobot.enterPassword('password123');
+      await loginRobot.tapLoginButton();
+      await loginRobot.verifyErrorMessage('Please enter your email.');
+
+      // Clear input fields after closing the dialog
+      await loginRobot.clearInputFields();
+    });
+
     testWidgets("Unauthorized Login Flow", (tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
-      await tester.pumpAndSettle(const Duration(seconds: 4));
-      loginRobot.verify();
+      await tester.pumpAndSettle(const Duration(seconds: 4)); //wait for splash screen
+      loginRobot.verify(); //verify its at login screen
       await loginRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
       await Future.delayed(const Duration(seconds: 2));
       await loginRobot.enterPassword(TestAuthInfo.unauthTestEmailEnv);
