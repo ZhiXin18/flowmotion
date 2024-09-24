@@ -33,7 +33,7 @@ class LoginRobot {
     final loginButton = find.byKey(WidgetKeys.loginButton);
     expect(loginButton, findsOneWidget);
     await tester.tap(loginButton);
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 3));
   }
 
   Future<void> tapOKButton() async {
@@ -50,14 +50,14 @@ class LoginRobot {
     await tester.pumpAndSettle();
   }
 
-  void verifyError() {
-    final errorDialog = find.byKey(WidgetKeys.loginErrorDialog);
-    expect(errorDialog, findsOneWidget);
+  void verifyLoginError() {
+    final loginErrorDialog = find.byKey(WidgetKeys.loginErrorDialog);
+    expect(loginErrorDialog, findsOneWidget);
   }
 
   // Helper function to verify error messages
   Future<void> verifyErrorMessage(String expectedMessage) async {
-    verifyError();
+    verifyLoginError();
     expect(find.text(expectedMessage), findsOneWidget);
     await Future.delayed(const Duration(seconds: 2));
     // Tap the OK button to dismiss the dialog
