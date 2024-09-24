@@ -35,7 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   int _success = 1;
   String _userEmail = "";
-  String _errorMessage = '';
 
   // Validation method
   bool _validateInputs() {
@@ -73,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _signIn() async {
     if (!_validateInputs()) {
-      return; // Stop registration if inputs are not valid
+      return; // Stop if inputs are not valid
     }
 
     try {
@@ -97,36 +96,20 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch (e) {
       // Catch Firebase specific authentication errors
       if (e.code == 'invalid-credential') {
-        setState(() {
-          _showErrorDialog('The supplied credentials are incorrect. Please try again.');
-        });
+        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
       } else if (e.code == 'user-not-found') {
-        setState(() {
-          _showErrorDialog('The supplied credentials are incorrect. Please try again.');
-        });
+        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
       } else if (e.code == 'wrong-password') {
-        setState(() {
-          _showErrorDialog('The supplied credentials are incorrect. Please try again.');
-
-        });
+        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
       } else {
-        setState(() {
-          _showErrorDialog('The supplied credentials are incorrect. Please try again.');
-        });
+        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
       }
     } catch (e) {
       // Handle any other types of errors
       setState(() {
-        _errorMessage = 'An error occurred. Please try again.';
+        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 
   @override
