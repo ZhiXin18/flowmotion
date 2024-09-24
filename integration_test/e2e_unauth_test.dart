@@ -22,7 +22,7 @@ void main() {
       await loginRobot.verifyErrorMessage('Please enter your email.'); // Expect email error message first
 
       // Test 2: Password field empty, email filled
-      await loginRobot.enterEmail('test@example.com');
+      await loginRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
       await loginRobot.tapLoginButton();
       await loginRobot.verifyErrorMessage('Please enter your password.');
 
@@ -30,7 +30,7 @@ void main() {
       await loginRobot.clearInputFields();
 
       // Test 3: Email field empty, password filled
-      await loginRobot.enterPassword('password123');
+      await loginRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
       await loginRobot.tapLoginButton();
       await loginRobot.verifyErrorMessage('Please enter your email.');
 
@@ -46,7 +46,7 @@ void main() {
       loginRobot.verify(); //verify its at login screen
       await loginRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
       await Future.delayed(const Duration(seconds: 2));
-      await loginRobot.enterPassword(TestAuthInfo.unauthTestEmailEnv);
+      await loginRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
       await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
       await loginRobot.verifyErrorMessage('The supplied credentials are incorrect. Please try again.');
