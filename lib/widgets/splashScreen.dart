@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase core.
@@ -35,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   /// Start a timer for the splash screen duration.
   startSplashScreenTimer() async {
-    var _duration = new Duration(seconds: 5);
+    var _duration = new Duration(seconds: 3);
     return new Timer(_duration, navigateToPage);
   }
 
@@ -52,6 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
     return Container(
+      key:  WidgetKeys.splashScreen,
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
