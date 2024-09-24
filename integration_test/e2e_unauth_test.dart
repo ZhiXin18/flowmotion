@@ -16,7 +16,7 @@ void main() {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
-      await tester.pumpAndSettle(Duration(seconds: 4));
+      await tester.pumpAndSettle(const Duration(seconds: 4));
       loginRobot.verify();
       await loginRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
       await Future.delayed(const Duration(seconds: 2));
