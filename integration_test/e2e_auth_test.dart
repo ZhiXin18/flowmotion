@@ -22,7 +22,7 @@ void main() {
       await loginRobot.enterPassword(TestAuthInfo.authTestPasswordEnv);
       await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
-      await Future.delayed(const Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
       loginRobot.verifySuccess();
     });
