@@ -1,4 +1,3 @@
-import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:flowmotion/main.dart' as app;
@@ -45,9 +44,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 4)); //wait for splash screen
       loginRobot.verify(); //verify its at login screen
       await loginRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
       await loginRobot.verifyErrorMessage('The supplied credentials are incorrect. Please try again.');
     });
