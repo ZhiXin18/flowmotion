@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return true;
   }
 
-  // Show error dialog if inputs are missing
+  // Show error dialog if the inputs are missing
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
