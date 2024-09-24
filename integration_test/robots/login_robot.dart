@@ -43,6 +43,13 @@ class LoginRobot {
     await tester.pumpAndSettle();
   }
 
+  Future<void> tapRegisterAccButton() async {
+    final goRegisterButton = find.byKey(WidgetKeys.goRegisterButton);
+    expect(goRegisterButton, findsOneWidget);
+    await tester.tap(goRegisterButton);
+    await tester.pumpAndSettle();
+  }
+
   void verifyError() {
     final errorDialog = find.byKey(WidgetKeys.loginErrorDialog);
     expect(errorDialog, findsOneWidget);
@@ -65,5 +72,9 @@ class LoginRobot {
 
   void verifySuccess() {
     final homeScreen = find.byKey(WidgetKeys.homeScreen);
+  }
+
+  void verifyStartRegister() {
+    final registerScreen = find.byKey(WidgetKeys.registerScreen);
   }
 }
