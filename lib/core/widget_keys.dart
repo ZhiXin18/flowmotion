@@ -25,4 +25,6 @@ class WidgetKeys {
 
   //home screen widgets
   static const Key homeScreen = Key('homeScreen');
+  static const Key goMapButton = Key('goMapButton');
+  static const Key fullMapScreen = Key('fullMapScreen');
 }
