@@ -1,10 +1,11 @@
+import 'package:flowmotion/screens/fullMapScreen.dart';
 import 'package:flutter/material.dart';
-
 import '../core/widget_keys.dart';
 import '../widgets/navigationBar.dart';
-
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +47,47 @@ class HomeScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Container(),
+                  SizedBox(
+                    height: 200,
+                    width: double.infinity,
+                    child: FlutterMap(
+                      options: MapOptions(
+                        initialCenter: LatLng(1.2878, 103.8666),
+                        initialZoom: 14,
+                      ),
+                      children: [
+                        TileLayer(
+                          urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                        ),
+                        const MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: LatLng(1.2878, 103.8666),
+                              width: 60,
+                              height: 60,
+                              alignment: Alignment.centerLeft,
+                              child: Icon(
+                                Icons.location_pin,
+                                size: 30,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: 10),
                   GestureDetector(
                     onTap: () {
                       // Handle "View Full Map" action
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FullMapScreen(),
+                          ),
+                      );
                     },
                     child: Text(
                       "View full map >",
