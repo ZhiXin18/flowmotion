@@ -13,27 +13,19 @@ class HomeScreen extends StatelessWidget {
       key: WidgetKeys.homeScreen,
       backgroundColor: Colors.white,
       bottomNavigationBar: MyBottomNavigationBar(selectedIndexNavBar: 0),
-      appBar: AppBar(
-        title: Text("Dashboard"),
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {},
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 50),
             // Dashboard Header Section
             Text(
               "Dashboard",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 5),
             Text(
               "Where would you like to go today?",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: TextStyle(fontSize: 16, color: Colors.black54),
             ),
             SizedBox(height: 20),
 
@@ -79,28 +71,30 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: () {
-                      // Handle "View Full Map" action
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FullMapScreen(),
-                          ),
-                      );
-                    },
-                    child: Text(
-                      "View full map >",
-                      style: TextStyle(
-                        color: Colors.redAccent,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
+            SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
+                // Handle "View Full Map" action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FullMapScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                "View full map >",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
             SizedBox(height: 30),
 
             // Saved Places Section
