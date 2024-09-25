@@ -16,14 +16,6 @@ class _FullMapScreenState extends State<FullMapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: MyBottomNavigationBar(selectedIndexNavBar: 0),
-      appBar: AppBar(
-        title: Text("Dashboard"),
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {},
-        ),
-      ),
       body: _fullMap(),
     );
   }
