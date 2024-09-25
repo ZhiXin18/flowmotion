@@ -76,6 +76,7 @@ class HomeScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             GestureDetector(
+              key: WidgetKeys.goMapButton,
               onTap: () {
                 // Handle "View Full Map" action
                 Navigator.push(

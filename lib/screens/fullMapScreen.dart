@@ -1,3 +1,4 @@
+import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import '../widgets/navigationBar.dart';
@@ -15,6 +16,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: WidgetKeys.fullMapScreen,
       bottomNavigationBar: MyBottomNavigationBar(selectedIndexNavBar: 0),
       body: _fullMap(),
     );
