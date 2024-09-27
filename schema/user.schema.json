@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ZhiXin18/flowmotion/refs/heads/master/schema/user.schema.json",
+  "title": "User",
+  "description": "Flowmotion user data",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "hashed_password": {
+      "type": "string"
+    },
+    "addresses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/address"
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/route"
+      }
+    },
+    "created_on": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_on": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "username",
+    "email",
+    "hashed_password",
+    "addresses",
+    "created_on",
+    "updated_on"
+  ],
+  "$defs": {
+    "address": {
+      "title": "Address",
+      "description": "Addresses created by the user",
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "postcode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "country_code": {
+          "description": "ISO 3166-1 Alpha-2 Country code",
+          "type": "string",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "deleted": {
+          "type": "boolean",
+          "description": "Whether this address has been deleted by the user"
+        }
+      },
+      "required": [
+        "line",
+        "postcode",
+        "city",
+        "state",
+        "country_code",
+        "deleted"
+      ]
+    },
+    "route": {
+      "title": "Saved Route",
+      "description": "Saved route created by the user",
+      "type": "object",
+      "properties": {
+        "src_address_idx": {
+          "description": "Index of source address of route in 'addresses' array",
+          "type": "integer"
+        },
+        "dest_address_idx": {
+          "description": "Index of destination address of route in 'addresses' array",
+          "type": "integer"
+        }
+      },
+      "required": ["src_address_idx", "dest_address_idx"]
+    }
+  }
+}
