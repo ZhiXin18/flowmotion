@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ZhiXin18/flowmotion/refs/heads/master/schema/user.schema.json",
+  "$id": "https://github.com/ZhiXin18/flowmotion/raw/refs/heads/master/schema/congestion.schema.json",
   "title": "Congestion",
   "description": "Traffic camera congestion rating",
   "type": "object",
@@ -35,6 +35,7 @@
           "format": "date-time"
         },
         "location": {
+          "type": "object",
           "properties": {
             "longtitude": {
               "type": "number"
