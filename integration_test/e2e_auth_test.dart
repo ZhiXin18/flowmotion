@@ -13,7 +13,7 @@ void main() {
   late HomeRobot homeRobot;
 
   group('E2E - ', () {
-    testWidgets("Authorized Login Flow", (tester) async {
+    testWidgets("Authorized Login Flow", (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
@@ -28,7 +28,7 @@ void main() {
       loginRobot.verifySuccess();
     });
 
-    testWidgets("Authorized Login To Map Flow", (tester) async {
+    testWidgets("Authorized Login To Map Flow", (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       homeRobot = HomeRobot(tester: tester);

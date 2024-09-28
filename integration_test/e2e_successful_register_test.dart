@@ -26,7 +26,7 @@ void main() {
   }
 
   group('E2E - Registrations', () {
-    testWidgets("Successful Register Flow(2 addresses)", (tester) async {
+    testWidgets("Successful Register Flow(2 addresses)", (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
@@ -73,7 +73,7 @@ void main() {
       registerRobot.verifyRegisterSuccess();
     });
 
-    testWidgets("Successful Register Flow(3 addresses)", (tester) async {
+    testWidgets("Successful Register Flow(3 addresses)", (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);

@@ -196,4 +196,9 @@ class RegisterRobot {
   void verifyRegisterSuccess() {
     final homeScreen = find.byKey(WidgetKeys.homeScreen);
   }
+
+  Future<void> tapBackButton() async{
+    await tester.tap(find.byKey(WidgetKeys.savedPlaceScreenBackButton));
+    await tester.pumpAndSettle(); // Wait for the UI to settle
+  }
 }

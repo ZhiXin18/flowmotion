@@ -221,8 +221,13 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
         key: WidgetKeys.savedPlaceScreen,
         appBar: AppBar(
           leading: IconButton(
+            key: WidgetKeys.savedPlaceScreenBackButton,
             icon: Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () =>
+            {
+              _auth.currentUser?.delete(),
+              Navigator.pop(context),
+            }
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
