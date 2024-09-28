@@ -87,12 +87,6 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
   }
 
   void _saveUserData() async {
-    // Check that both checkboxes are checked
-    if (!_termsAccepted || !_notificationsAllowed) {
-      _showErrorDialog('Please accept the terms and conditions and allow notifications.');
-      return;
-    }
-
     // Check that both Home and Work addresses are filled
     if (savedAddresses[0]['postalCode']!.isEmpty || savedAddresses[0]['address']!.isEmpty) {
       _showErrorDialog('Please fill in the Home address.');
@@ -101,6 +95,12 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
 
     if (savedAddresses[1]['postalCode']!.isEmpty || savedAddresses[1]['address']!.isEmpty) {
       _showErrorDialog('Please fill in the Work address.');
+      return;
+    }
+
+    // Check that both checkboxes are checked
+    if (!_termsAccepted || !_notificationsAllowed) {
+      _showErrorDialog('Please accept the terms and conditions and allow notifications.');
       return;
     }
 
@@ -130,10 +130,12 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        key: WidgetKeys.registerErrorDialog,
         title: Text('Error'),
         content: Text(message),
         actions: [
           TextButton(
+            key: WidgetKeys.registerErrorOK,
             onPressed: () {
               Navigator.of(context).pop();
             },
