@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ZhiXin18/flowmotion/raw/refs/heads/master/schema/congestion.schema.json",
+  "title": "Congestion",
+  "description": "Traffic camera congestion rating",
+  "type": "object",
+  "properties": {
+    "camera": {
+      "$ref": "#/$defs/camera"
+    },
+    "rating": {
+      "$ref": "#/$defs/rating"
+    },
+    "updated_on": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["camera", "rating", "updated_on"],
+  "$defs": {
+    "camera": {
+      "title": "Camera",
+      "description": "Traffic camera capturing traffic images",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "captured_on": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "retrieved_on": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "longtitude": {
+              "type": "number"
+            },
+            "latitude": {
+              "type": "number"
+            }
+          },
+          "required": ["longtitude", "latitude"]
+        }
+      },
+      "required": ["id", "captured_on", "retrieved_on", "location"]
+    },
+    "rating": {
+      "title": "Rating",
+      "description": "Traffic congestion rating",
+      "type": "object",
+      "properties": {
+        "rated_on": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "value": {
+          "description": "0-1 congestion rating with 1 being 'most congested'",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}
