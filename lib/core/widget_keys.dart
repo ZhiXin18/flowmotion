@@ -34,6 +34,7 @@ class WidgetKeys {
   static final Key termsCheckbox = Key('termsCheckbox');
   static final Key notificationsCheckbox = Key('notificationsCheckbox');
   static final Key dismissKeyboard = Key('dismissKeyboard');
+  static final Key savedPlaceScreenBackButton = Key('savedPlaceScreenBackButton');
 
   // For address fields
   static Key addressField(int index) => Key('addressField_$index');

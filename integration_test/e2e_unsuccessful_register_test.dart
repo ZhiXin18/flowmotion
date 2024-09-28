@@ -88,7 +88,7 @@ void main() {
       await registerRobot.clearInputFields();
     });
 
-    testWidgets("Unsuccessful Register Flow", (tester) async {
+    testWidgets("Unsuccessful Register Flow", (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
@@ -137,7 +137,7 @@ void main() {
       await registerRobot.clearInputFields();
     });
 
-    testWidgets("Unsuccessful Address Register Flow", (tester) async {
+    testWidgets("Unsuccessful Address Register Flow", (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
@@ -230,6 +230,39 @@ void main() {
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
           'Please accept the terms and conditions and allow notifications.');
+    });
+
+    testWidgets("Click back before saving address", (WidgetTester tester) async {
+      await tester.pumpWidget(const app.MyApp());
+      loginRobot = LoginRobot(tester: tester);
+      registerRobot = RegisterRobot(tester: tester);
+
+      await tester.pumpAndSettle(
+          const Duration(seconds: 4)); // Wait for splash screen
+      loginRobot.verify(); // Verify its at login screen
+
+      await loginRobot.tapRegisterAccButton();
+      await Future.delayed(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+      loginRobot.verifyStartRegister(); // Verify its at register screen
+
+      // Generate both username and email
+      var userDetails = generateUsernameAndEmail();
+      String username = userDetails['username']!; // Extract username
+      String randomEmail = userDetails['email']!; // Extract email
+
+      await registerRobot.enterName(username); // Enter the generated username
+      await Future.delayed(const Duration(seconds: 2));
+      await registerRobot.enterEmail(randomEmail); // Enter the generated email
+      await Future.delayed(const Duration(seconds: 2));
+      await registerRobot.enterPassword(TestAuthInfo.registerTestPasswordEnv);
+      await Future.delayed(const Duration(seconds: 2));
+      await registerRobot.tapRegisterButton();
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+      registerRobot.verifyPartSuccess(); // Verify its at saved place screen
+
+      await registerRobot.tapBackButton();
+      loginRobot.verifyStartRegister();
     });
   });
 }

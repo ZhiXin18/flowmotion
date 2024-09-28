@@ -37,7 +37,7 @@ void main() {
       await loginRobot.clearInputFields();
     });
 
-    testWidgets("Unauthorized Login Flow", (tester) async {
+    testWidgets("Unauthorized Login Flow", (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
