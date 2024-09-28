@@ -72,6 +72,21 @@ class RegisterRobot {
     await enterPassword('');
   }
 
+  // Clear input address fields function
+  Future<void> clearAddressInputFields(int indexToClear) async {
+      final postalCodeField = find.byKey(WidgetKeys.addressPostalCodeField(indexToClear));
+      final addressField = find.byKey(WidgetKeys.addressField(indexToClear));
+
+      expect(postalCodeField, findsOneWidget);
+      await tester.enterText(postalCodeField, "");
+      await tester.pump();
+
+      expect(addressField, findsOneWidget);
+      await tester.enterText(addressField, "");
+      await tester.pump();
+  }
+
+
   void verifyPartSuccess() {
     final savedPlaceScreen = find.byKey(WidgetKeys.savedPlaceScreen);
   }
@@ -108,6 +123,21 @@ class RegisterRobot {
       await tester.enterText(addressField, addresses[i].address);
       await tester.pump();
     }
+  }
+
+  Future<void> enterSpecifiedAddress(List<Address> addresses, int index) async {
+    final postalCodeField = find.byKey(WidgetKeys.addressPostalCodeField(index));
+    final specifiedAddressField = find.byKey(WidgetKeys.addressField(index));
+
+    // Verify postal code field
+    expect(postalCodeField, findsOneWidget);
+    await tester.enterText(postalCodeField, addresses[index].postalCode);
+    await tester.pump();
+
+    // Verify address field
+    expect(specifiedAddressField, findsOneWidget);
+    await tester.enterText(specifiedAddressField, addresses[index].address);
+    await tester.pump();
   }
 
   // Method to dismiss the keyboard
