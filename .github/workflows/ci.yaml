@@ -76,6 +76,8 @@ jobs:
     name: Build & Test Mobile App (iOS)
     runs-on: ubuntu-22.04
     steps:
+      - uses: actions/checkout@v4
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
