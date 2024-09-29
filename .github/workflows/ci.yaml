@@ -74,7 +74,7 @@ jobs:
 
   mobile-ios:
     name: Build & Test Mobile App (iOS)
-    runs-on: ubuntu-22.04
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
