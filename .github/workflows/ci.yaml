@@ -10,7 +10,7 @@ env:
   ANDROID_API_LEVEL: 23
 jobs:
   build-mobile-android:
-    name: Build & Test Mobile App (Android)
+    name: Build Mobile App (Android)
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -33,8 +33,8 @@ jobs:
           name: flowmotion_apk
           path: /build/app/outputs/apk/release/*.apk
 
-  mobile-android:
-    name: Build & Test Mobile App (Android)
+  test-mobile-android:
+    name: Test Mobile App (Android)
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -88,7 +88,7 @@ jobs:
           script: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
 
   build-mobile-ios:
-    name: Build & Test Mobile App (iOS)
+    name: Build Mobile App (iOS)
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
