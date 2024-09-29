@@ -17,31 +17,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Set up JDK 11
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: 'adopt'
 
+      # Setup Flutter SDK
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           flutter-version-file: pubspec.yaml
 
+      # Install required Android SDK components
       - name: Install Android SDK
         run: |
-          mkdir -p $HOME/android-sdk
-          echo "sdk.dir=$HOME/android-sdk" > $HOME/android-sdk/gradle.properties
           yes | sdkmanager --licenses
-          sdkmanager --install "platform-tools" "platforms;android-33" "build-tools;34.0.0"
+          sdkmanager --install "build-tools;34.0.0" "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64"
 
       # Create AVD for Tiramisu
       - name: Create AVD for Tiramisu
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
-          target: google_apis
+          target: google_apis  # Make sure to specify the correct target
           arch: x86_64
           force-avd-creation: true
           emulator-options: -no-snapshot-save -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1440x3040 -density 560
