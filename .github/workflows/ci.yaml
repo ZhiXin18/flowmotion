@@ -65,11 +65,10 @@ jobs:
           key: avd-${{ env.ANDROID_API_LEVEL }}
 
       - name: Create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ env.ANDROID_API_LEVEL }}
-          device-name: "pixel_4_xl"  # Set to Pixel 4 XL
+          api-level: 33
+          avd-name: Pixel_4_XL_API_33  # Use the exact name of your AVD
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
@@ -82,8 +81,8 @@ jobs:
       - name: Test Mobile App (Android)
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ env.ANDROID_API_LEVEL }}
-          device-name: "pixel_4_xl"  # Ensure it runs on Pixel 4 XL
+          api-level: 33
+          avd-name: Pixel_4_XL_API_33  # Ensure it runs on Pixel 4 XL
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
