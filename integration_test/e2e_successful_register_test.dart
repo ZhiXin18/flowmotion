@@ -34,6 +34,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
       loginRobot.verify(); // Verify its at login screen
 
+      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapRegisterAccButton();
       await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
@@ -82,6 +83,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
       loginRobot.verify(); // Verify its at login screen
 
+      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapRegisterAccButton();
       await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
@@ -115,8 +117,11 @@ void main() {
       await registerRobot.dismissKeyboard();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapAddMoreButton();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyAddMore();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterAdditionalAddress(addresses);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.dismissKeyboard();
       await Future.delayed(const Duration(seconds: 2));
       final scrollableFinder = find.byType(SingleChildScrollView);
