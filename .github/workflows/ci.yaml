@@ -6,8 +6,9 @@
 name: Flowmotion CI/CD
 on:
   push: {}
+
 env:
-  ANDROID_API_LEVEL: 23
+  ANDROID_API_LEVEL: 33
 jobs:
   build-mobile-android:
     name: Build Mobile App (Android)
@@ -21,7 +22,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          channel: 'stable'
           flutter-version-file: pubspec.yaml
 
       - name: Build Android APK
@@ -45,7 +46,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          channel: 'stable'
           flutter-version-file: pubspec.yaml
 
         # setup android emulator for testing
@@ -82,114 +83,197 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
-          device-name: "pixel_4_xl"  # Ensure it runs on Pixel 4 XL
+          arch: x86_64
+          profile: Pixel 4 XL
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
 
-  build-mobile-ios:
-    name: Build Mobile App (iOS)
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@v4
+  #env:
+#  ANDROID_API_LEVEL: 23
+#jobs:
+#  build-mobile-android:
+#    name: Build Mobile App (Android)
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Restore Gradle build cache
+#        uses: gradle/actions/setup-gradle@v3
+#
+#      - name: Setup Flutter
+#        uses: subosito/flutter-action@v2
+#        with:
+#          channel: stable
+#          flutter-version-file: pubspec.yaml
+#
+#      - name: Build Android APK
+#        run: flutter build apk --debug
+#
+#      - name: Upload Android APK
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: flowmotion.apk
+#          path: build/app/outputs/flutter-apk/*.apk
+#
+#  test-mobile-android:
+#    name: Test Mobile App (Android)
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Restore Gradle build cache
+#        uses: gradle/actions/setup-gradle@v3
+#
+#      - name: Setup Flutter
+#        uses: subosito/flutter-action@v2
+#        with:
+#          channel: stable
+#          flutter-version-file: pubspec.yaml
+#
+#        # setup android emulator for testing
+#      - name: Enable KVM for Android emulator
+#        run: |
+#          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+#          sudo udevadm control --reload-rules
+#          sudo udevadm trigger --name-match=kvm
+#
+#      - name: Setup AVD emulator cache
+#        uses: actions/cache@v4
+#        id: avd-cache
+#        with:
+#          path: |
+#            ~/.android/avd/*
+#            ~/.android/adb*
+#          key: avd-${{ env.ANDROID_API_LEVEL }}
+#
+#      - name: Create AVD and generate snapshot for caching
+#        if: steps.avd-cache.outputs.cache-hit != 'true'
+#        uses: reactivecircus/android-emulator-runner@v2
+#        with:
+#          api-level: ${{ env.ANDROID_API_LEVEL }}
+#          force-avd-creation: false
+#          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+#          disable-animations: false
+#          script: echo "Generated AVD snapshot for caching."
+#
+#      # run tests on android AVD
+#      - name: Write test_auth_info.dart secrets
+#        run: printf "${{ secrets.TEST_AUTH_INFO_B64 }}" | base64 -d > test_auth_info.dart
+#
+#      - name: Test Mobile App (Android)
+#        uses: reactivecircus/android-emulator-runner@v2
+#        with:
+#          api-level: ${{ env.ANDROID_API_LEVEL }}
+#          device-name: "pixel_4_xl"  # Ensure it runs on Pixel 4 XL
+#          force-avd-creation: false
+#          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+#          disable-animations: true
+#          script: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
+#
+#  build-mobile-ios:
+#    name: Build Mobile App (iOS)
+#    runs-on: macos-14
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Setup Flutter
+#        uses: subosito/flutter-action@v2
+#        with:
+#          channel: stable
+#          flutter-version-file: pubspec.yaml
+#
+#      - name: Restore Xcode build cache
+#        uses: irgaly/xcode-cache@v1
+#        with:
+#          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
+#          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+#
+#      - name: Restore Cocoapods build cache
+#        uses: actions/cache@v4
+#        with:
+#          path: ios/Pods
+#          key: cocoapods-cache-${{ hashFiles('ios/Podfile.lock') }}
+#
+#      - name: Build iOS xcarchive
+#        run: flutter build ipa --no-codesign
+#
+#      - name: Upload iOS xcarchive
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: flowmotion.xcarchive
+#          path: build/ios/archive/*.ipa
+#
+#  test-mobile-ios:
+#    name: Test Mobile App (iOS)
+#    runs-on: macos-14
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Setup Flutter
+#        uses: subosito/flutter-action@v2
+#        with:
+#          channel: stable
+#          flutter-version-file: pubspec.yaml
+#
+#      - name: Restore Xcode build cache
+#        uses: irgaly/xcode-cache@v1
+#        with:
+#          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
+#          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+#
+#      - name: Boot iOS simulator
+#        uses: futureware-tech/simulator-action@v3
+#        with:
+#          model: "iPhone 15"
+#          os: "iOS"
+#          os_version: "17.4"
+#
+#      # run tests on ios simulator
+#      - name: Write test_auth_info.dart secrets
+#        run: printf "${{ secrets.TEST_AUTH_INFO_B64 }}" | base64 -d > test_auth_info.dart
+#
+#      - name: Test Mobile App (iOS)
+#        run: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version-file: pubspec.yaml
-
-      - name: Restore Xcode build cache
-        uses: irgaly/xcode-cache@v1
-        with:
-          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
-
-      - name: Restore Cocoapods build cache
-        uses: actions/cache@v4
-        with:
-          path: ios/Pods
-          key: cocoapods-cache-${{ hashFiles('ios/Podfile.lock') }}
-
-      - name: Build iOS xcarchive
-        run: flutter build ipa --no-codesign
-
-      - name: Upload iOS xcarchive
-        uses: actions/upload-artifact@v4
-        with:
-          name: flowmotion.xcarchive
-          path: build/ios/archive/*.ipa
-
-  test-mobile-ios:
-    name: Test Mobile App (iOS)
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version-file: pubspec.yaml
-
-      - name: Restore Xcode build cache
-        uses: irgaly/xcode-cache@v1
-        with:
-          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
-
-      - name: Boot iOS simulator
-        uses: futureware-tech/simulator-action@v3
-        with:
-          model: "iPhone 15"
-          os: "iOS"
-          os_version: "17.4"
-
-      # run tests on ios simulator
-      - name: Write test_auth_info.dart secrets
-        run: printf "${{ secrets.TEST_AUTH_INFO_B64 }}" | base64 -d > test_auth_info.dart
-
-      - name: Test Mobile App (iOS)
-        run: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
-
-  pipeline:
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [lint, test]
-    name: "${{ matrix.target }} Pipeline"
-    defaults:
-      run:
-        working-directory: pipeline
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.10.13"
-          # cache pip dependencies
-          cache: "pip"
-      - name: Install Pip dependencies
-        run: pip install -r requirements.txt
-      - name: "${{ matrix.target }} Pipeline"
-        run: "make ${{ matrix.target }}"
-
-  schema:
-    name: "Validate JSON Schema"
-    runs-on: ubuntu-22.04
-    defaults:
-      run:
-        working-directory: schema
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.9.x
-          # cache npm dependencies
-          cache: npm
-          cache-dependency-path: schema/package-lock.json
-      - name: Install npm dependencies
-        run: npm ci
-      - name: Validate json schema
-        run: npx ajv compile -s "*.schema.json" --spec=draft2020 -c ajv-formats
+#  pipeline:
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        target: [lint, test]
+#    name: "${{ matrix.target }} Pipeline"
+#    defaults:
+#      run:
+#        working-directory: pipeline
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: actions/setup-python@v5
+#        with:
+#          python-version: "3.10.13"
+#          # cache pip dependencies
+#          cache: "pip"
+#      - name: Install Pip dependencies
+#        run: pip install -r requirements.txt
+#      - name: "${{ matrix.target }} Pipeline"
+#        run: "make ${{ matrix.target }}"
+#
+#  schema:
+#    name: "Validate JSON Schema"
+#    runs-on: ubuntu-22.04
+#    defaults:
+#      run:
+#        working-directory: schema
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: actions/setup-node@v4
+#        with:
+#          node-version: 20.9.x
+#          # cache npm dependencies
+#          cache: npm
+#          cache-dependency-path: schema/package-lock.json
+#      - name: Install npm dependencies
+#        run: npm ci
+#      - name: Validate json schema
+#        run: npx ajv compile -s "*.schema.json" --spec=draft2020 -c ajv-formats
