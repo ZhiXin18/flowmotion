@@ -218,12 +218,14 @@ void main() {
           'Please accept the terms and conditions and allow notifications.');
 
       // Test 5: Only one checkbox is checked
+      await registerRobot.dismissKeyboard();
       await registerRobot.tapTermsCheckbox();
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
           'Please accept the terms and conditions and allow notifications.');
 
+      await registerRobot.dismissKeyboard();
       await registerRobot.tapTermsCheckbox();
       await registerRobot.tapNotificationCheckbox();
       await registerRobot.tapGetStartedButton();
