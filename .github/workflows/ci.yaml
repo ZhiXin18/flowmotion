@@ -8,7 +8,7 @@ on:
   push: {}
 
 env:
-  ANDROID_API_LEVEL: 33  # Change to the desired API level
+  ANDROID_API_LEVEL: 23  # Change to the desired API level
 
 jobs:
   build-mobile-android:
