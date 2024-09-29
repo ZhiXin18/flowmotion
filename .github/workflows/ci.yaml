@@ -15,8 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Gradle build cache
+      - name: Restore Gradle build cache
         uses: gradle/actions/setup-gradle@v3
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -58,6 +59,7 @@ jobs:
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
+      # run tests on android AVD
       - name: Write test_auth_info.dart secrets
         run: printf "${{ secrets.TEST_AUTH_INFO_B64 }}" | base64 -d > test_auth_info.dart
 
@@ -69,6 +71,45 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
+
+  mobile-ios:
+    name: Build & Test Mobile App (iOS)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+
+      - name: Restore Xcode build cache
+        uses: irgaly/xcode-cache@v1
+        with:
+          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+
+      - name: Build iOS IPA
+        run: flutter build ipa
+
+      - name: Upload iOS IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: flowmotion-debug.ipa
+          path: build/ios/ipa/Runner.ipa
+
+      - name: Boot iOS simulator
+        uses: futureware-tech/simulator-action@v3
+        with:
+          model: "iPhone 15"
+          os: "iOS"
+          os_version: "17.4"
+
+      # run tests on ios simulator
+      - name: Write test_auth_info.dart secrets
+        run: printf "${{ secrets.TEST_AUTH_INFO_B64 }}" | base64 -d > test_auth_info.dart
+
+      - name: Test Mobile App (iOS)
+        run: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
 
   pipeline:
     strategy:
