@@ -25,7 +25,7 @@ jobs:
           flutter-version-file: pubspec.yaml
 
       - name: Build Android APK
-        run: flutter build apk
+        run: flutter build apk --debug
 
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
