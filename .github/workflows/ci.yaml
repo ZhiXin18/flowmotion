@@ -8,7 +8,7 @@ on:
   push: {}
 
 env:
-  ANDROID_API_LEVEL: 23  # Change to the desired API level
+  ANDROID_API_LEVEL: 29
 
 jobs:
   build-mobile-android:
@@ -50,37 +50,21 @@ jobs:
           channel: 'stable'
           flutter-version-file: pubspec.yaml
 
-      # Setup Android SDK
-      - name: Install Android SDK
-        uses: malinskiy/action-android/install-sdk@release/0.1.2
 
-      # Install necessary system images and components
-      - run: sdkmanager --install "system-images;android-33;google_apis;x86_64"
-      - run: sdkmanager --install "platform-tools"
-      - run: sdkmanager --install "build-tools;34.0.0"  # Adjust build-tools as needed
-
-      # Setup Android emulator for testing
+      # Enable KVM for Android emulator
       - name: Enable KVM for Android emulator
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Setup AVD emulator cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ env.ANDROID_API_LEVEL }}
-
+      # Create AVD and generate snapshot for caching
       - name: Create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
-          device-name: "Pixel 4 XL"  # Specify the device name directly
+          arch: x86_64
+          profile: "Pixel 4 XL"  # Set to Pixel 4 XL
           force-avd-creation: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
@@ -94,11 +78,13 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
-          device-name: "Pixel 4 XL"  # Ensure it runs on Pixel 4 XL
+          arch: x86_64
+          profile: "Pixel 4 XL"  # Ensure it runs on Pixel 4 XL
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
+
 
   #env:
 #  ANDROID_API_LEVEL: 23
