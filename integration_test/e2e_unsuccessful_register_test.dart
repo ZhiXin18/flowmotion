@@ -50,20 +50,26 @@ void main() {
           const Duration(seconds: 4)); // Wait for splash screen
       loginRobot.verify(); // Verify its at login screen
 
+      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapRegisterAccButton();
       await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
       loginRobot.verifyStartRegister(); // Verify its at register screen
 
       // Test 1: All fields empty
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapRegisterButton();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
           'Please enter your name.'); // Expect name error message first
 
       // Test 2: Name field empty
       await registerRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapRegisterButton();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage('Please enter your name.');
 
       // Clear input fields after closing the dialog
@@ -71,8 +77,11 @@ void main() {
 
       // Test 3: Email field empty
       await registerRobot.enterName("Johnny");
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapRegisterButton();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage('Please enter your email.');
 
       // Clear input fields after closing the dialog
@@ -80,8 +89,11 @@ void main() {
 
       // Test 4: Password field empty
       await registerRobot.enterName("Johnny");
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapRegisterButton();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage('Please enter your password.');
 
       // Clear input fields after closing the dialog
@@ -97,6 +109,7 @@ void main() {
           const Duration(seconds: 4)); // Wait for splash screen
       loginRobot.verify(); // Verify its at login screen
 
+      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapRegisterAccButton();
       await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
@@ -104,9 +117,13 @@ void main() {
 
       // Test 1: Invalid email
       await registerRobot.enterName("Johnny");
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterEmail(TestAuthInfo.testInvalidEmailEnv);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapRegisterButton();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
           'Please enter a valid email address.');
 
@@ -115,9 +132,13 @@ void main() {
 
       // Test 2: Short Password
       await registerRobot.enterName("Johnny");
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterPassword(TestAuthInfo.shortPassword);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapRegisterButton();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
           'Password must be 5-12 characters and include at least one special character.');
 
@@ -126,10 +147,14 @@ void main() {
 
       // Test 3: Password no special character
       await registerRobot.enterName("Johnny");
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterPassword(
           TestAuthInfo.passwordWithoutSpecialChar);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapRegisterButton();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
           'Password must be 5-12 characters and include at least one special character.');
 
@@ -146,6 +171,7 @@ void main() {
           const Duration(seconds: 4)); // Wait for splash screen
       loginRobot.verify(); // Verify its at login screen
 
+      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapRegisterAccButton();
       await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
@@ -163,10 +189,12 @@ void main() {
       await registerRobot.enterPassword(TestAuthInfo.registerTestPasswordEnv);
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapRegisterButton();
+      await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle(const Duration(seconds: 2));
       registerRobot.verifyPartSuccess(); // Verify its at saved place screen
 
       // Test 1: All fields empty
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage('Please fill in the Home address.');
@@ -183,6 +211,7 @@ void main() {
       await Future.delayed(const Duration(seconds: 2));
       final scrollableFinder = find.byType(SingleChildScrollView);
       await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
@@ -212,6 +241,7 @@ void main() {
       await registerRobot.dismissKeyboard();
       await Future.delayed(const Duration(seconds: 2));
       await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
@@ -220,6 +250,7 @@ void main() {
       // Test 5: Only one checkbox is checked
       await registerRobot.dismissKeyboard();
       await registerRobot.tapTermsCheckbox();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
@@ -227,7 +258,9 @@ void main() {
 
       await registerRobot.dismissKeyboard();
       await registerRobot.tapTermsCheckbox();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapNotificationCheckbox();
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
@@ -243,6 +276,7 @@ void main() {
           const Duration(seconds: 4)); // Wait for splash screen
       loginRobot.verify(); // Verify its at login screen
 
+      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapRegisterAccButton();
       await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
