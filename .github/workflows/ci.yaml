@@ -8,16 +8,14 @@ on:
   push: {}
 
 env:
-  ANDROID_API_LEVEL: 23
+  ANDROID_API_LEVEL: 33  # Set to Tiramisu (API 33)
+
 jobs:
   build-mobile-android:
     name: Build Mobile App (Android)
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-
-      - name: Restore Gradle build cache
-        uses: gradle/actions/setup-gradle@v3
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -35,13 +33,10 @@ jobs:
           path: build/app/outputs/flutter-apk/*.apk
 
   test-mobile-android:
-    name: Test Mobile App (Android)
+    name: Test Mobile App (Android - Tiramisu)
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-
-      - name: Restore Gradle build cache
-        uses: gradle/actions/setup-gradle@v3
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -49,42 +44,39 @@ jobs:
           channel: 'stable'
           flutter-version-file: pubspec.yaml
 
-        # setup android emulator for testing
-      - name: Enable KVM for Android emulator
+      # Setup Android SDK for Tiramisu (API 33)
+      - name: Install Android SDK
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+          yes | sdkmanager --licenses
+          sdkmanager --install "build-tools;34.0.0" "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64"
 
-      - name: Setup AVD emulator cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ env.ANDROID_API_LEVEL }}
-
-      - name: Create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
+      # Create AVD for Tiramisu
+      - name: Create AVD for Tiramisu
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1440x3040 -density 560
+          arch: x86_64
+          profile: "Pixel 4 XL"
+          force-avd-creation: true
+          emulator-options: -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1440x3040 -density 560
           disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
+          emulator-boot-timeout: 1800  # Increased boot timeout
 
-      # run tests on android AVD
-      - name: Write test_auth_info.dart secrets
-        run: printf "${{ secrets.TEST_AUTH_INFO_B64 }}" | base64 -d > test_auth_info.dart
+      # Wait for the emulator to fully boot up
+      - name: Wait for Emulator to Boot
+        run: |
+          adb wait-for-device
+          adb shell getprop sys.boot_completed
 
+      # Run tests on android AVD
       - name: Test Mobile App (Android)
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
+          arch: x86_64
+          profile: "Pixel 4 XL"
           force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1440x3040 -density 560
+          emulator-options: -no-snapshot-save -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1440x3040 -density 560
           disable-animations: true
           script: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
 
