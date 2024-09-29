@@ -62,6 +62,7 @@ void main() {
 
       // Call enterAddress to fill in the addresses
       await registerRobot.enterAddress(addresses);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.dismissKeyboard();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapTermsCheckbox();
@@ -110,6 +111,7 @@ void main() {
 
       // Call enterAddress to fill in the addresses
       await registerRobot.enterAddress(addresses);
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.dismissKeyboard();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapAddMoreButton();
