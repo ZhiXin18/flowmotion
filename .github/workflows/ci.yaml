@@ -8,7 +8,7 @@ on:
   push: {}
 
 env:
-  ANDROID_API_LEVEL: 33  # Set to Tiramisu (API 33)
+  ANDROID_API_LEVEL: 30  # Set to API 30 for Tiramisu compatibility
 
 jobs:
   build-mobile-android:
@@ -17,32 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore Gradle build cache
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
           flutter-version-file: pubspec.yaml
-
-      - name: Install Android SDK
-        run: |
-          # Install Android SDK
-          sudo apt-get update
-          sudo apt-get install -y unzip
-          mkdir -p $HOME/android-sdk
-          cd $HOME/android-sdk
-          wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
-          unzip commandlinetools-linux-7302050_latest.zip
-          rm commandlinetools-linux-7302050_latest.zip
-          echo "export ANDROID_HOME=$HOME/android-sdk" >> $HOME/.bashrc
-          echo "export PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin" >> $HOME/.bashrc
-          source $HOME/.bashrc
-
-      - name: Accept Android SDK licenses
-        run: yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-
-      - name: Install required SDK components
-        run: |
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --install "build-tools;34.0.0" "platform-tools" "platforms;android-33" "system-images;android-33;google_apis;x86_64"
 
       - name: Build Android APK
         run: flutter build apk --debug
@@ -59,23 +41,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore Gradle build cache
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
           flutter-version-file: pubspec.yaml
 
-      # Create AVD for Tiramisu
+      # Setup Android SDK for API 30
+      - name: Install Android SDK
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager --install "build-tools;34.0.0" "platform-tools" "platforms;android-30"
+          sdkmanager --install "system-images;android-30;google_apis;x86_64"
+
+      # Create AVD for API 30
       - name: Create AVD for Tiramisu
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
+          target: google_apis
           arch: x86_64
-          profile: "Pixel 4 XL"
           force-avd-creation: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1440x3040 -density 560
+          emulator-options: -no-snapshot-save -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1440x3040 -density 560
           disable-animations: true
-          emulator-boot-timeout: 1200  # Increased boot timeout
+          emulator-boot-timeout: 1200
 
       # Wait for the emulator to fully boot up
       - name: Wait for Emulator to Boot
@@ -83,20 +75,13 @@ jobs:
           adb wait-for-device
           adb shell getprop sys.boot_completed
 
-      # Run tests on android AVD
-      - name: Test Mobile App (Android)
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ env.ANDROID_API_LEVEL }}
-          arch: x86_64
-          profile: "Pixel 4 XL"
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1440x3040 -density 560
-          disable-animations: true
-          script: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
+      # Run Flutter Integration Tests
+      - name: Run Integration Tests
+        run: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
 
 
-#test_fail
+
+  #test_fail
 #env:
 #  ANDROID_API_LEVEL: 29
 #jobs:
