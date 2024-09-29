@@ -6,12 +6,12 @@
 name: Flowmotion CI/CD
 on:
   push: {}
+env:
+  ANDROID_API_LEVEL: 23
 jobs:
-  mobile-android:
+  build-mobile-android:
     name: Build & Test Mobile App (Android)
     runs-on: ubuntu-22.04
-    env:
-      ANDROID_API_LEVEL: 23
     steps:
       - uses: actions/checkout@v4
 
@@ -33,7 +33,22 @@ jobs:
           name: flowmotion_apk
           path: /build/app/outputs/apk/release/*.apk
 
-      # setup android emulator for testing
+  mobile-android:
+    name: Build & Test Mobile App (Android)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore Gradle build cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+
+        # setup android emulator for testing
       - name: Enable KVM for Android emulator
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -72,7 +87,7 @@ jobs:
           disable-animations: true
           script: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
 
-  mobile-ios:
+  build-mobile-ios:
     name: Build & Test Mobile App (iOS)
     runs-on: macos-14
     steps:
@@ -104,6 +119,24 @@ jobs:
         with:
           name: flowmotion-debug.ipa
           path: build/ios/ipa/*.ipa
+
+  test-mobile-ios:
+    name: Test Mobile App (iOS)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+
+      - name: Restore Xcode build cache
+        uses: irgaly/xcode-cache@v1
+        with:
+          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
 
       - name: Boot iOS simulator
         uses: futureware-tech/simulator-action@v3
