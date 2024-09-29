@@ -30,7 +30,7 @@ jobs:
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
-          name: flowmotion_apk
+          name: flowmotion.apk
           path: build/app/outputs/flutter-apk/*.apk
 
   test-mobile-android:
@@ -111,14 +111,14 @@ jobs:
           path: ios/Pods
           key: cocoapods-cache-${{ hashFiles('ios/Podfile.lock') }}
 
-      - name: Build iOS IPA
+      - name: Build iOS xcarchive
         run: flutter build ipa --no-codesign
 
-      - name: Upload iOS IPA
+      - name: Upload iOS xcarchive
         uses: actions/upload-artifact@v4
         with:
-          name: flowmotion-debug.ipa
-          path: build/ios/ipa/*.ipa
+          name: flowmotion.xcarchive
+          path: build/ios/archive/*.ipa
 
   test-mobile-ios:
     name: Test Mobile App (iOS)
