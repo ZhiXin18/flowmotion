@@ -9,6 +9,7 @@ on:
 
 env:
   ANDROID_API_LEVEL: 23
+
 jobs:
   build-mobile-android:
     name: Build Mobile App (Android)
