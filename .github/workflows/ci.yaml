@@ -91,7 +91,7 @@ jobs:
           restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
 
       - name: Build iOS IPA
-        run: flutter build ipa
+        run: flutter build ipa --no-codesign
 
       - name: Upload iOS IPA
         uses: actions/upload-artifact@v4
