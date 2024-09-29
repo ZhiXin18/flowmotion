@@ -144,7 +144,7 @@ class RegisterRobot {
   Future<void> dismissKeyboard() async {
     // Tap in the center of the screen or another area not covered by inputs
     await tester.tap(find.byKey(WidgetKeys.dismissKeyboard)); // Change this to an appropriate widget if needed
-    await tester.pumpAndSettle(); // Wait for the UI to settle
+    await tester.pumpAndSettle(const Duration(seconds: 5)); // Wait for the UI to settle
   }
 
   Future<void> tapAddMoreButton() async {

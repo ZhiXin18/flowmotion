@@ -150,73 +150,81 @@ class _RegisterScreenState extends State<RegisterScreen> {
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              alignment: Alignment.center,
-              child: Text(
-                '01.',
-                style: TextStyle(
-                  color: Color(0xFFD4543C),
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Container(
-              alignment: Alignment.center,
-              child: Text(
-                'Hello! Nice to meet you.',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 30),
-            _buildTextField(
-              key: WidgetKeys.registerNameController,
-              controller: _usernameController,
-              hintText: 'Your Name',
-            ),
-            SizedBox(height: 20),
-            _buildTextField(
-              key: WidgetKeys.registerEmailController,
-              controller: _emailController,
-              hintText: 'Your Email',
-            ),
-            SizedBox(height: 20),
-            _buildTextField(
-              key: WidgetKeys.registerPasswordController,
-              controller: _passwordController,
-              hintText: 'Password',
-              isPassword: true,
-            ),
-            SizedBox(height: 40),
-            Center(
-              child: ElevatedButton(
-                key: WidgetKeys.registerButton,
-                onPressed: _register,
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: Colors.grey),
+      body: GestureDetector(
+        key: WidgetKeys.dismissKeyboard,
+        onTap: () {
+          FocusScope.of(context).unfocus(); // Dismiss the keyboard
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '01.',
+                    style: TextStyle(
+                      color: Color(0xFFD4543C),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
                 ),
-                child: const Text(
-                  'Next',
-                  style: TextStyle(fontSize: 18),
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Hello! Nice to meet you.',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(height: 30),
+                _buildTextField(
+                  key: WidgetKeys.registerNameController,
+                  controller: _usernameController,
+                  hintText: 'Your Name',
+                ),
+                SizedBox(height: 20),
+                _buildTextField(
+                  key: WidgetKeys.registerEmailController,
+                  controller: _emailController,
+                  hintText: 'Your Email',
+                ),
+                SizedBox(height: 20),
+                _buildTextField(
+                  key: WidgetKeys.registerPasswordController,
+                  controller: _passwordController,
+                  hintText: 'Password',
+                  isPassword: true,
+                ),
+                SizedBox(height: 40),
+                Center(
+                  child: ElevatedButton(
+                    key: WidgetKeys.registerButton,
+                    onPressed: _register,
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: Colors.grey),
+                      ),
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                    ),
+                    child: const Text(
+                      'Next',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

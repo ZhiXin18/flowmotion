@@ -49,7 +49,8 @@ void main() {
       await registerRobot.enterEmail(randomEmail); // Enter the generated email
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterPassword(TestAuthInfo.registerTestPasswordEnv);
-      await Future.delayed(const Duration(seconds: 2));
+      await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
       registerRobot.verifyPartSuccess(); // Verify its at saved place screen
@@ -65,6 +66,9 @@ void main() {
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.dismissKeyboard();
       await Future.delayed(const Duration(seconds: 2));
+      final scrollableFinder = find.byType(SingleChildScrollView);
+      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapTermsCheckbox();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapNotificationCheckbox();
@@ -97,7 +101,8 @@ void main() {
       await registerRobot.enterEmail(randomEmail); // Enter the generated email
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterPassword(TestAuthInfo.registerTestPasswordEnv);
-      await Future.delayed(const Duration(seconds: 2));
+      await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
       registerRobot.verifyPartSuccess(); // Verify its at saved place screen
