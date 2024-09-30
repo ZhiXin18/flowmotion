@@ -40,13 +40,15 @@ class FirebaseCalls {
   }
 
   Future<List<CongestionRating>> getCongestionRatings() async {
-    QuerySnapshot querySnap = await FirebaseFirestore.instance.collection('congestions').get();
+    QuerySnapshot querySnap = await FirebaseFirestore.instance.collection(
+        'congestions').get();
 
     List<CongestionRating> congestionRatings = [];
 
     if (querySnap.docs.isNotEmpty) {
       for (QueryDocumentSnapshot doc in querySnap.docs) {
-        final data = doc.data() as Map<String, dynamic>?; // Cast the data to a Map
+        final data = doc.data() as Map<String,
+            dynamic>?; // Cast the data to a Map
 
         // Print the data for debugging
         print('Document ${doc.id} data: $data');
@@ -57,11 +59,11 @@ class FirebaseCalls {
             data['camera'].containsKey('location') &&
             data['camera']['location'] is Map &&
             data['camera']['location'].containsKey('latitude') &&
-            data['camera']['location'].containsKey('longtitude') && // Corrected spelling
+            data['camera']['location'].containsKey(
+                'longtitude') && // Corrected spelling
             data.containsKey('rating') &&
             data['rating'] is Map &&
             data['rating'].containsKey('value')) {
-
           // Corrected spelling of longitude
           double latitude = data['camera']['location']['latitude'];
           double longitude = data['camera']['location']['longtitude']; // Ensure this spelling is consistent
@@ -82,7 +84,46 @@ class FirebaseCalls {
         }
       }
     }
+    return congestionRatings;
+  }
 
+  Future<List<CongestionRating>> getCongestionRatingsForPlace(String savedPlaceLabel) async {
+    QuerySnapshot querySnap = await congestionCollection
+        .where('place_label', isEqualTo: savedPlaceLabel) // Assuming there's a place_label field
+        .get();
+
+    List<CongestionRating> congestionRatings = [];
+
+    if (querySnap.docs.isNotEmpty) {
+      for (QueryDocumentSnapshot doc in querySnap.docs) {
+        final data = doc.data() as Map<String, dynamic>?;
+
+        if (data != null &&
+            data.containsKey('camera') &&
+            data['camera'] is Map &&
+            data['camera'].containsKey('location') &&
+            data['camera']['location'] is Map &&
+            data['camera']['location'].containsKey('latitude') &&
+            data['camera']['location'].containsKey('longtitude') &&
+            data.containsKey('rating') &&
+            data['rating'] is Map &&
+            data['rating'].containsKey('value')) {
+
+          double latitude = data['camera']['location']['latitude'];
+          double longitude = data['camera']['location']['longtitude'];
+          double ratingValue = data['rating']['value'];
+
+          CongestionRating congestionRating = CongestionRating(
+            latitude: latitude,
+            longitude: longitude,
+            value: ratingValue,
+            capturedOn: data['camera']['captured_on'],
+          );
+
+          congestionRatings.add(congestionRating);
+        }
+      }
+    }
     return congestionRatings;
   }
 
