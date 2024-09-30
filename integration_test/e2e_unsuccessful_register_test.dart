@@ -34,6 +34,7 @@ void main() {
           const Duration(seconds: 4)); //wait for splash screen
       loginRobot.verify(); //verify its at login screen
 
+      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapRegisterAccButton();
       await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
@@ -66,7 +67,7 @@ void main() {
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
       final scrollableFinder = find.byType(SingleChildScrollView);
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
@@ -80,7 +81,7 @@ void main() {
       await registerRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapRegisterButton();
       await registerRobot.verifyErrorMessage('Please enter your email.');
@@ -93,7 +94,7 @@ void main() {
       await registerRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
@@ -124,7 +125,7 @@ void main() {
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
       final scrollableFinder = find.byType(SingleChildScrollView);
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
@@ -140,7 +141,7 @@ void main() {
       await registerRobot.enterPassword(TestAuthInfo.shortPassword);
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
@@ -157,7 +158,7 @@ void main() {
           TestAuthInfo.passwordWithoutSpecialChar);
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
@@ -195,7 +196,7 @@ void main() {
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
       final scrollableFinder = find.byType(SingleChildScrollView);
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
@@ -203,7 +204,7 @@ void main() {
       registerRobot.verifyPartSuccess(); // Verify its at saved place screen
 
       // Test 1: All fields empty
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
@@ -220,7 +221,7 @@ void main() {
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
       //await Future.delayed(const Duration(seconds: 4));
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
@@ -248,7 +249,7 @@ void main() {
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
       //await Future.delayed(const Duration(seconds: 4));
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));

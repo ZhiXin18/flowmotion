@@ -68,7 +68,7 @@ void main() {
       await registerRobot.dismissKeyboard();
       await Future.delayed(const Duration(seconds: 2));
       final scrollableFinder = find.byType(SingleChildScrollView);
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapTermsCheckbox();
       await Future.delayed(const Duration(seconds: 2));
@@ -126,7 +126,7 @@ void main() {
       await registerRobot.dismissKeyboard();
       await Future.delayed(const Duration(seconds: 2));
       final scrollableFinder = find.byType(SingleChildScrollView);
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapTermsCheckbox();
       await Future.delayed(const Duration(seconds: 2));
