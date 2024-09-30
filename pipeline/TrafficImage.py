@@ -9,8 +9,8 @@ class TrafficImage:
         self.longitude = longitude
         self.latitude = latitude
 
-    #def processed(self, congestion_rating):
-       # self.processed = True
-        #self.conestion_rating = congestion_rating
+    def processed(self, congestion_rating):
+        self.processed = True
+        self.conestion_rating = congestion_rating
 
 
