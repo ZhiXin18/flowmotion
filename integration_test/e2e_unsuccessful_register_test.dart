@@ -56,6 +56,8 @@ void main() {
       loginRobot.verifyStartRegister(); // Verify its at register screen
 
       // Test 1: All fields empty
+      await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
       await registerRobot.verifyErrorMessage(
           'Please enter your name.'); // Expect name error message first
@@ -64,12 +66,14 @@ void main() {
       await registerRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
       await registerRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
       await registerRobot.dismissKeyboard();
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapRegisterButton();
       await registerRobot.verifyErrorMessage('Please enter your name.');
 
       // Clear input fields after closing the dialog
       await registerRobot.clearInputFields();
+      await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 2));
 
       // Test 3: Email field empty
       await registerRobot.enterName("Johnny");
@@ -81,6 +85,8 @@ void main() {
 
       // Clear input fields after closing the dialog
       await registerRobot.clearInputFields();
+      await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
 
       // Test 4: Password field empty
       await registerRobot.enterName("Johnny");
@@ -92,6 +98,8 @@ void main() {
 
       // Clear input fields after closing the dialog
       await registerRobot.clearInputFields();
+      await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
     });
 
     testWidgets("Unsuccessful Register Flow", (WidgetTester tester) async {
@@ -196,7 +204,7 @@ void main() {
       // Test 2: Work Address field empty
       await registerRobot.enterSpecifiedAddress(addresses, 0);
       await registerRobot.dismissKeyboard();
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 4));
       await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapGetStartedButton();
@@ -207,12 +215,12 @@ void main() {
       // Clear input fields after closing the dialog
       await registerRobot.clearAddressInputFields(0);
       await registerRobot.dismissKeyboard();
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 4));
 
       // Test 3: Home Address field empty
       await registerRobot.enterSpecifiedAddress(addresses, 1);
       await registerRobot.dismissKeyboard();
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
@@ -221,12 +229,12 @@ void main() {
       // Clear input fields after closing the dialog
       await registerRobot.clearAddressInputFields(1);
       await registerRobot.dismissKeyboard();
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 4));
 
       // Test 4: Checkboxes not checked
       await registerRobot.enterAddress(addresses);
       await registerRobot.dismissKeyboard();
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 4));
       await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapGetStartedButton();
@@ -236,15 +244,23 @@ void main() {
 
       // Test 5: Only one checkbox is checked
       await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapTermsCheckbox();
+      await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
           'Please accept the terms and conditions and allow notifications.');
 
       await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapTermsCheckbox();
+      await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapNotificationCheckbox();
+      await registerRobot.dismissKeyboard();
+      await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
