@@ -63,6 +63,8 @@ void main() {
       // Test 2: Name field empty
       await registerRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
       await registerRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
       final scrollableFinder = find.byType(SingleChildScrollView);
       await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
@@ -76,6 +78,8 @@ void main() {
       // Test 3: Email field empty
       await registerRobot.enterName("Johnny");
       await registerRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
       await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapRegisterButton();
@@ -87,6 +91,8 @@ void main() {
       // Test 4: Password field empty
       await registerRobot.enterName("Johnny");
       await registerRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
       await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
