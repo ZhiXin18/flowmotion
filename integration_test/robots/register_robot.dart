@@ -93,6 +93,7 @@ class RegisterRobot {
   }
 
   Future<void> enterAddress(List<Address> addresses) async {
+    await Future.delayed(const Duration(seconds: 2));
     for (int i = 0; i < 2; i++) {
       final postalCodeField = find.byKey(WidgetKeys.addressPostalCodeField(i));
       final addressField = find.byKey(WidgetKeys.addressField(i));
@@ -190,6 +191,7 @@ class RegisterRobot {
   Future<void> tapGetStartedButton() async {
     final getStartedButton = find.byKey(WidgetKeys.getStartedButton);
     expect(getStartedButton, findsOneWidget);
+    await Future.delayed(const Duration(seconds: 2));
     await tester.tap(getStartedButton);
     await tester.pumpAndSettle();
   }
@@ -199,7 +201,9 @@ class RegisterRobot {
   }
 
   Future<void> tapBackButton() async{
-    await tester.tap(find.byKey(WidgetKeys.savedPlaceScreenBackButton));
+    final savedPlaceScreenBackButton = find.byKey(WidgetKeys.savedPlaceScreenBackButton);
+    expect(savedPlaceScreenBackButton, findsOneWidget);
+    await tester.tap(savedPlaceScreenBackButton);
     await tester.pumpAndSettle(); // Wait for the UI to settle
   }
 }

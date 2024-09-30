@@ -316,6 +316,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
       registerRobot.verifyPartSuccess(); // Verify its at saved place screen
 
+      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapBackButton();
       loginRobot.verifyStartRegister();
     });

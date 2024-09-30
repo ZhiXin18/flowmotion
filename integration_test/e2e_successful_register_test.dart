@@ -61,6 +61,7 @@ void main() {
         Address(postalCode: '048424', address: '8 Cross Street'),
       ];
 
+      await Future.delayed(const Duration(seconds: 2));
       // Call enterAddress to fill in the addresses
       await registerRobot.enterAddress(addresses);
       await Future.delayed(const Duration(seconds: 2));
