@@ -261,11 +261,15 @@ void main() {
       // Test 5: Only one checkbox is checked
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapTermsCheckbox();
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
       //await Future.delayed(const Duration(seconds: 4));
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
@@ -273,14 +277,20 @@ void main() {
 
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapTermsCheckbox();
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapNotificationCheckbox();
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       //await Future.delayed(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));

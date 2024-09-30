@@ -54,6 +54,7 @@ void main() {
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
       registerRobot.verifyPartSuccess(); // Verify its at saved place screen
+      await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Define your addresses
       List<Address> addresses = [
@@ -107,6 +108,7 @@ void main() {
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
       registerRobot.verifyPartSuccess(); // Verify its at saved place screen
+      await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Define your addresses
       List<Address> addresses = [
