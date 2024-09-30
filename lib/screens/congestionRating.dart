@@ -1,20 +1,56 @@
 import 'package:flutter/material.dart';
-// import firebase stuff
+import '../models/congestion_rating.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../utilities/firebase_calls.dart';
+final FirebaseCalls firebaseCalls = FirebaseCalls();
 
-class CongestionRatingScreen extends StatelessWidget {
+class CongestionRatingScreen extends StatefulWidget {
   final String savedPlaceLabel;
 
   CongestionRatingScreen({required this.savedPlaceLabel});
 
   @override
+  _CongestionRatingScreenState createState() => _CongestionRatingScreenState();
+}
+
+class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
+  final FirebaseCalls firebaseCalls = FirebaseCalls();
+  List<CongestionRating> congestionRatings = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCongestionRatings();
+  }
+
+  Future<void> fetchCongestionRatings() async {
+    try {
+      List<CongestionRating> ratings = await firebaseCalls.getCongestionRatingsForPlace(widget.savedPlaceLabel);
+      setState(() {
+        congestionRatings = ratings;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching congestion ratings: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(savedPlaceLabel),
+        title: Text(widget.savedPlaceLabel),
         backgroundColor: Colors.black,
       ),
-      body: SingleChildScrollView(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,34 +101,7 @@ class CongestionRatingScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            // Row 2: Congestion Rating
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Congestion Rating", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 10),
-                  _buildHourlyCongestionRatingGraph(),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // Row 3: Congestion History
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Congestion History - Past 7 Days", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 10),
-                  _buildCongestionHistoryGraph(),
-                  SizedBox(height: 10),
-                  _buildTotalCongestionTimeGraph(),
-                ],
-              ),
-            ),
+            // Additional rows for congestion ratings and history...
           ],
         ),
       ),
@@ -109,9 +118,14 @@ class CongestionRatingScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("X Congestion Points", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            "${congestionRatings.length} Congestion Points",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 10),
-          Text("Road 1\nRoad 2\nRoad 3"), // Congested road names
+          ...congestionRatings.map((rating) {
+            return Text("Lat: ${rating.latitude}, Lng: ${rating.longitude}, Rating: ${rating.value}");
+          }).toList(),
         ],
       ),
     );
