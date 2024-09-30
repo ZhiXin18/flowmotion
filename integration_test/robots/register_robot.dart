@@ -40,6 +40,7 @@ class RegisterRobot {
   Future<void> tapRegisterButton() async {
     final registerButton = find.byKey(WidgetKeys.registerButton);
     expect(registerButton, findsOneWidget);
+    await Future.delayed(const Duration(seconds: 2));
     await tester.tap(registerButton);
     await tester.pumpAndSettle();
   }
