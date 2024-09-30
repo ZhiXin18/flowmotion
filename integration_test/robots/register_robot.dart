@@ -203,6 +203,7 @@ class RegisterRobot {
   Future<void> tapBackButton() async{
     final savedPlaceScreenBackButton = find.byKey(WidgetKeys.savedPlaceScreenBackButton);
     expect(savedPlaceScreenBackButton, findsOneWidget);
+    await Future.delayed(const Duration(seconds: 2));
     await tester.tap(savedPlaceScreenBackButton);
     await tester.pumpAndSettle(); // Wait for the UI to settle
   }

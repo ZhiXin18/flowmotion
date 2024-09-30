@@ -236,6 +236,8 @@ void main() {
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
       //await Future.delayed(const Duration(seconds: 4));
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapGetStartedButton();
       await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyErrorMessage(
@@ -313,6 +315,9 @@ void main() {
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
       //await Future.delayed(const Duration(seconds: 4));
+      final scrollableFinder = find.byType(SingleChildScrollView);
+      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
       registerRobot.verifyPartSuccess(); // Verify its at saved place screen
