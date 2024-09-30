@@ -154,43 +154,43 @@ jobs:
       - name: Test Mobile App (iOS)
         run: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
 
-#  pipeline:
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        target: [lint, test]
-#    name: "${{ matrix.target }} Pipeline"
-#    defaults:
-#      run:
-#        working-directory: pipeline
-#    runs-on: ubuntu-22.04
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: actions/setup-python@v5
-#        with:
-#          python-version: "3.10.13"
-#          # cache pip dependencies
-#          cache: "pip"
-#      - name: Install Pip dependencies
-#        run: pip install -r requirements.txt
-#      - name: "${{ matrix.target }} Pipeline"
-#        run: "make ${{ matrix.target }}"
-#
-#  schema:
-#    name: "Validate JSON Schema"
-#    runs-on: ubuntu-22.04
-#    defaults:
-#      run:
-#        working-directory: schema
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: actions/setup-node@v4
-#        with:
-#          node-version: 20.9.x
-#          # cache npm dependencies
-#          cache: npm
-#          cache-dependency-path: schema/package-lock.json
-#      - name: Install npm dependencies
-#        run: npm ci
-#      - name: Validate json schema
-#        run: npx ajv compile -s "*.schema.json" --spec=draft2020 -c ajv-formats
+  pipeline:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [lint, test]
+    name: "${{ matrix.target }} Pipeline"
+    defaults:
+      run:
+        working-directory: pipeline
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10.13"
+          # cache pip dependencies
+          cache: "pip"
+      - name: Install Pip dependencies
+        run: pip install -r requirements.txt
+      - name: "${{ matrix.target }} Pipeline"
+        run: "make ${{ matrix.target }}"
+
+  schema:
+    name: "Validate JSON Schema"
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: schema
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.9.x
+          # cache npm dependencies
+          cache: npm
+          cache-dependency-path: schema/package-lock.json
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Validate json schema
+        run: npx ajv compile -s "*.schema.json" --spec=draft2020 -c ajv-formats
