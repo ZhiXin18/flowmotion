@@ -60,13 +60,12 @@ class FirebaseCalls {
             data['camera']['location'] is Map &&
             data['camera']['location'].containsKey('latitude') &&
             data['camera']['location'].containsKey(
-                'longtitude') && // Corrected spelling
+                'longitude') && 
             data.containsKey('rating') &&
             data['rating'] is Map &&
             data['rating'].containsKey('value')) {
-          // Corrected spelling of longitude
           double latitude = data['camera']['location']['latitude'];
-          double longitude = data['camera']['location']['longtitude']; // Ensure this spelling is consistent
+          double longitude = data['camera']['location']['longitude'];
           double ratingValue = data['rating']['value'];
 
           print("Marker latitude: $latitude, longitude: $longitude");
@@ -104,13 +103,13 @@ class FirebaseCalls {
             data['camera'].containsKey('location') &&
             data['camera']['location'] is Map &&
             data['camera']['location'].containsKey('latitude') &&
-            data['camera']['location'].containsKey('longtitude') &&
+            data['camera']['location'].containsKey('longitude') &&
             data.containsKey('rating') &&
             data['rating'] is Map &&
             data['rating'].containsKey('value')) {
 
           double latitude = data['camera']['location']['latitude'];
-          double longitude = data['camera']['location']['longtitude'];
+          double longitude = data['camera']['location']['longitude'];
           double ratingValue = data['rating']['value'];
 
           CongestionRating congestionRating = CongestionRating(
