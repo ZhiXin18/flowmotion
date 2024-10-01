@@ -8,13 +8,6 @@
     "username": {
       "type": "string"
     },
-    "email": {
-      "type": "string",
-      "format": "email"
-    },
-    "hashed_password": {
-      "type": "string"
-    },
     "addresses": {
       "type": "array",
       "items": {
@@ -38,8 +31,6 @@
   },
   "required": [
     "username",
-    "email",
-    "hashed_password",
     "addresses",
     "created_on",
     "updated_on"
