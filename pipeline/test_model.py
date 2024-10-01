@@ -8,8 +8,10 @@
 import json
 from datetime import datetime
 from pathlib import Path
-from model import Camera, Congestion, Location, Rating, to_json_dict
+
 from jsonschema import validate
+
+from model import Camera, Congestion, Location, Rating, to_json_dict
 
 CONGESTION_SCHEMA = Path(__file__).parent.parent / "schema" / "congestion.schema.json"
 
