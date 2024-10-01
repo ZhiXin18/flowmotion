@@ -5,6 +5,7 @@
 #
 
 from datetime import datetime
+import json
 
 from pydantic import BaseModel
 
@@ -40,3 +41,8 @@ class Congestion(BaseModel):
     camera: Camera
     rating: Rating
     updated_on: datetime
+
+
+def to_json_dict(model: BaseModel):
+    """Convert given pydantic model into the its JSON dict representation"""
+    return json.loads(model.model_dump_json())
