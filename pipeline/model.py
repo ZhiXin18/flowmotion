@@ -16,6 +16,14 @@ class Location(BaseModel):
     latitude: float
 
 
+class Rating(BaseModel):
+    """Traffic Congestion rating performed by a model"""
+
+    rated_on: datetime
+    model_id: str
+    value: float
+
+
 class Camera(BaseModel):
     """Traffic Camera capturing traffic images."""
 
