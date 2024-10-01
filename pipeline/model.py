@@ -27,8 +27,16 @@ class Rating(BaseModel):
 class Camera(BaseModel):
     """Traffic Camera capturing traffic images."""
 
-    camera_id: str
+    id: str
     image_url: str
     captured_on: datetime
     retrieved_on: datetime
     location: Location
+
+
+class Congestion(BaseModel):
+    """Traffic Congestion data."""
+
+    camera: Camera
+    rating: Rating
+    updated_on: datetime
