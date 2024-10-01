@@ -37,14 +37,14 @@
         "location": {
           "type": "object",
           "properties": {
-            "longtitude": {
+            "longitude": {
               "type": "number"
             },
             "latitude": {
               "type": "number"
             }
           },
-          "required": ["longtitude", "latitude"]
+          "required": ["longitude", "latitude"]
         }
       },
       "required": ["id", "captured_on", "retrieved_on", "location"]

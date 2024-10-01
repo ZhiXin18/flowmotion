@@ -155,9 +155,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         onTap: () {
           FocusScope.of(context).unfocus(); // Dismiss the keyboard
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,7 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ),
-      ),
+      )
     );
   }
 
