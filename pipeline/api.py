@@ -32,8 +32,8 @@ class APIClient():
                     return camera["image"]  # Return the image URL if the camera ID matches
         # If camera ID is not found
         return f"Camera ID {camera_id} not found."
-
-
+        
+# TODO: get_camera_IDs(self) -> return a nested list of all active cameraIDs and thie longitude and lattitude. [[id, long, lat], ...]
  
 
 
