@@ -51,7 +51,8 @@ void main() {
       await registerRobot.dismissKeyboard();
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
-      registerRobot.verifyPartSuccess(); // Verify its at saved place screen
+      await registerRobot
+          .verifyPartSuccess(); // Verify its at saved place screen
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Define your addresses
