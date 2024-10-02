@@ -219,6 +219,8 @@ void main() {
       await tester.fling(
           scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await registerRobot
           .verifyErrorMessage('Please fill in the Work address.');
@@ -233,6 +235,8 @@ void main() {
       await tester.fling(
           scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await registerRobot
           .verifyErrorMessage('Please fill in the Home address.');
@@ -247,6 +251,8 @@ void main() {
       await tester.fling(
           scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await registerRobot.verifyErrorMessage(
           'Please accept the terms and conditions and allow notifications.');
@@ -257,6 +263,8 @@ void main() {
       await tester.fling(
           scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
       await registerRobot.tapTermsCheckbox();
       await registerRobot.dismissKeyboard();
       await tester.pumpAndSettle(const Duration(seconds: 4));
@@ -284,6 +292,8 @@ void main() {
       await tester.fling(
           scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await registerRobot.verifyErrorMessage(
           'Please accept the terms and conditions and allow notifications.');

@@ -20,24 +20,32 @@ class FirebaseCalls {
       throw Exception("No user is logged in.");
     }
 
+    // Get the current date and time for created_on and updated_on
+    String currentTime = DateTime.now().toUtc().toIso8601String();
+
     // Check if there is an existing record of user
     QuerySnapshot querySnap = await usersCollection.where('userid', isEqualTo: currentUser.uid).get();
 
     if (querySnap.docs.isNotEmpty) {
-      // Existing user
+      // Existing user, update the data including updated_on
       QueryDocumentSnapshot doc = querySnap.docs[0];
       await doc.reference.update({
         'addresses': addresses,
+        'updated_on': currentTime,
       });
     } else {
-      // New user
+      // New user, set created_on and updated_on, and add an empty routes array
       await usersCollection.add({
         'addresses': addresses,
+        'created_on': currentTime,
+        'routes': [], // Empty routes array
         'username': username,
         'userid': currentUser.uid,
+        'updated_on': currentTime,
       });
     }
   }
+
 
   Future<List<CongestionRating>> getCongestionRatings() async {
     QuerySnapshot querySnap = await FirebaseFirestore.instance.collection(
