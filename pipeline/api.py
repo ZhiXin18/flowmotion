@@ -57,7 +57,7 @@ def parse_cameras(meta: dict) -> list[Camera]:
     retrieved_on = meta["timestamp"]
     return [
         Camera(
-            camera_id=c["camera_id"],
+            id=c["camera_id"],
             retrieved_on=retrieved_on,
             captured_on=c["timestamp"],
             image_url=c["image"],
