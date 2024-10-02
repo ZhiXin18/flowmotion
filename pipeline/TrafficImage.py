@@ -1,4 +1,4 @@
-import APIClient
+
 
 class TrafficImage:
     def __init__(self, image=None,processed=False, congestion_rating=None, camera_id="Not Set!", longitude="Longitude not set", latitude="Latitude not set"):
