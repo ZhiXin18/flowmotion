@@ -10,23 +10,22 @@ void main() {
   late LoginRobot loginRobot;
 
   group('E2E - ', () {
-    testWidgets('Login form validation - empty fields', (WidgetTester tester) async {
+    testWidgets('Login form validation - empty fields',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
-      await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
-      loginRobot.verify(); // Verify it's at login screen
+      await tester
+          .pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
+      await loginRobot.verify(); // Verify it's at login screen
 
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
-      await Future.delayed(const Duration(seconds: 2));
-      await loginRobot.verifyErrorMessage('Please enter your email.'); // Expect email error message first
+      await loginRobot.verifyErrorMessage(
+          'Please enter your email.'); // Expect email error message first
 
       // Test 2: Password field empty, email filled
       await loginRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.verifyErrorMessage('Please enter your password.');
 
       // Clear input fields after closing the dialog
@@ -34,9 +33,7 @@ void main() {
 
       // Test 3: Email field empty, password filled
       await loginRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.verifyErrorMessage('Please enter your email.');
 
       // Clear input fields after closing the dialog
@@ -47,15 +44,14 @@ void main() {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
-      await tester.pumpAndSettle(const Duration(seconds: 4)); //wait for splash screen
-      loginRobot.verify(); //verify its at login screen
+      await tester
+          .pumpAndSettle(const Duration(seconds: 4)); //wait for splash screen
+      await loginRobot.verify(); //verify its at login screen
       await loginRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
-      await Future.delayed(const Duration(seconds: 2));
-      await loginRobot.verifyErrorMessage('The supplied credentials are incorrect. Please try again.');
+      await loginRobot.verifyErrorMessage(
+          'The supplied credentials are incorrect. Please try again.');
     });
   });
 }

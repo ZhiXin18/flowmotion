@@ -89,18 +89,17 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
   void _saveUserData() async {
     // Check that both Home and Work addresses are filled
     if (savedAddresses[0]['postalCode']!.isEmpty || savedAddresses[0]['address']!.isEmpty) {
-      _showErrorDialog('Please fill in the Home address.');
+      if (mounted) _showErrorDialog('Please fill in the Home address.');
       return;
     }
 
     if (savedAddresses[1]['postalCode']!.isEmpty || savedAddresses[1]['address']!.isEmpty) {
-      _showErrorDialog('Please fill in the Work address.');
+      if (mounted) _showErrorDialog('Please fill in the Work address.');
       return;
     }
 
-    // Check that both checkboxes are checked
     if (!_termsAccepted || !_notificationsAllowed) {
-      _showErrorDialog('Please accept the terms and conditions and allow notifications.');
+      if (mounted) _showErrorDialog('Please accept the terms and conditions and allow notifications.');
       return;
     }
 
@@ -109,20 +108,21 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
     );
 
     if (!allFieldsFilled) {
-      _showErrorDialog('Please fill in all address fields.');
+      if (mounted) _showErrorDialog('Please fill in all address fields.');
       return;
     }
 
     try {
       FirebaseCalls firebaseCalls = FirebaseCalls();
       await firebaseCalls.updateUser(widget.username, savedAddresses);
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      }
     } catch (e) {
-      _showErrorDialog(e.toString());
+      if (mounted) _showErrorDialog(e.toString());
     }
   }
 

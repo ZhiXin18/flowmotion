@@ -26,17 +26,17 @@ void main() {
   }
 
   group('E2E - Registrations', () {
-    testWidgets("Successful Register Flow(2 addresses)", (WidgetTester tester) async {
+    testWidgets("Successful Register Flow(2 addresses)",
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
 
-      await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
-      loginRobot.verify(); // Verify its at login screen
+      await tester
+          .pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
+      await loginRobot.verify(); // Verify its at login screen
 
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapRegisterAccButton();
-      await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
       loginRobot.verifyStartRegister(); // Verify its at register screen
 
@@ -46,14 +46,13 @@ void main() {
       String randomEmail = userDetails['email']!; // Extract email
 
       await registerRobot.enterName(username); // Enter the generated username
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterEmail(randomEmail); // Enter the generated email
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterPassword(TestAuthInfo.registerTestPasswordEnv);
-      await Future.delayed(const Duration(seconds: 2));
+      await registerRobot.dismissKeyboard();
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
       registerRobot.verifyPartSuccess(); // Verify its at saved place screen
+      await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Define your addresses
       List<Address> addresses = [
@@ -63,31 +62,31 @@ void main() {
 
       // Call enterAddress to fill in the addresses
       await registerRobot.enterAddress(addresses);
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.dismissKeyboard();
-      await Future.delayed(const Duration(seconds: 2));
+      final scrollableFinder = find.byType(SingleChildScrollView);
+      await tester.fling(
+          scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapTermsCheckbox();
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapNotificationCheckbox();
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapGetStartedButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
-      registerRobot.verifyRegisterSuccess();
+      await registerRobot.verifyRegisterSuccess();
     });
 
-    testWidgets("Successful Register Flow(3 addresses)", (WidgetTester tester) async {
+    testWidgets("Successful Register Flow(3 addresses)",
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
 
-      await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
-      loginRobot.verify(); // Verify its at login screen
+      await tester
+          .pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
+      await loginRobot.verify(); // Verify its at login screen
 
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapRegisterAccButton();
-      await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle();
-      loginRobot.verifyStartRegister(); // Verify its at register screen
+      await loginRobot.verifyStartRegister(); // Verify its at register screen
 
       // Generate both username and email
       var userDetails = generateUsernameAndEmail();
@@ -95,14 +94,14 @@ void main() {
       String randomEmail = userDetails['email']!; // Extract email
 
       await registerRobot.enterName(username); // Enter the generated username
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterEmail(randomEmail); // Enter the generated email
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterPassword(TestAuthInfo.registerTestPasswordEnv);
-      await Future.delayed(const Duration(seconds: 2));
+      await registerRobot.dismissKeyboard();
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
-      registerRobot.verifyPartSuccess(); // Verify its at saved place screen
+      await registerRobot
+          .verifyPartSuccess(); // Verify its at saved place screen
+      await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Define your addresses
       List<Address> addresses = [
@@ -113,27 +112,20 @@ void main() {
 
       // Call enterAddress to fill in the addresses
       await registerRobot.enterAddress(addresses);
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.dismissKeyboard();
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapAddMoreButton();
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.verifyAddMore();
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.enterAdditionalAddress(addresses);
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.dismissKeyboard();
-      await Future.delayed(const Duration(seconds: 2));
       final scrollableFinder = find.byType(SingleChildScrollView);
-      await tester.fling(scrollableFinder, Offset(0, -300), 1000); // Fling upwards
+      await tester.fling(
+          scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapTermsCheckbox();
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapNotificationCheckbox();
-      await Future.delayed(const Duration(seconds: 2));
       await registerRobot.tapGetStartedButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
-      registerRobot.verifyRegisterSuccess();
+      await registerRobot.verifyRegisterSuccess();
     });
   });
 }

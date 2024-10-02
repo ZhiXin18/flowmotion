@@ -2,65 +2,70 @@ import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flowmotion/models/address.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../utils/polling_finder.dart';
 
 class RegisterRobot {
   final WidgetTester tester;
 
   RegisterRobot({required this.tester});
 
-  void verifyBootup() {
-    final splashScreen = find.byKey(WidgetKeys.splashScreen);
+  Future<void> verifyBootup() async {
+    await find.byKey(WidgetKeys.splashScreen).wait(tester);
   }
 
-  void verify() {
-    final loginScreen = find.byKey(WidgetKeys.loginScreen);
+  Future<void> verify() async {
+    await find.byKey(WidgetKeys.loginScreen).wait(tester);
   }
 
   Future<void> enterName(String name) async {
-    final nameField = find.byKey(WidgetKeys.registerNameController);
+    final nameField =
+        await find.byKey(WidgetKeys.registerNameController).wait(tester);
     expect(nameField, findsOneWidget);
     await tester.enterText(nameField, name);
     await tester.pump();
   }
 
   Future<void> enterEmail(String email) async {
-    final emailField = find.byKey(WidgetKeys.registerEmailController);
+    final emailField =
+        await find.byKey(WidgetKeys.registerEmailController).wait(tester);
     expect(emailField, findsOneWidget);
     await tester.enterText(emailField, email);
     await tester.pump();
   }
 
   Future<void> enterPassword(String password) async {
-    final passwordField = find.byKey(WidgetKeys.registerPasswordController);
+    final passwordField =
+        await find.byKey(WidgetKeys.registerPasswordController).wait(tester);
     expect(passwordField, findsOneWidget);
     await tester.enterText(passwordField, password);
     await tester.pump();
   }
 
   Future<void> tapRegisterButton() async {
-    final registerButton = find.byKey(WidgetKeys.registerButton);
+    final registerButton =
+        await find.byKey(WidgetKeys.registerButton).wait(tester);
     expect(registerButton, findsOneWidget);
     await tester.tap(registerButton);
     await tester.pumpAndSettle();
   }
 
   Future<void> tapOKButton() async {
-    final okButton = find.byKey(WidgetKeys.registerErrorOK);
+    final okButton = await find.byKey(WidgetKeys.registerErrorOK).wait(tester);
     expect(okButton, findsOneWidget);
     await tester.tap(okButton);
     await tester.pumpAndSettle();
   }
 
-  void verifyError() {
-    final errorDialog = find.byKey(WidgetKeys.registerErrorDialog);
+  Future<void> verifyError() async {
+    final errorDialog =
+        await find.byKey(WidgetKeys.registerErrorDialog).wait(tester);
     expect(errorDialog, findsOneWidget);
   }
 
   // Helper function to verify error messages
   Future<void> verifyErrorMessage(String expectedMessage) async {
-    verifyError();
-    expect(find.text(expectedMessage), findsOneWidget);
-    await Future.delayed(const Duration(seconds: 2));
+    await verifyError();
+    expect(await find.text(expectedMessage).wait(tester), findsOneWidget);
     // Tap the OK button to dismiss the dialog
     await tapOKButton();
   }
@@ -74,27 +79,31 @@ class RegisterRobot {
 
   // Clear input address fields function
   Future<void> clearAddressInputFields(int indexToClear) async {
-      final postalCodeField = find.byKey(WidgetKeys.addressPostalCodeField(indexToClear));
-      final addressField = find.byKey(WidgetKeys.addressField(indexToClear));
+    final postalCodeField = await find
+        .byKey(WidgetKeys.addressPostalCodeField(indexToClear))
+        .wait(tester);
+    final addressField =
+        await find.byKey(WidgetKeys.addressField(indexToClear)).wait(tester);
 
-      expect(postalCodeField, findsOneWidget);
-      await tester.enterText(postalCodeField, "");
-      await tester.pump();
+    expect(postalCodeField, findsOneWidget);
+    await tester.enterText(postalCodeField, "");
+    await tester.pump();
 
-      expect(addressField, findsOneWidget);
-      await tester.enterText(addressField, "");
-      await tester.pump();
+    expect(addressField, findsOneWidget);
+    await tester.enterText(addressField, "");
+    await tester.pump();
   }
 
-
-  void verifyPartSuccess() {
-    final savedPlaceScreen = find.byKey(WidgetKeys.savedPlaceScreen);
+  Future<void> verifyPartSuccess() async {
+    await find.byKey(WidgetKeys.savedPlaceScreen).wait(tester);
   }
 
   Future<void> enterAddress(List<Address> addresses) async {
     for (int i = 0; i < 2; i++) {
-      final postalCodeField = find.byKey(WidgetKeys.addressPostalCodeField(i));
-      final addressField = find.byKey(WidgetKeys.addressField(i));
+      final postalCodeField =
+          await find.byKey(WidgetKeys.addressPostalCodeField(i)).wait(tester);
+      final addressField =
+          await find.byKey(WidgetKeys.addressField(i)).wait(tester);
 
       // Verify postal code field
       expect(postalCodeField, findsOneWidget);
@@ -110,8 +119,8 @@ class RegisterRobot {
 
   Future<void> enterAdditionalAddress(List<Address> addresses) async {
     for (int i = 2; i < addresses.length; i++) {
-      final postalCodeField = find.byKey(WidgetKeys.addressPostalCodeField(i));
-      final addressField = find.byKey(WidgetKeys.addressField(i));
+      final postalCodeField = await find.byKey(WidgetKeys.addressPostalCodeField(i)).wait(tester);
+      final addressField = await find.byKey(WidgetKeys.addressField(i)).wait(tester);
 
       // Verify postal code field
       expect(postalCodeField, findsOneWidget);
@@ -126,8 +135,9 @@ class RegisterRobot {
   }
 
   Future<void> enterSpecifiedAddress(List<Address> addresses, int index) async {
-    final postalCodeField = find.byKey(WidgetKeys.addressPostalCodeField(index));
-    final specifiedAddressField = find.byKey(WidgetKeys.addressField(index));
+    final postalCodeField =
+        await find.byKey(WidgetKeys.addressPostalCodeField(index)).wait(tester);
+    final specifiedAddressField = await find.byKey(WidgetKeys.addressField(index)).wait(tester);
 
     // Verify postal code field
     expect(postalCodeField, findsOneWidget);
@@ -143,19 +153,23 @@ class RegisterRobot {
   // Method to dismiss the keyboard
   Future<void> dismissKeyboard() async {
     // Tap in the center of the screen or another area not covered by inputs
-    await tester.tap(find.byKey(WidgetKeys.dismissKeyboard)); // Change this to an appropriate widget if needed
-    await tester.pumpAndSettle(); // Wait for the UI to settle
+    await tester.tap(
+        // Change this to an appropriate widget if needed
+        await find.byKey(WidgetKeys .dismissKeyboard).wait(tester));
+    await tester
+        .pumpAndSettle(const Duration(seconds: 5)); // Wait for the UI to settle
   }
 
   Future<void> tapAddMoreButton() async {
-    await tester.tap(find.byKey(WidgetKeys.addMoreButton));
+    await tester.tap(await find.byKey(WidgetKeys.addMoreButton).wait(tester));
     await tester.pumpAndSettle(); // Wait for the UI to settle
   }
 
   Future<void> verifyAddMore() async {
-    final addMoreDialog = find.byKey(WidgetKeys.addMoreDialog);
-    expect(addMoreDialog, findsOneWidget); // Verify that dialog shows to add address
-    final newAddressName = find.byKey(WidgetKeys.addressNameTextField);
+    final addMoreDialog = await find.byKey(WidgetKeys.addMoreDialog).wait(tester);
+    expect(addMoreDialog,
+        findsOneWidget); // Verify that dialog shows to add address
+    final newAddressName = await find.byKey(WidgetKeys.addressNameTextField).wait(tester);
     expect(newAddressName, findsOneWidget);
     await tester.enterText(newAddressName, "School"); // Enter new address name
     await tester.pump();
@@ -163,42 +177,47 @@ class RegisterRobot {
   }
 
   Future<void> tapCancelButton() async {
-    await tester.tap(find.byKey(WidgetKeys.addMoreCancelButton));
+    await tester.tap(await find.byKey(WidgetKeys.addMoreCancelButton).wait(tester));
     await tester.pumpAndSettle(); // Wait for the UI to settle
   }
 
   Future<void> tapAddButton() async {
-    await tester.tap(find.byKey(WidgetKeys.addButton));
+    await tester.tap(await find.byKey(WidgetKeys.addButton).wait(tester));
     await tester.pumpAndSettle(); // Wait for the UI to settle
   }
 
   Future<void> tapTermsCheckbox() async {
-    final termsCheckbox = find.byKey(WidgetKeys.termsCheckbox);
+    final termsCheckbox = await find.byKey(WidgetKeys.termsCheckbox).wait(tester);
     expect(termsCheckbox, findsOneWidget);
     await tester.tap(termsCheckbox);
     await tester.pumpAndSettle();
   }
 
   Future<void> tapNotificationCheckbox() async {
-    final notificationsCheckbox = find.byKey(WidgetKeys.notificationsCheckbox);
+    final notificationsCheckbox = await find.byKey(WidgetKeys.notificationsCheckbox).wait(tester);
     expect(notificationsCheckbox, findsOneWidget);
     await tester.tap(notificationsCheckbox);
     await tester.pumpAndSettle();
   }
 
   Future<void> tapGetStartedButton() async {
-    final getStartedButton = find.byKey(WidgetKeys.getStartedButton);
+    final getStartedButton =
+        await find.byKey(WidgetKeys.getStartedButton).wait(tester);
     expect(getStartedButton, findsOneWidget);
     await tester.tap(getStartedButton);
     await tester.pumpAndSettle();
   }
 
-  void verifyRegisterSuccess() {
-    final homeScreen = find.byKey(WidgetKeys.homeScreen);
+  Future<void> verifyRegisterSuccess() async {
+    await find.byKey(WidgetKeys.homeScreen).wait(tester);
   }
 
-  Future<void> tapBackButton() async{
-    await tester.tap(find.byKey(WidgetKeys.savedPlaceScreenBackButton));
+  Future<void> tapBackButton() async {
+    final savedPlaceScreenBackButton =
+        await find.byKey(WidgetKeys.savedPlaceScreenBackButton).wait(tester);
+    expect(savedPlaceScreenBackButton, findsOneWidget);
+    await tester.tap(savedPlaceScreenBackButton);
     await tester.pumpAndSettle(); // Wait for the UI to settle
   }
 }
+
