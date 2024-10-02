@@ -29,23 +29,22 @@ jobs:
       - name: Install Pip dependencies
         run: pip install -r requirements.txt 
 
+      # Run black to reformat the code automatically
       - name: Reformat code with black
         run: black .
 
-      - name: Commit and push if code was reformatted
+      # Optionally commit and push changes if reformatting is done
+      - name: Commit and push changes if reformatted
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git diff --exit-code || (git add . && git commit -m "Reformat code with black" && git push)
-        # This step will commit and push the reformatted code if changes were made
-
-      - name: Check formatting with black
-        run: black --check .
+          git diff --exit-code || (git add . && git commit -m "Reformatted code with black" && git push)
 
       - name: Run Tests
         run: pytest
 
       - name: Run Pipeline
         run: python pipeline.py
+
 
 
