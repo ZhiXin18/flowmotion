@@ -9,8 +9,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// Defines a extension to Finder that polls a for a nonempty result.
 extension PollingFinder on Finder {
   /// Waits for the Finder to evaluate to an nonempty result.
-  /// If no results match on evaluation, perform [tester]'s `.pumpAndSettle()` 
-  /// and poll the Finder again after waiting for [interval].
+  /// If no results match on evaluation, perform [tester]'s `.pumpAndSettle()` and poll the Finder
+  /// again after waiting for [interval].
   /// Throws `Exception` Upon reaching [timeout] without evaluating to a nonempty result.
   /// Returns the Finder to support chaining (eg. `find.byKey(...).wait(tester)`).
   Future<Finder> wait(
