@@ -119,7 +119,7 @@ class RegisterRobot {
 
   Future<void> enterAdditionalAddress(List<Address> addresses) async {
     for (int i = 2; i < addresses.length; i++) {
-      final postalCodeField = await .wait(tester)find.byKey(WidgetKeys.addressPostalCodeField(i)).wait(tester);
+      final postalCodeField = await find.byKey(WidgetKeys.addressPostalCodeField(i)).wait(tester);
       final addressField = await find.byKey(WidgetKeys.addressField(i)).wait(tester);
 
       // Verify postal code field
