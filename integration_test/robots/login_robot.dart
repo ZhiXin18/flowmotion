@@ -17,14 +17,16 @@ class LoginRobot {
   }
 
   Future<void> enterEmail(String email) async {
-    final emailField = await find.byKey(WidgetKeys.loginEmailController).wait(tester);
+    final emailField =
+        await find.byKey(WidgetKeys.loginEmailController).wait(tester);
     expect(emailField, findsOneWidget);
     await tester.enterText(emailField, email);
     await tester.pump();
   }
 
   Future<void> enterPassword(String password) async {
-    final passwordField = await find.byKey(WidgetKeys.loginPasswordController).wait(tester);
+    final passwordField =
+        await find.byKey(WidgetKeys.loginPasswordController).wait(tester);
     expect(passwordField, findsOneWidget);
     await tester.enterText(passwordField, password);
     await tester.pump();
@@ -53,7 +55,8 @@ class LoginRobot {
   }
 
   Future<void> verifyLoginError() async {
-    final loginErrorDialog = await find.byKey(WidgetKeys.loginErrorDialog).wait(tester);
+    final loginErrorDialog =
+        await find.byKey(WidgetKeys.loginErrorDialog).wait(tester);
     expect(loginErrorDialog, findsOneWidget);
   }
 
@@ -79,4 +82,3 @@ class LoginRobot {
     await find.byKey(WidgetKeys.registerScreen).wait(tester);
   }
 }
-

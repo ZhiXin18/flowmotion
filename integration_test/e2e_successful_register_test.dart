@@ -26,12 +26,14 @@ void main() {
   }
 
   group('E2E - Registrations', () {
-    testWidgets("Successful Register Flow(2 addresses)", (WidgetTester tester) async {
+    testWidgets("Successful Register Flow(2 addresses)",
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
 
-      await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
+      await tester
+          .pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
       await loginRobot.verify(); // Verify its at login screen
 
       await loginRobot.tapRegisterAccButton();
@@ -62,7 +64,8 @@ void main() {
       await registerRobot.enterAddress(addresses);
       await registerRobot.dismissKeyboard();
       final scrollableFinder = find.byType(SingleChildScrollView);
-      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.fling(
+          scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapTermsCheckbox();
       await registerRobot.tapNotificationCheckbox();
@@ -71,12 +74,14 @@ void main() {
       await registerRobot.verifyRegisterSuccess();
     });
 
-    testWidgets("Successful Register Flow(3 addresses)", (WidgetTester tester) async {
+    testWidgets("Successful Register Flow(3 addresses)",
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
 
-      await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
+      await tester
+          .pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
       await loginRobot.verify(); // Verify its at login screen
 
       await loginRobot.tapRegisterAccButton();
@@ -94,7 +99,8 @@ void main() {
       await registerRobot.dismissKeyboard();
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
-      await registerRobot.verifyPartSuccess(); // Verify its at saved place screen
+      await registerRobot
+          .verifyPartSuccess(); // Verify its at saved place screen
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Define your addresses
@@ -112,7 +118,8 @@ void main() {
       await registerRobot.enterAdditionalAddress(addresses);
       await registerRobot.dismissKeyboard();
       final scrollableFinder = find.byType(SingleChildScrollView);
-      await tester.fling(scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.fling(
+          scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapTermsCheckbox();
       await registerRobot.tapNotificationCheckbox();
