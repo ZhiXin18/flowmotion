@@ -1,14 +1,7 @@
-#
-# Flowmotion
-# Pipeline
-# Scheduled Workflow
-#
-
 name: Flowmotion Pipeline
 
 on:
   schedule:
-    # run every 10 minutes
     - cron: "*/10 * * * *"
 
 jobs:
@@ -27,13 +20,14 @@ jobs:
           cache: "pip"
 
       - name: Install Pip dependencies
-        run: pip install -r requirements.txt 
+        run: pip install -r requirements.txt
 
-      # Run black to reformat the code automatically
-      - name: Reformat code with black
-        run: black .
+      - name: Reformat code (make fmt)
+        run: make fmt
 
-      # Optionally commit and push changes if reformatting is done
+      - name: Lint code (make lint)
+        run: make lint
+
       - name: Commit and push changes if reformatted
         run: |
           git config --local user.email "actions@github.com"
@@ -45,6 +39,5 @@ jobs:
 
       - name: Run Pipeline
         run: python pipeline.py
-
 
 
