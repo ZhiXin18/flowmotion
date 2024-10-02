@@ -27,7 +27,7 @@ jobs:
           cache: "pip"
 
       - name: Install Pip dependencies
-        run: pip install -r ../requirements.txt  # Adjust path if needed
+        run: pip install -r requirements.txt 
 
       - name: Run Tests
         run: pytest
