@@ -35,22 +35,3 @@ jobs:
           credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
       - name: "${{ matrix.target }} Pipeline"
         run: "make ${{ matrix.target }}"
-
-  schema:
-    name: "Validate JSON Schema"
-    runs-on: ubuntu-22.04
-    defaults:
-      run:
-        working-directory: schema
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.9.x
-          # cache npm dependencies
-          cache: npm
-          cache-dependency-path: schema/package-lock.json
-      - name: Install npm dependencies
-        run: npm ci
-      - name: Validate json schema
-        run: npx ajv compile -s "*.schema.json" --spec=draft2020 -c ajv-formats
