@@ -38,7 +38,7 @@ void main() {
 
       await loginRobot.tapRegisterAccButton();
       await tester.pumpAndSettle();
-      loginRobot.verifyStartRegister(); // Verify its at register screen
+      await loginRobot.verifyStartRegister(); // Verify its at register screen
 
       // Generate both username and email
       var userDetails = generateUsernameAndEmail();
