@@ -22,22 +22,28 @@ jobs:
       - name: Install Pip dependencies
         run: pip install -r requirements.txt
 
+      # Reformat the code with black and isort (make fmt)
       - name: Reformat code (make fmt)
         run: make fmt
 
-      - name: Lint code (make lint)
-        run: make lint
-
+      # Commit any changes made by reformatting before running lint
       - name: Commit and push changes if reformatted
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git diff --exit-code || (git add . && git commit -m "Reformatted code with black" && git push)
 
+      # Lint the code after reformatting and committing changes
+      - name: Lint code (make lint)
+        run: make lint
+
+      # Run tests
       - name: Run Tests
         run: pytest
 
+      # Run the main pipeline
       - name: Run Pipeline
         run: python pipeline.py
+
 
 
