@@ -1,23 +1,25 @@
-from ultralytics import YOLO
-import json
+import cv2
+import numpy as np
+from ultralytics import YOLO 
+from API_Client import TrafficImageAPI
+from tracking import CarTracker
+from detection import detect_and_count_cars
 
-model = YOLO("yolov8n.pt") 
+def fetch_and_process_images(model, tracker, conf_threshold=0.25, iou_threshold=0.45):
 
-with open('metadata.json', 'r') as json_file:
-    data = json.load(json_file)
+    api = TrafficImageAPI()
+    cameras = api.get_cameras()
+    images_with_timestamps = api.get_images_sync(cameras)
+    for idx, (image_bytes, timestamp, location) in enumerate(images_with_timestamps):
 
-path =[]
-for i in range(50,55):
-    path.append(data["items"][0]["cameras"][i]["image"])
-print(path)
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-results = model(path) 
-for i,result in enumerate(results):
-    i+=1
-    boxes = result.boxes 
-    masks = result.masks  
-    keypoints = result.keypoints  
-    probs = result.probs  
-    obb = result.obb  
-    result.show() 
-    result.save(filename=f"result{i}.jpg")  
+        detect_and_count_cars(img, model, tracker, timestamp, location, conf_threshold, iou_threshold)
+
+
+model = YOLO('yolov8n.pt')  
+
+tracker = CarTracker()
+# optimise on thresholds
+fetch_and_process_images(model, tracker, conf_threshold=0.25, iou_threshold=0.45)
