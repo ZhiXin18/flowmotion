@@ -5,9 +5,9 @@ import '../models/congestion_rating.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 CollectionReference usersCollection =
-    FirebaseFirestore.instance.collection('users');
+FirebaseFirestore.instance.collection('users');
 CollectionReference congestionCollection =
-    FirebaseFirestore.instance.collection('congestions');
+FirebaseFirestore.instance.collection('congestions');
 bool newUser = true;
 
 class FirebaseCalls {
@@ -125,6 +125,4 @@ class FirebaseCalls {
     }
     return congestionRatings;
   }
-
 }
-

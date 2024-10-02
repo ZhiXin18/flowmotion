@@ -1,65 +1,69 @@
 import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../utils/polling_finder.dart';
 
 class LoginRobot {
   final WidgetTester tester;
 
   LoginRobot({required this.tester});
 
-  void verifyBootup() {
-    final splashScreen = find.byKey(WidgetKeys.splashScreen);
+  Future<void> verifyBootup() async {
+    await find.byKey(WidgetKeys.splashScreen).wait(tester);
   }
 
-  void verify() {
-    final loginScreen = find.byKey(WidgetKeys.loginScreen);
+  Future<void> verify() async {
+    final loginScreen = await find.byKey(WidgetKeys.loginScreen).wait(tester);
   }
 
   Future<void> enterEmail(String email) async {
-    final emailField = find.byKey(WidgetKeys.loginEmailController);
+    final emailField =
+        await find.byKey(WidgetKeys.loginEmailController).wait(tester);
     expect(emailField, findsOneWidget);
     await tester.enterText(emailField, email);
     await tester.pump();
   }
 
   Future<void> enterPassword(String password) async {
-    final passwordField = find.byKey(WidgetKeys.loginPasswordController);
+    final passwordField =
+        await find.byKey(WidgetKeys.loginPasswordController).wait(tester);
     expect(passwordField, findsOneWidget);
     await tester.enterText(passwordField, password);
     await tester.pump();
   }
 
   Future<void> tapLoginButton() async {
-    final loginButton = find.byKey(WidgetKeys.loginButton);
+    final loginButton = await find.byKey(WidgetKeys.loginButton).wait(tester);
     expect(loginButton, findsOneWidget);
     await tester.tap(loginButton);
     await tester.pumpAndSettle(const Duration(seconds: 3));
   }
 
   Future<void> tapOKButton() async {
-    final okButton = find.byKey(WidgetKeys.loginErrorOK);
+    final okButton = await find.byKey(WidgetKeys.loginErrorOK).wait(tester);
     expect(okButton, findsOneWidget);
     await tester.tap(okButton);
     await tester.pumpAndSettle();
   }
 
   Future<void> tapRegisterAccButton() async {
-    final goRegisterButton = find.byKey(WidgetKeys.goRegisterButton);
+    final goRegisterButton =
+        await find.byKey(WidgetKeys.goRegisterButton).wait(tester);
     expect(goRegisterButton, findsOneWidget);
     await tester.tap(goRegisterButton);
     await tester.pumpAndSettle();
   }
 
-  void verifyLoginError() {
-    final loginErrorDialog = find.byKey(WidgetKeys.loginErrorDialog);
+  Future<void> verifyLoginError() async {
+    final loginErrorDialog =
+        await find.byKey(WidgetKeys.loginErrorDialog).wait(tester);
     expect(loginErrorDialog, findsOneWidget);
   }
 
   // Helper function to verify error messages
   Future<void> verifyErrorMessage(String expectedMessage) async {
-    verifyLoginError();
+    await verifyLoginError();
     expect(find.text(expectedMessage), findsOneWidget);
-    await Future.delayed(const Duration(seconds: 2));
     // Tap the OK button to dismiss the dialog
     await tapOKButton();
   }
@@ -70,11 +74,11 @@ class LoginRobot {
     await enterPassword('');
   }
 
-  void verifySuccess() {
-    final homeScreen = find.byKey(WidgetKeys.homeScreen);
+  Future<void> verifySuccess() async {
+    await find.byKey(WidgetKeys.homeScreen).wait(tester);
   }
 
-  void verifyStartRegister() {
-    final registerScreen = find.byKey(WidgetKeys.registerScreen);
+  Future<void> verifyStartRegister() async {
+    await find.byKey(WidgetKeys.registerScreen).wait(tester);
   }
 }

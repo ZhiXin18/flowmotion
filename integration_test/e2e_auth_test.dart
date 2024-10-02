@@ -18,14 +18,12 @@ void main() {
       loginRobot = LoginRobot(tester: tester);
 
       await tester.pumpAndSettle(const Duration(seconds: 4));
-      loginRobot.verify();
+      await loginRobot.verify();
       await loginRobot.enterEmail(TestAuthInfo.authTestEmailEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.enterPassword(TestAuthInfo.authTestPasswordEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
-      loginRobot.verifySuccess();
+      await loginRobot.verifySuccess();
     });
 
     testWidgets("Authorized Login To Map Flow", (WidgetTester tester) async {
@@ -34,20 +32,17 @@ void main() {
       homeRobot = HomeRobot(tester: tester);
 
       await tester.pumpAndSettle(const Duration(seconds: 4));
-      loginRobot.verify();
+      await loginRobot.verify();
       await loginRobot.enterEmail(TestAuthInfo.authTestEmailEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.enterPassword(TestAuthInfo.authTestPasswordEnv);
-      await Future.delayed(const Duration(seconds: 2));
       await loginRobot.tapLoginButton();
-      await Future.delayed(const Duration(seconds: 2));
       await tester.pumpAndSettle(const Duration(seconds: 2));
-      loginRobot.verifySuccess();
+      await loginRobot.verifySuccess();
 
       //click view full map
       await homeRobot.tapFullMapButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
-      homeRobot.verifyFullMap();
+      await homeRobot.verifyFullMap();
     });
   });
 }
