@@ -17,4 +17,4 @@ class TrafficImage:
 
     def set_processed(self, congestion_rating):
         self.processed = True
-        self.conestion_rating = congestion_rating
+        self.congestion_rating = congestion_rating
