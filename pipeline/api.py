@@ -1,8 +1,9 @@
-import requests 
+import requests
 
 API_URL = "https://api.data.gov.sg/v1/transport/traffic-images"
 
-class APIClient():
+
+class APIClient:
     def __init__(self, url="No API URL"):
         self.url = url
         self.timestamp = None
@@ -33,7 +34,9 @@ class APIClient():
         for item in self.metadata["items"]:
             for camera in item["cameras"]:
                 if camera["camera_id"] == str(camera_id):
-                    return camera["image"]  # Return the image URL if the camera ID matches
+                    return camera[
+                        "image"
+                    ]  # Return the image URL if the camera ID matches
         # If camera ID is not found
         return f"Camera ID {camera_id} not found."
 
@@ -43,10 +46,12 @@ class APIClient():
                 if camera["camera_id"] == str(camera_id):
                     longitude = camera["location"]["longitude"]
                     latitude = camera["location"]["latitude"]
-                    return longitude, latitude  # Return both longitude and latitude as a tuple
+                    return (
+                        longitude,
+                        latitude,
+                    )  # Return both longitude and latitude as a tuple
         # If camera ID is not found
         return f"Camera ID {camera_id} not found."
-
 
 
  
