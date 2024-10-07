@@ -1,50 +1,28 @@
-name: Flowmotion Pipeline
+#
+# Flowmotion
+# Pipeline
+# Scheduled Workflow
+#
 
+name: Flowmotion Pipeline
 on:
   schedule:
+    # run every 10 minutes
     - cron: "*/10 * * * *"
-
 jobs:
   run-pipeline:
-    runs-on: ubuntu-22.04
     defaults:
       run:
         working-directory: pipeline
-
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10.13"
+          # cache pip dependencies
           cache: "pip"
-
       - name: Install Pip dependencies
         run: pip install -r requirements.txt
-
-      # Step 1: Reformat the code with black and isort (make fmt)
-      - name: Reformat code (make fmt)
-        run: make fmt
-
-      # Step 2: Commit and push changes if reformatting was done
-      - name: Commit and push changes if reformatted
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git diff --exit-code || (git add . && git commit -m "Reformatted code with black" && git push)
-
-      # Step 3: Run linting after reformatting and committing changes
-      - name: Lint code (make lint)
-        run: make lint
-
-      # Step 4: Run tests
-      - name: Run Tests
-        run: pytest
-
-      # Step 5: Run the main pipeline
       - name: Run Pipeline
         run: python pipeline.py
-
-
-
-
