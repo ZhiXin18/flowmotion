@@ -1,4 +1,5 @@
 import requests
+
 API_URL = "https://api.data.gov.sg/v1/transport/traffic-images"
 
 
@@ -51,8 +52,3 @@ class APIClient:
                     )  # Return both longitude and latitude as a tuple
         # If camera ID is not found
         return f"Camera ID {camera_id} not found."
-
-
- 
-
-

@@ -8,7 +8,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from api import APIClient
 from TrafficImage import TrafficImage
 
@@ -23,7 +22,9 @@ def sample_camera_id() -> str:
     # Load camera ID from a sample JSON file for testing
     with open(Path(__file__).parent / "resources" / "traffic_images.json") as f:
         cameras_data = json.loads(f.read())
-        return cameras_data["items"][0]["cameras"][0]["camera_id"]  # Grab a camera_id from the file
+        return cameras_data["items"][0]["cameras"][0][
+            "camera_id"
+        ]  # Grab a camera_id from the file
 
 
 def test_get_camera_ids(api: APIClient):
@@ -53,9 +54,9 @@ def test_traffic_image_class():
         congestion_rating=None,
         camera_id="camera_123",
         longitude=103.851959,
-        latitude=1.290270
+        latitude=1.290270,
     )
-    
+
     assert traffic_image.image == "some_image_url"
     assert traffic_image.camera_id == "camera_123"
     assert not traffic_image.processed  # Ensure it's not processed initially
