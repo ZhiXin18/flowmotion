@@ -41,7 +41,6 @@ package-lock.json
 remoteconfig.template.json
 storage.rules
 test_auth_info.dart
-firebase_options.dart
 
 # Symbolication related
 app.*.symbols

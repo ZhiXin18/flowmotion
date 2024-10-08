@@ -1,6 +1,6 @@
 import requests
 
-API_URL = "https://api.data.gov.sg/v1/transport/traffic-images"
+    API_URL = "https://api.data.gov.sg/v1/transport/traffic-images"
 
 
 class APIClient:

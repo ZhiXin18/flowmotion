@@ -42,6 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   /// Navigate to the login screen after the splash screen timer completes.
   void navigateToPage() {
+    if (!mounted) return;
     Navigator.pushReplacement(
       (context),
       MaterialPageRoute(builder: (context) => LoginScreen()),

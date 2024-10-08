@@ -10,15 +10,18 @@ void main() {
   late LoginRobot loginRobot;
 
   group('E2E - ', () {
-    testWidgets('Login form validation - empty fields', (WidgetTester tester) async {
+    testWidgets('Login form validation - empty fields',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
-      await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
-      loginRobot.verify(); // Verify it's at login screen
+      await tester
+          .pumpAndSettle(const Duration(seconds: 4)); // Wait for splash screen
+      await loginRobot.verify(); // Verify it's at login screen
 
       await loginRobot.tapLoginButton();
-      await loginRobot.verifyErrorMessage('Please enter your email.'); // Expect email error message first
+      await loginRobot.verifyErrorMessage(
+          'Please enter your email.'); // Expect email error message first
 
       // Test 2: Password field empty, email filled
       await loginRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
@@ -37,16 +40,18 @@ void main() {
       await loginRobot.clearInputFields();
     });
 
-    testWidgets("Unauthorized Login Flow", (tester) async {
+    testWidgets("Unauthorized Login Flow", (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
-      await tester.pumpAndSettle(const Duration(seconds: 4)); //wait for splash screen
-      loginRobot.verify(); //verify its at login screen
+      await tester
+          .pumpAndSettle(const Duration(seconds: 4)); //wait for splash screen
+      await loginRobot.verify(); //verify its at login screen
       await loginRobot.enterEmail(TestAuthInfo.unauthTestEmailEnv);
       await loginRobot.enterPassword(TestAuthInfo.unauthTestPasswordEnv);
       await loginRobot.tapLoginButton();
-      await loginRobot.verifyErrorMessage('The supplied credentials are incorrect. Please try again.');
+      await loginRobot.verifyErrorMessage(
+          'The supplied credentials are incorrect. Please try again.');
     });
   });
 }
