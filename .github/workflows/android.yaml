@@ -1,0 +1,103 @@
+#
+# Flowmotion
+# CI/CD Pipeline
+# Flutter Android
+#
+
+name: Flowmotion Android CI/CD
+on:
+  push:
+    paths:
+      - .github/workflows/android.yaml
+      - "android/**"
+      - "flutter/**"
+      - "images/**"
+      - "integration_test/**"
+      - "lib/**"
+      - "test/**"
+      - "test_driver/**"
+      - .firebaserc
+      - storage.rules
+      - pubspec.lock
+      - "*.yaml"
+      - "*.json"
+env:
+  ANDROID_API_LEVEL: 23
+jobs:
+  build-mobile-android:
+    name: Build Mobile App (Android)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore Gradle build cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+
+      - name: Build Android APK
+        run: flutter build apk --debug
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: flowmotion.apk
+          path: build/app/outputs/flutter-apk/*.apk
+
+  test-mobile-android:
+    name: Test Mobile App (Android)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore Gradle build cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+
+        # setup android emulator for testing
+      - name: Enable KVM for Android emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Setup AVD emulator cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ env.ANDROID_API_LEVEL }}
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
+      # run tests on android AVD
+      - name: Write test_auth_info.dart secrets
+        run: printf "${{ secrets.TEST_AUTH_INFO_B64 }}" | base64 -d > test_auth_info.dart
+
+      - name: Test Mobile App (Android)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: flutter drive --driver=test_driver/integration_driver.dart --target=integration_test/main.dart
