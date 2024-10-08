@@ -1,48 +1,22 @@
 #
 # Flowmotion
 # Pipeline
-# Models
+# ML Model
 #
 
-import json
-from datetime import datetime
-
-from pydantic import BaseModel
+from TrafficImage import TrafficImage
 
 
-class Location(BaseModel):
-    """Geolocation consisting of longitude and latitude."""
+class Model:
+    def __init__(self):
+        """Initialise ML model for traffic congestion inference"""
+        # TODO: initialise model
+        pass
 
-    longitude: float
-    latitude: float
+    def predict(self, images: list[TrafficImage]):
+        """Predict the traffic congestion rating (0.0-1.0) in the given images.
 
-
-class Rating(BaseModel):
-    """Traffic Congestion rating performed by a model"""
-
-    rated_on: datetime
-    model_id: str
-    value: float
-
-
-class Camera(BaseModel):
-    """Traffic Camera capturing traffic images."""
-
-    id: str
-    image_url: str
-    captured_on: datetime
-    retrieved_on: datetime
-    location: Location
-
-
-class Congestion(BaseModel):
-    """Traffic Congestion data."""
-
-    camera: Camera
-    rating: Rating
-    updated_on: datetime
-
-
-def to_json_dict(model: BaseModel):
-    """Convert given pydantic model into the its JSON dict representation"""
-    return json.loads(model.model_dump_json())
+        Set the predicted congestion rating for each TrafficImage using TrafficImage.set_processed()
+        """
+        # TODO: make prediction and TrafficImage.set_processed()
+        pass
