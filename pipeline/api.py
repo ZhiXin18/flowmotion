@@ -1,14 +1,11 @@
 import requests
 
-API_URL = "https://api.data.gov.sg/v1/transport/traffic-images"
-
 
 class APIClient:
-    def __init__(self, url="No API URL"):
+    def __init__(self, url="https://api.data.gov.sg/v1/transport/traffic-images"):
         self.url = url
         self.timestamp = None
         self.api_status = "Unverified"
-        self.metadata = None
         self.camera_id_array = []
 
         # Get API response
