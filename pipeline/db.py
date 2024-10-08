@@ -9,8 +9,9 @@ from typing import Any, Iterable, Optional, cast
 import firebase_admin
 from firebase_admin import firestore
 from google.cloud.firestore import DocumentReference
-from model import to_json_dict
 from pydantic import BaseModel
+
+from model import to_json_dict
 
 
 class DatabaseClient:
