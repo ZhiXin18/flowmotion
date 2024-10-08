@@ -1,6 +1,6 @@
 #
 # Flowmotion
-# Models
+# Data Models
 # Unit Tests
 #
 
@@ -11,7 +11,7 @@ from pathlib import Path
 
 from jsonschema import validate
 
-from model import Camera, Congestion, Location, Rating, to_json_dict
+from data import Camera, Congestion, Location, Rating, to_json_dict
 
 CONGESTION_SCHEMA = Path(__file__).parent.parent / "schema" / "congestion.schema.json"
 

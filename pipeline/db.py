@@ -11,7 +11,7 @@ from firebase_admin import firestore
 from google.cloud.firestore import DocumentReference
 from pydantic import BaseModel
 
-from model import to_json_dict
+from data import to_json_dict
 
 
 class DatabaseClient:
