@@ -35,7 +35,7 @@ class APIClient:
                         "image"
                     ]  # Return the image URL if the camera ID matches
         # If camera ID is not found
-        return f"Camera ID {camera_id} not found."
+        raise RuntimeError(f"Camera ID {camera_id} not found.")
 
     def extract_latlon(self, camera_id):
         for item in self.metadata["items"]:
@@ -48,4 +48,4 @@ class APIClient:
                         latitude,
                     )  # Return both longitude and latitude as a tuple
         # If camera ID is not found
-        return f"Camera ID {camera_id} not found."
+        raise RuntimeError(f"Camera ID {camera_id} not found.")
