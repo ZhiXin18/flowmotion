@@ -4,9 +4,9 @@ class TrafficImage:
         image=None,
         processed=False,
         congestion_rating=None,
-        camera_id="Not Set!",
-        longitude="Longitude not set",
-        latitude="Latitude not set",
+        camera_id=None,
+        longitude=None,
+        latitude=None,
     ):
         self.image = image
         self.processed = processed
