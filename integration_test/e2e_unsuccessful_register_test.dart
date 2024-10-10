@@ -163,6 +163,20 @@ void main() {
 
       // Clear input fields after closing the dialog
       await registerRobot.clearInputFields();
+
+      await registerRobot.enterName("Johnny");
+      await registerRobot.enterEmail(TestAuthInfo.authTestEmailEnv);
+      await registerRobot
+          .enterPassword(TestAuthInfo.unauthTestPasswordEnv);
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
+      await tester.fling(
+          scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
+      await registerRobot.tapRegisterButton();
+      await registerRobot.verifyErrorMessage(
+          'Failed to register. Please try again.');
+
     });
 
     testWidgets("Unsuccessful Address Register Flow",
