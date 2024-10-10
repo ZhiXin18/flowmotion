@@ -98,6 +98,10 @@ void main() {
       await registerRobot.enterEmail(randomEmail); // Enter the generated email
       await registerRobot.enterPassword(TestAuthInfo.registerTestPasswordEnv);
       await registerRobot.dismissKeyboard();
+      final scrollableFinder = find.byType(SingleChildScrollView);
+      await tester.fling(
+          scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
       await registerRobot.tapRegisterButton();
       await tester.pumpAndSettle(const Duration(seconds: 2));
       await registerRobot
@@ -118,7 +122,6 @@ void main() {
       await registerRobot.verifyAddMore();
       await registerRobot.enterAdditionalAddress(addresses);
       await registerRobot.dismissKeyboard();
-      final scrollableFinder = find.byType(SingleChildScrollView);
       await tester.fling(
           scrollableFinder, Offset(0, -300), 1500); // Fling upwards
       await tester.pumpAndSettle(); // Allow time for scrolling to finish
