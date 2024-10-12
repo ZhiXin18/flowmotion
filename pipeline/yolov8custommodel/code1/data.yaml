@@ -1,4 +1,10 @@
+path: C:\Users\Fengren\OneDrive\Desktop\flowmotionCCTV\code1\data
+
+# data.yaml
+train: images/train # Path to training dataset
+val: images/val # Path to validation dataset
+
+nc: 1 # Number of classes (update as per your classes)
 names:
-  0: car
-path: .
-train: train.txt
+  ["car"]
+  # Update with class names
