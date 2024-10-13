@@ -16,9 +16,9 @@ from typing import Any, Generator
 
 import pytest
 import requests
+from TrafficImage import TrafficImage
 
 from model import Model
-from TrafficImage import TrafficImage
 
 
 @pytest.fixture(scope="session")

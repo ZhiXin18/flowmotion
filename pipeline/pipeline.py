@@ -1,5 +1,6 @@
 from api import APIClient
 from TrafficImage import TrafficImage
+
 from model import Model
 
 if __name__ == "__main__":
