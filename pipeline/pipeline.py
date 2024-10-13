@@ -1,5 +1,6 @@
 from api import APIClient
 from TrafficImage import TrafficImage
+from model import Model
 
 if __name__ == "__main__":
     apiclient = APIClient("https://api.data.gov.sg/v1/transport/traffic-images")
@@ -15,4 +16,4 @@ if __name__ == "__main__":
         )
         current_traffic_camera_objects.append(traffic_camera_obj)
 
-    # MLmodel(current_traffic_camera_objects)
+    Model.predict(current_traffic_camera_objects)
