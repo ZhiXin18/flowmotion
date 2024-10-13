@@ -1,0 +1,6 @@
+path: C:\Users\Fengren\OneDrive\Desktop\flowmotionCCTV\code2\data
+train: images/train
+val: images/val
+
+nc: 1
+names: ["road"]

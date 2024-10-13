@@ -39,7 +39,7 @@ def train_model():
         translate=0.2,  # Allow higher translation augmentation
         scale=0.6,  # Slightly higher scaling range for augmentation
         flipud=0.1,  # Flip images upside down 10% of the time
-        fliplr=0.5,  # Left-right flip augmentation
+        fliplr=0.5,  # Left-right flip augmentationn m
         max_det=1000,  # Allow up to 1000 detections to handle crowded scenes
         patience=50,  # Early stopping patience to avoid overfitting
         project="runs/detect",
