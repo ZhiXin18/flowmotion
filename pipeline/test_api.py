@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 import pytest
+
 from api import APIClient
 from TrafficImage import TrafficImage
 
