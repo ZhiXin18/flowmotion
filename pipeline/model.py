@@ -26,7 +26,7 @@ class Model:
         """
         gcs = storage.Client(project=project_id)
         bucket = gcs.bucket(bucket_name)
-        print("hi")
+        print("hi/marker")
         # Load the YOLOv8 car detection model from download pretrained weights
         with NamedTemporaryFile(suffix=".pt") as f:
             bucket.blob(detect_path).download_to_file(f)
