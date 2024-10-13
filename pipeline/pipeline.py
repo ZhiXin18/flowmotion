@@ -16,4 +16,5 @@ if __name__ == "__main__":
         )
         current_traffic_camera_objects.append(traffic_camera_obj)
 
-    Model.predict(current_traffic_camera_objects)
+    m = Model()
+    m.predict(current_traffic_camera_objects)
