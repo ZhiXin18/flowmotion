@@ -14,9 +14,10 @@ import os
 from uuid import uuid4
 
 import pytest
+from pydantic import BaseModel
+
 from data import to_json_dict
 from db import DatabaseClient
-from pydantic import BaseModel
 
 
 class Model(BaseModel):
