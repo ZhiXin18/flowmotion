@@ -12,12 +12,12 @@ class TrafficImage:
 
     def __init__(
         self,
-        image=None,
+        image,
+        camera_id,
+        longitude,
+        latitude,
         processed=False,
         congestion_rating=None,
-        camera_id=None,
-        longitude=None,
-        latitude=None,
     ):
         self.image = image
         self.processed = processed
