@@ -3,9 +3,8 @@ from tempfile import NamedTemporaryFile
 import cv2
 import torch
 from google.cloud import storage
-from ultralytics import YOLO
-
 from TrafficImage import TrafficImage
+from ultralytics import YOLO
 
 
 class Model:
