@@ -1,6 +1,7 @@
 from api import APIClient
 from model import Model
 from TrafficImage import TrafficImage
+from rating_validator import RatingValidator
 
 if __name__ == "__main__":
     apiclient = APIClient("https://api.data.gov.sg/v1/transport/traffic-images")
@@ -16,4 +17,12 @@ if __name__ == "__main__":
         )
         current_traffic_camera_objects.append(traffic_camera_obj)
 
+    # run model
     Model(current_traffic_camera_objects)
+
+    # validate model output
+    # for object in current_traffic_camera_objects:
+    #   validator = RatingValidator(object)
+    #   validator.validate()
+
+    
