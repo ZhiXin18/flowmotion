@@ -1,4 +1,5 @@
 import pytest
+
 from rating_validator import RatingValidator
 from TrafficImage import TrafficImage
 

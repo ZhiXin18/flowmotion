@@ -1,8 +1,7 @@
 from api import APIClient
+from model import Model
 from rating_validator import RatingValidator
 from TrafficImage import TrafficImage
-
-from model import Model
 
 if __name__ == "__main__":
     apiclient = APIClient("https://api.data.gov.sg/v1/transport/traffic-images")
