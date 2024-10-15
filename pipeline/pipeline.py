@@ -19,9 +19,12 @@ if __name__ == "__main__":
         current_traffic_camera_objects.append(traffic_camera_obj)
 
     # run model
-    Model(current_traffic_camera_objects)
+    active_model = Model()
+    active_model.predict(current_traffic_camera_objects)
 
     # validate model output
-    # for object in current_traffic_camera_objects:
-    #   validator = RatingValidator(object)
-    #   validator.validate()
+    for object in current_traffic_camera_objects:
+        validator = RatingValidator(object)
+        validator.validate()
+
+    # iterate through current_traffic_camera_objects and populate json for firebase storage
