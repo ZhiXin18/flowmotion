@@ -1,3 +1,5 @@
+from TrafficImage import TrafficImage
+
 class RatingValidator:
     def __init__(self, TrafficImageObject: TrafficImage = None):
         self.traffic_image_object = TrafficImageObject
