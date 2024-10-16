@@ -1,4 +1,4 @@
-from TrafficImage import TrafficImage
+from data import TrafficImage
 
 
 class RatingValidator:
@@ -14,7 +14,7 @@ class RatingValidator:
 
     def validate(self) -> None:
         if self.traffic_image_object is None:
-            raise Exception("No Traffic Image Parsed Through Validatior!!!")
+            raise Exception("No Traffic Image Parsed Through Validator!!!")
         elif self.congestion_rating < 0 or self.congestion_rating > 1:
             raise Exception("Congestion Rating Is Invalid (< 0 or > 1)!!!")
         elif self.processed is False:

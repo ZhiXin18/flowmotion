@@ -1,20 +1,6 @@
 import pytest
 
 from rating_validator import RatingValidator
-from TrafficImage import TrafficImage
-
-
-# Fixture for TrafficImage instance
-@pytest.fixture
-def traffic_image():
-    return TrafficImage(
-        image="some_image_url",
-        processed=True,
-        congestion_rating=0.5,
-        camera_id="camera_123",
-        longitude=103.851959,
-        latitude=1.290270,
-    )
 
 
 # Fixture for RatingValidator instance
@@ -34,9 +20,7 @@ def test_validate_with_valid_data(validator):
 def test_validate_with_no_traffic_image():
     # Test without a TrafficImage object
     validator = RatingValidator(TrafficImageObject=None)
-    with pytest.raises(
-        Exception, match="No Traffic Image Parsed Through Validatior!!!"
-    ):
+    with pytest.raises(Exception, match="No Traffic Image Parsed Through Validator!!!"):
         validator.validate()
 
 
