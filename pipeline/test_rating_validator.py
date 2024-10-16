@@ -1,20 +1,7 @@
 import pytest
 
 from rating_validator import RatingValidator
-from TrafficImage import TrafficImage
-
-
-# Fixture for TrafficImage instance
-@pytest.fixture
-def traffic_image():
-    return TrafficImage(
-        image="some_image_url",
-        processed=True,
-        congestion_rating=0.5,
-        camera_id="camera_123",
-        longitude=103.851959,
-        latitude=1.290270,
-    )
+from data import TrafficImage
 
 
 # Fixture for RatingValidator instance

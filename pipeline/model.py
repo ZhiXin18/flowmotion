@@ -5,7 +5,7 @@ import torch
 from google.cloud import storage
 from ultralytics import YOLO
 
-from TrafficImage import TrafficImage
+from data import TrafficImage
 
 
 class Model:

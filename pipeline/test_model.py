@@ -18,7 +18,7 @@ import pytest
 import requests
 
 from model import Model
-from TrafficImage import TrafficImage
+from data import TrafficImage
 
 
 @pytest.fixture(scope="session")

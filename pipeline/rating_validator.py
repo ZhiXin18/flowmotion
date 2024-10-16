@@ -1,4 +1,4 @@
-from TrafficImage import TrafficImage
+from data import TrafficImage
 
 
 class RatingValidator:
