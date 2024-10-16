@@ -1,3 +1,10 @@
+from datetime import datetime
+from pathlib import Path
+from typing import Optional
+from data import Camera, Rating
+from timetools import datetime_sgt
+
+
 class TrafficImage:
     """Traffic Image to be rated for congestion.
 
@@ -8,6 +15,7 @@ class TrafficImage:
         camera_id: ID of the camera that captured this image
         longitude: Longitude of the camera that captured this image
         latitude: Latitude of the camera that captured this image
+        processed_on: Timestamp when this TrafficImage instance has been processed.
     """
 
     def __init__(
@@ -18,6 +26,7 @@ class TrafficImage:
         latitude,
         processed=False,
         congestion_rating=None,
+        processed_on: Optional[datetime] = None,
     ):
         self.image = image
         self.processed = processed
@@ -49,3 +58,4 @@ class TrafficImage:
     def set_processed(self, congestion_rating):
         self.processed = True
         self.congestion_rating = congestion_rating
+        self.processed_on = datetime_sgt()
