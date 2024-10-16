@@ -20,6 +20,7 @@ def camera() -> Camera:
         location=Location(longitude=103.851959, latitude=1.290270),
     )
 
+
 # Fixture for TrafficImage instance
 @pytest.fixture
 def traffic_image():
@@ -31,4 +32,5 @@ def traffic_image():
         longitude=103.851959,
         latitude=1.290270,
         processed_on=datetime(2024, 9, 27, 8, 30, 0),
+        model_id="model_v1",
     )
