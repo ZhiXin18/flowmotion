@@ -5,6 +5,7 @@
 #
 
 import asyncio
+from pathlib import Path
 
 import httpx
 
@@ -16,7 +17,8 @@ class TrafficImageAPI:
 
     API_URL = "https://api.data.gov.sg/v1/transport/traffic-images"
 
-    def __init__(self):
+    def __init__(self, api_url: str = API_URL):
+        self.api_url = api_url
         self._sync = httpx.Client()
         self._async = httpx.AsyncClient()
 
@@ -27,29 +29,41 @@ class TrafficImageAPI:
             Parsed traffic camera metadata.
         """
         # fetch traffic-images api endpoint
-        response = self._sync.get(TrafficImageAPI.API_URL)
+        response = self._sync.get(self.API_URL)
         response.raise_for_status()
         meta = response.json()
         return parse_cameras(meta)
 
-        # parse traffic camera metadata
-
-    def get_images(self, cameras: list[Camera]) -> list[bytes]:
-        """Get Traffic Camera images from given Traffic Cameras.
+    def get_images(self, cameras: list[Camera], image_dir: Path) -> list[Path]:
+        """Save Traffic Camera images from given Cameras into image_dir.
+        Creates image_dir if it does not already exist.
 
         Args:
             cameras:
                 List of traffic cameras to retrieve traffic images from.
+            image_dir:
+                Path the image directory to write retrieved images.
         Returns:
-            List of JPEG image bytes camera captured by each given Camera.
+            List of JPEG paths to images captured by each given Camera.
         """
+        # ensure image directory exists
+        image_dir.mkdir(parents=True, exist_ok=True)
 
-        async def fetch():
-            responses = [self._async.get(camera.image_url) for camera in cameras]
-            images = [(await r).aread() for r in responses]
-            return await asyncio.gather(*images)
+        async def fetch(camera: Camera) -> Path:
+            response = await self._async.get(camera.image_url)
+            # write image bytes to image file on disk
+            image_path = image_dir / f"{camera.id}.jpg"
+            with open(image_path, "wb") as f:
+                for chunk in response.iter_bytes():
+                    f.write(chunk)
 
-        return asyncio.run(fetch())
+            return image_path
+
+        async def fetch_all() -> list[Path]:
+            # perform all image fetches asynchronously
+            return await asyncio.gather(*[fetch(camera) for camera in cameras])
+
+        return asyncio.run(fetch_all())
 
 
 def parse_cameras(meta: dict) -> list[Camera]:
