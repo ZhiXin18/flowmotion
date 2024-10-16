@@ -25,6 +25,26 @@ class TrafficImage:
         self.camera_id = camera_id
         self.longitude = longitude
         self.latitude = latitude
+        self.processed_on = processed_on
+
+    @classmethod
+    def from_camera(cls, camera: Camera, image_path: Path) -> "TrafficImage":
+        """Create TrafficImage from camera & its image path.
+
+        Args:
+            camera:
+                Camera model to create TrafficImage from.
+            image_path:
+                Path to the retrieved captured image from the Camera.
+        Returns:
+            Constructed TrafficImage
+        """
+        return cls(
+            image=str(image_path),
+            camera_id=camera.id,
+            longitude=camera.location.longitude,
+            latitude=camera.location.latitude,
+        )
 
     def set_processed(self, congestion_rating):
         self.processed = True
