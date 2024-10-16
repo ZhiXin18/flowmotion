@@ -4,10 +4,11 @@
 #
 
 from datetime import datetime
+
 import pytest
 
-from data import TrafficImage
-from data import Camera, Location
+from data import Camera, Location, TrafficImage
+from model import Model
 
 
 @pytest.fixture
@@ -32,5 +33,5 @@ def traffic_image():
         longitude=103.851959,
         latitude=1.290270,
         processed_on=datetime(2024, 9, 27, 8, 30, 0),
-        model_id="model_v1",
+        model_id=Model.MODEL_ID,
     )

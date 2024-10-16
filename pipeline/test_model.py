@@ -17,8 +17,8 @@ from typing import Any, Generator
 import pytest
 import requests
 
-from model import Model
 from data import TrafficImage
+from model import Model
 
 
 @pytest.fixture(scope="session")

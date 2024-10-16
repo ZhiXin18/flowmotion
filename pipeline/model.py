@@ -9,7 +9,7 @@ from data import TrafficImage
 
 
 class Model:
-    # uniquely identifies versions of the model. 
+    # uniquely identifies versions of the model.
     # NOTE: update this if the model changed in any way.
     MODEL_ID = "yolo_detect_segment_v1"
 
@@ -62,7 +62,7 @@ class Model:
             car_results = self.car_model(img)
             if len(car_results) == 0 or len(car_results[0].boxes) == 0:
                 print("No cars detected")
-                image.set_processed(0.0)
+                image.set_processed(0.0, Model.MODEL_ID)
                 continue
 
             # Access car bounding boxes (x, y, w, h)
@@ -99,4 +99,4 @@ class Model:
             print(f"Congestion rating: {congestion_rating}")
 
             # Set the predicted congestion rating
-            image.set_processed(congestion_rating)
+            image.set_processed(congestion_rating, Model.MODEL_ID)
