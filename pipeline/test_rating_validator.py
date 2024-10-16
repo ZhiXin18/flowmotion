@@ -22,7 +22,7 @@ def test_validate_with_no_traffic_image():
     # Test without a TrafficImage object
     validator = RatingValidator(TrafficImageObject=None)
     with pytest.raises(
-        Exception, match="No Traffic Image Parsed Through Validatior!!!"
+        Exception, match="No Traffic Image Parsed Through Validator!!!"
     ):
         validator.validate()
 
