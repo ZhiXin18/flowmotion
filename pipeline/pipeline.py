@@ -9,7 +9,7 @@ from pathlib import Path
 from tempfile import mkdtemp
 
 from api import TrafficImageAPI
-from data import Congestion, TrafficImage
+from data import Congestion
 from db import DatabaseClient
 from model import Model
 from rating_validator import RatingValidator
@@ -20,12 +20,7 @@ if __name__ == "__main__":
     api = TrafficImageAPI()
     cameras = api.get_cameras()
     image_dir = Path(mkdtemp())
-    image_paths = api.get_images(cameras, image_dir)
-
-    # populating array of TrafficImage objects
-    traffic_images = []  # type: list[TrafficImage]
-    for camera, image_path in zip(cameras, image_paths):
-        traffic_images.append(TrafficImage.from_camera(camera, image_path))
+    traffic_images = api.get_traffic_images(cameras, image_dir)
 
     # perform inference on model for traffic congestion rating
     active_model = Model()

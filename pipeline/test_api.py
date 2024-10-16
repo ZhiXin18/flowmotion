@@ -31,14 +31,14 @@ def test_get_cameras(api: TrafficImageAPI):
     assert len(api.get_cameras()) > 0
 
 
-def test_get_images(api: TrafficImageAPI, cameras: list[Camera]):
+def test_get_traffic_images(api: TrafficImageAPI, cameras: list[Camera]):
     image_dir = mkdtemp()
-    image_paths = api.get_images(cameras, Path(image_dir))
-    assert len(image_paths) > 0
+    traffic_images = api.get_traffic_images(cameras, Path(image_dir))
+    assert len(traffic_images) > 0
 
     # check image paths are nonempty
-    for path in image_paths:
-        with open(path) as f:
+    for traffic_image in traffic_images:
+        with open(traffic_image.image) as f:
             f.seek(0, SEEK_END)
             assert f.tell() > 0
 

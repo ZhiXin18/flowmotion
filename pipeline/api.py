@@ -9,7 +9,7 @@ from pathlib import Path
 
 import httpx
 
-from data import Camera, Location
+from data import Camera, Location, TrafficImage
 
 
 class TrafficImageAPI:
@@ -34,7 +34,9 @@ class TrafficImageAPI:
         meta = response.json()
         return parse_cameras(meta)
 
-    def get_images(self, cameras: list[Camera], image_dir: Path) -> list[Path]:
+    def get_traffic_images(
+        self, cameras: list[Camera], image_dir: Path
+    ) -> list[TrafficImage]:
         """Save Traffic Camera images from given Cameras into image_dir.
         Creates image_dir if it does not already exist.
 
@@ -44,12 +46,12 @@ class TrafficImageAPI:
             image_dir:
                 Path the image directory to write retrieved images.
         Returns:
-            List of JPEG paths to images captured by each given Camera.
+            List of retrieve Traffic Images.
         """
         # ensure image directory exists
         image_dir.mkdir(parents=True, exist_ok=True)
 
-        async def fetch(camera: Camera) -> Path:
+        async def fetch(camera: Camera) -> TrafficImage:
             response = await self._async.get(camera.image_url)
             # write image bytes to image file on disk
             image_path = image_dir / f"{camera.id}.jpg"
@@ -57,9 +59,9 @@ class TrafficImageAPI:
                 for chunk in response.iter_bytes():
                     f.write(chunk)
 
-            return image_path
+            return TrafficImage.from_camera(camera, image_path)
 
-        async def fetch_all() -> list[Path]:
+        async def fetch_all() -> list[TrafficImage]:
             # perform all image fetches asynchronously
             return await asyncio.gather(*[fetch(camera) for camera in cameras])
 
