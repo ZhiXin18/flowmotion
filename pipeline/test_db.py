@@ -10,7 +10,6 @@
 #       with firestore eg. by setting GOOGLE_APPLICATION_CREDENTIALS env var.
 
 
-import os
 from uuid import uuid4
 
 import pytest
@@ -26,7 +25,6 @@ class Model(BaseModel):
 
 @pytest.fixture(scope="session")
 def db() -> DatabaseClient:
-    os.environ["GOOGLE_CLOUD_PROJECT"] = "flowmotion-4e268"
     return DatabaseClient()
 
 
