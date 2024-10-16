@@ -9,6 +9,10 @@ from TrafficImage import TrafficImage
 
 
 class Model:
+    # uniquely identifies versions of the model. 
+    # NOTE: update this if the model changed in any way.
+    MODEL_ID = "yolo_detect_segment_v1"
+
     def __init__(
         self,
         project_id: str = "flowmotion-4e268",
