@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/navigationBar.dart';
-
+import '../screens/homeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utilities/firebase_calls.dart';
@@ -140,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       return ListTile(
                         title: Text('${address["label"]}'),
                         subtitle: Text(
-                            '${address["street"]}, ${address["postal"]}'),
+                            '${address["address"]}, ${address["postalCode"]}'),
                       );
                     },
                   ),
