@@ -54,6 +54,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Your UI components for showing congestion ratings
             SizedBox(height: 20),
 
             // "From" label and input field

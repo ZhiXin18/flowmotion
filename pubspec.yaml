@@ -42,15 +42,18 @@ dependencies:
   cloud_firestore: ^5.4.2
   firebase_auth_mocks: ^0.14.1
   device_preview: ^1.2.0
+  geolocator: ^13.0.1
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  patrol: ^3.11.1
+  flutter_popup_card: ^0.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.3.2
   rxdart: ^0.28.0
-  #geolocator: ^13.0.1
-  flutter_map: ^7.0.2
-  latlong2: ^0.9.1
+
 
   integration_test:
     sdk: flutter

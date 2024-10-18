@@ -58,8 +58,9 @@ class FirebaseCalls {
         final data = doc.data() as Map<String,
             dynamic>?; // Cast the data to a Map
 
+        String docId = doc.id;
         // Print the data for debugging
-        print('Document ${doc.id} data: $data');
+        //print('Document ${doc.id} data: $data');
 
         if (data != null &&
             data.containsKey('camera') &&
@@ -75,14 +76,17 @@ class FirebaseCalls {
           double latitude = data['camera']['location']['latitude'];
           double longitude = data['camera']['location']['longitude'];
           double ratingValue = data['rating']['value'];
+          String url = data['camera']['image_url'];
 
-          print("Marker latitude: $latitude, longitude: $longitude");
+          //print("Marker latitude: $latitude, longitude: $longitude");
 
           CongestionRating congestionRating = CongestionRating(
+            docId: docId,
             latitude: latitude,
             longitude: longitude,
             value: ratingValue,
             capturedOn: data['camera']['captured_on'], // Use 'data' instead of 'doc'
+            imageUrl: url,
           );
 
           congestionRatings.add(congestionRating);
@@ -105,6 +109,8 @@ class FirebaseCalls {
       for (QueryDocumentSnapshot doc in querySnap.docs) {
         final data = doc.data() as Map<String, dynamic>?;
 
+        String docId = doc.id;
+
         if (data != null &&
             data.containsKey('camera') &&
             data['camera'] is Map &&
@@ -119,12 +125,15 @@ class FirebaseCalls {
           double latitude = data['camera']['location']['latitude'];
           double longitude = data['camera']['location']['longitude'];
           double ratingValue = data['rating']['value'];
+          String url = data['camera']['image_url'];
 
           CongestionRating congestionRating = CongestionRating(
+            docId: docId,
             latitude: latitude,
             longitude: longitude,
             value: ratingValue,
             capturedOn: data['camera']['captured_on'],
+            imageUrl: url,
           );
 
           congestionRatings.add(congestionRating);

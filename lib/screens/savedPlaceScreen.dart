@@ -1,12 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flowmotion/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../firebase_options.dart';
-
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import '../utilities/firebase_calls.dart'; // Import the FirebaseCalls class
+//import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+
+import '../utilities/location_service.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -34,8 +36,8 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
   bool _termsAccepted = false;
   bool _notificationsAllowed = false;
   List<Map<String, dynamic>> savedAddresses = [
-    {'postalCode': '', 'address': '', 'city': '', 'state': '', 'countryCode': '', 'deleted': false},
-    {'postalCode': '', 'address': '', 'city': '', 'state': '', 'countryCode': '', 'deleted': false}
+    {'label': '','postalCode': '', 'address': '', 'city': '', 'state': '', 'countryCode': '', 'deleted': false},
+    {'label': '','postalCode': '', 'address': '', 'city': '', 'state': '', 'countryCode': '', 'deleted': false}
   ]; // Initialize with matching number of items
 
   void _addAddress() async {
@@ -75,6 +77,7 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
       setState(() {
         addressLabels.add(newName);
         savedAddresses.add({
+          'label': '',
           'postalCode': '',
           'address': '',
           'city': '',
@@ -112,9 +115,17 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
       return;
     }
 
+    // Combine address data with labels
+    List<Map<String, dynamic>> addressesWithLabels = List.generate(savedAddresses.length, (index) {
+      return {
+        'label': addressLabels[index],
+        ...savedAddresses[index],
+      };
+    });
+
     try {
       FirebaseCalls firebaseCalls = FirebaseCalls();
-      await firebaseCalls.updateUser(widget.username, savedAddresses);
+      await firebaseCalls.updateUser(widget.username, addressesWithLabels); // Use the new list with labels
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -209,6 +220,35 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
       ],
     );
   }
+  late LocationService locationService;
+
+  @override
+  void initState() {
+    super.initState();
+    locationService = LocationService(context); // Initialize with context
+  }
+
+  void _getCurrentLocation() async {
+    await locationService.getCurrentPosition();
+    if (locationService.currentPosition != null) {
+      print('Location obtained: Latitude - ${locationService.currentPosition!.latitude}, '
+          'Longitude - ${locationService.currentPosition!.longitude}');
+    }
+  }
+
+  /*Future<void> _getAddressFromLatLng(Position position) async {
+    await placemarkFromCoordinates(
+        _currentPosition!.latitude, _currentPosition!.longitude)
+        .then((List<Placemark> placemarks) {
+      Placemark place = placemarks[0];
+      setState(() {
+        _currentAddress =
+        '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.postalCode}';
+      });
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -221,13 +261,13 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
         key: WidgetKeys.savedPlaceScreen,
         appBar: AppBar(
           leading: IconButton(
-            key: WidgetKeys.savedPlaceScreenBackButton,
-            icon: Icon(Icons.arrow_back),
-            onPressed: () =>
-            {
-              _auth.currentUser?.delete(),
-              Navigator.pop(context),
-            }
+              key: WidgetKeys.savedPlaceScreenBackButton,
+              icon: Icon(Icons.arrow_back),
+              onPressed: () =>
+              {
+                _auth.currentUser?.delete(),
+                Navigator.pop(context),
+              }
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -299,6 +339,10 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
                             (bool? value) {
                           setState(() {
                             _termsAccepted = value ?? false;
+                            // Call _getCurrentPosition if the checkbox is enabled
+                            if (_termsAccepted) {
+                              _getCurrentLocation();
+                            }
                           });
                         },
                         key: WidgetKeys.termsCheckbox,
