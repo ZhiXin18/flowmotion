@@ -5,6 +5,7 @@ import '../widgets/navigationBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utilities/firebase_calls.dart';
+import 'homeScreen.dart';
 
 FirebaseCalls firebaseCalls = FirebaseCalls();
 
@@ -84,6 +85,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: Text('Profile'),
         backgroundColor: Colors.blue,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+          },
+        ),
       ),
       bottomNavigationBar: MyBottomNavigationBar(selectedIndexNavBar: 1),
       body: SingleChildScrollView(
@@ -140,8 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       return ListTile(
                         title: Text('${address["label"]}'),
                         subtitle: Text(
-                            '${address["street"]}, ${address["postal"]}'),
-                      );
+                            '${address["address"]}, ${address["postalCode"]}'),                      );
                     },
                   ),
 
