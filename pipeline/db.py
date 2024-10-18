@@ -23,7 +23,7 @@ class DatabaseClient:
         Uses Google Application Default credentials with authenticate DB requests.
         See https://firebase.google.com/docs/admin/setup#initialize-sdk.
         """
-        app = firebase_admin.initialize_app()
+        app = firebase_admin.initialize_app(options={"projectId": "flowmotion-4e268"})
         self._db = firestore.client(app)
 
     def insert(self, table: str, data: BaseModel) -> str:

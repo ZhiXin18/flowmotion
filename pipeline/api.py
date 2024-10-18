@@ -1,51 +1,86 @@
-import requests
+#
+# Flowmotion
+# Pipeline
+# Traffic Images API Client
+#
+
+import asyncio
+from pathlib import Path
+
+import httpx
+
+from data import Camera, Location, TrafficImage
 
 
-class APIClient:
-    def __init__(self, url="https://api.data.gov.sg/v1/transport/traffic-images"):
-        self.url = url
-        self.timestamp = None
-        self.api_status = "Unverified"
-        self.camera_id_array = []
+class TrafficImageAPI:
+    """Data.gov.sg Traffic Images API Client."""
 
-        # Get API response
-        response = requests.get(self.url)
-        response_json = response.json()
-        self.metadata = response_json
+    API_URL = "https://api.data.gov.sg/v1/transport/traffic-images"
 
-        # Get and set API status
-        self.api_status = self.metadata["api_info"]["status"]
+    def __init__(self, api_url: str = API_URL):
+        self.api_url = api_url
+        self._sync = httpx.Client()
+        self._async = httpx.AsyncClient()
 
-        # Get and set timestamp
-        self.timestamp = self.metadata["items"][0]["timestamp"]
+    def get_cameras(self) -> list[Camera]:
+        """Get Traffic Camera metadata from traffic images API endpoint.
 
-        print(f"The API status is: {self.api_status}")
-        print(f"The API was called at: {self.timestamp}")
+        Returns:
+            Parsed traffic camera metadata.
+        """
+        # fetch traffic-images api endpoint
+        response = self._sync.get(self.API_URL)
+        response.raise_for_status()
+        meta = response.json()
+        return parse_cameras(meta)
 
-        for item in self.metadata["items"]:
-            for camera in item["cameras"]:
-                self.camera_id_array.append(camera["camera_id"])
+    def get_traffic_images(
+        self, cameras: list[Camera], image_dir: Path
+    ) -> list[TrafficImage]:
+        """Save Traffic Camera images from given Cameras into image_dir.
+        Creates image_dir if it does not already exist.
 
-    def extract_image(self, camera_id):
-        # Loop through the items and cameras to find the correct camera_id
-        for item in self.metadata["items"]:
-            for camera in item["cameras"]:
-                if camera["camera_id"] == str(camera_id):
-                    return camera[
-                        "image"
-                    ]  # Return the image URL if the camera ID matches
-        # If camera ID is not found
-        raise RuntimeError(f"Camera ID {camera_id} not found.")
+        Args:
+            cameras:
+                List of traffic cameras to retrieve traffic images from.
+            image_dir:
+                Path the image directory to write retrieved images.
+        Returns:
+            List of retrieve Traffic Images.
+        """
+        # ensure image directory exists
+        image_dir.mkdir(parents=True, exist_ok=True)
 
-    def extract_latlon(self, camera_id):
-        for item in self.metadata["items"]:
-            for camera in item["cameras"]:
-                if camera["camera_id"] == str(camera_id):
-                    longitude = camera["location"]["longitude"]
-                    latitude = camera["location"]["latitude"]
-                    return (
-                        longitude,
-                        latitude,
-                    )  # Return both longitude and latitude as a tuple
-        # If camera ID is not found
-        raise RuntimeError(f"Camera ID {camera_id} not found.")
+        async def fetch(camera: Camera) -> TrafficImage:
+            response = await self._async.get(camera.image_url)
+            # write image bytes to image file on disk
+            image_path = image_dir / f"{camera.id}.jpg"
+            with open(image_path, "wb") as f:
+                for chunk in response.iter_bytes():
+                    f.write(chunk)
+
+            return TrafficImage.from_camera(camera, image_path)
+
+        async def fetch_all() -> list[TrafficImage]:
+            # perform all image fetches asynchronously
+            return await asyncio.gather(*[fetch(camera) for camera in cameras])
+
+        return asyncio.run(fetch_all())
+
+
+def parse_cameras(meta: dict) -> list[Camera]:
+    meta = meta["items"][0]
+    retrieved_on = meta["timestamp"]
+    return [
+        Camera(
+            id=c["camera_id"],
+            retrieved_on=retrieved_on,
+            captured_on=c["timestamp"],
+            image_url=c["image"],
+            location=Location(
+                longitude=c["location"]["longitude"],
+                latitude=c["location"]["latitude"],
+            ),
+        )
+        for c in meta["cameras"]
+    ]

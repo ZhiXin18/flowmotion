@@ -1,0 +1,10 @@
+path: data
+
+# data.yaml
+train: images/train # Path to training dataset
+val: images/val # Path to validation dataset
+
+nc: 1 # Number of classes (update as per your classes)
+names:
+  ["car"]
+  # Update with class names
