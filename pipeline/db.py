@@ -8,7 +8,7 @@ from typing import Any, Iterable, Optional, cast
 
 import firebase_admin
 from firebase_admin import firestore
-from google.cloud.firestore import DocumentReference
+from google.cloud.firestore import DocumentReference, Query
 from pydantic import BaseModel
 
 from data import to_json_dict
@@ -99,9 +99,8 @@ class DatabaseClient:
         for field, (op, value) in params.items():
             collection = collection.where(field.replace("__", "."), op, value)
 
-        for document in self._db.collection(table).list_documents():
-            yield _to_key(document)
-
+        for document in collection.stream():
+            yield _to_key(document.reference)
 
 def _to_key(ref: DocumentReference) -> str:
     return cast(DocumentReference, ref).path
