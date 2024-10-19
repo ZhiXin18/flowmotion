@@ -59,6 +59,7 @@ nvidia-nccl-cu12==2.20.5
 nvidia-nvjitlink-cu12==12.6.77
 nvidia-nvtx-cu12==12.1.105
 opencv-python==4.10.0.84
+osmium==4.0.1
 packaging==24.1
 pandas==2.2.3
 pathspec==0.12.1
