@@ -36,7 +36,7 @@ if __name__ == "__main__":
         help="Proximity threshold for tagging in meters."
         "If a OSM way contains a node within the Threshold to a congestion point, "
         "it will be tagged with the congestion point",
-        default=10,
+        default=20,
     )
     args = parser.parse_args()
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
         way_congestion_map[way_id] = congestion
 
-    # write associated congestion point into OSM way's tags to be used by osrm
+    # write associated congestion point into OSM way's tags to be used by orsm
     # custom profile congestion_profile.lua for routing
     way_ids = list(way_congestion_map.keys())
     with osm.SimpleWriter(args.out_pbf, overwrite=True) as writer:
