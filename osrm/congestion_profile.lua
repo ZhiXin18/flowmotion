@@ -380,10 +380,12 @@ function apply_congestion(profile, way, result, data)
   -- apply it to the way's routing speed.
   -- 0.0 (no congestion) - 1.0 (fully congested)
   local congestion = tonumber(way:get_value_by_key("congestion_rating")) or 0.0
-  -- extract base routing speed or default to 50km/h
-  local speed = result.speed or 50
+  if congestion > 0.0  then
+    print("GOT congestion: ", congestion)
+  end
   -- adjust routing speed based on congestion level
-  result.speed = math.max(0.0, speed * (1 - congestion))
+  result.forward_speed = math.max(0.0, result.forward_speed * (1 - congestion))
+  result.backward_speed = math.max(0.0, result.backward_speed * (1 - congestion))
 end
 
 function process_way(profile, way, result, relations)
@@ -450,14 +452,14 @@ function process_way(profile, way, result, relations)
     -- handle hov
     WayHandlers.hov,
 
-    -- apply congestion rating to adjust speed
-    apply_congestion,
-
     -- compute speed taking into account way type, maxspeed tags, etc.
     WayHandlers.speed,
     WayHandlers.maxspeed,
     WayHandlers.surface,
+    -- apply congestion rating to adjust speed
+    apply_congestion,
     WayHandlers.penalties,
+
 
     -- compute class labels
     WayHandlers.classes,
