@@ -1,7 +1,7 @@
 #
 # Flowmotion
 # ML Pipeline
-# Entrypoint
+# Congestion Rating
 #
 
 
@@ -14,6 +14,8 @@ from db import DatabaseClient
 from model import Model
 from rating_validator import RatingValidator
 from timetools import datetime_sgt
+
+CONGESTION_COLLECTION = "congestions"
 
 if __name__ == "__main__":
     # fetch camera metadata & images from traffic image api
@@ -40,4 +42,4 @@ if __name__ == "__main__":
     # write congestions to the database
     db = DatabaseClient()
     for congestion in congestions:
-        db.insert("congestions", congestion)
+        db.insert(CONGESTION_COLLECTION, congestion)
