@@ -111,8 +111,8 @@ if __name__ == "__main__":
 
         way_congestion_map[way_id] = congestion
 
-    # write associated congestion point into OSM way's tags to be used by orsm
-    # custom profile for routing
+    # write associated congestion point into OSM way's tags to be used by osrm
+    # custom profile congestion_profile.lua for routing
     way_ids = list(way_congestion_map.keys())
     with osm.SimpleWriter(args.out_pbf, overwrite=True) as writer:
         in_pbf = (
