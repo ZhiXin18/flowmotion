@@ -6,9 +6,10 @@
 
 name: Flowmotion Pipeline
 on:
-  schedule:
-    # run every 10 minutes
-    - cron: "*/10 * * * *"
+  # schedule:
+  #   # run every 10 minutes
+  #   - cron: "*/10 * * * *"
+  push: {}
 permissions:
   # needed to push docker images to GHCR
   packages: write
@@ -36,12 +37,12 @@ jobs:
           key: pip-${{ hashFiles('pipeline/requirements.txt') }}
 
       - name: Install Pip dependencies
+        if: steps.cache-pip.outputs.cache-hit != 'true'
         run: |
           set -ex -o pipefail
           python -m venv venv
           source venv/bin/activate
           pip install -r pipeline/requirements.txt
-        if: steps.cache-venv.outputs.cache-hit != 'true'
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -52,9 +53,9 @@ jobs:
         with:
           credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
 
-      # run congestion model to rate congestion points
-      - name: Run Congestion Model Pipeline
-        run: python pipeline/pipeline.py
+      # # run congestion model to rate congestion points
+      # - name: Run Congestion Model Pipeline
+      #   run: source venv/bin/activate && python pipeline/pipeline.py
 
       # download & customize OSM map data with congestion ratings
       - name: Cache OSM Map Data
@@ -101,6 +102,7 @@ jobs:
             type=sha
 
       - name: Build and Push OSRM with Custom Congestion Profile
+        id: osrm-build
         uses: docker/build-push-action@v6
         with:
           push: true
@@ -109,3 +111,16 @@ jobs:
           labels: ${{ steps.osrm-meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.ORSM_IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ env.ORSM_IMAGE }}:buildcache,mode=max
+
+      # deploy custom ORSM container
+      - name: Deploy custom ORSM container to GCP Cloud run
+        run: >
+          gcloud run deploy orsm-congestion
+            --image asia-southeast1-docker.pkg.dev/flowmotion-4e268/ghcr/zhixin18/flowmotion/orsm-congestion@${{ steps.osrm-build.outputs.imageid }}
+            --platform managed
+            --region=asia-southeast1
+            --allow-unauthenticated
+            --port 5000
+            --cpu 1
+            --memory 1Gi
+            --cpu-boost
