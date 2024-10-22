@@ -105,7 +105,7 @@ jobs:
         with:
           push: true
           context: osrm
-          tags: ${{ steps.orsm-meta.outputs.tags }}
-          labels: ${{ steps.orms-meta.outputs.labels }}
+          tags: ${{ steps.osrm-meta.outputs.tags }}
+          labels: ${{ steps.osrm-meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.ORSM_IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ env.ORSM_IMAGE }}:buildcache,mode=max
