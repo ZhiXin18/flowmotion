@@ -1,21 +1,21 @@
 #
 # Flowmotion
-# ORSM with Custom Profile
+# osrm with Custom Profile
 # Dockerfile
 #
 
 ARG OSRM_VERSION=v5.27.1
 FROM ghcr.io/project-osrm/osrm-backend:${OSRM_VERSION} AS base
 
-# create non root user to run orsm
-ARG USERNAME=orsm
+# create non root user to run osrm
+ARG USERNAME=osrm
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 RUN groupadd --gid $USER_GID $USERNAME \
    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 
 
 # setup project directory
-RUN mkdir -p /app && chown ${USERNAME} /app
+RUN mkdir -p /app
 WORKDIR /app
 
 FROM base AS build
@@ -40,6 +40,8 @@ RUN osrm-extract -p osrm-backend-${OSRM_VERSION}/profiles/congestion_profile.lua
 
 # build runtime container free of build dependencies
 FROM build AS runtime
+ARG USERNAME=osrm
 COPY --from=build /app/map.osrm* /app/
+RUN chown -R osrm /app
 USER ${USERNAME}
 CMD [ "osrm-routed", "--algorithm=MLD", "/app/map.osrm" ]
