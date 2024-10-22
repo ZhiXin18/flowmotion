@@ -30,11 +30,11 @@ RUN curl -L https://github.com/Project-OSRM/osrm-backend/archive/refs/tags/v${OS
    && tar -xzf osrm-backend.tgz
 
 # download tagged map data
-COPY map_tagged.osm.pbf .
+COPY map_tagged.osm.pbf map.osm.pbf
 # copy custom profile for processing
 COPY congestion_profile.lua osrm-backend-${OSRM_VERSION}/profiles/
 # OSRM map data preprocessing for multi-level dijkstra (MLD) routing
-RUN osrm-extract -p osrm-backend-${OSRM_VERSION}/profiles/congestion_profile.lua map_tagged.osm.pbf \
+RUN osrm-extract -p osrm-backend-${OSRM_VERSION}/profiles/congestion_profile.lua map.osm.pbf \
    && osrm-partition map.osrm \
    && osrm-customize map.osrm
 
