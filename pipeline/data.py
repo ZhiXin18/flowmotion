@@ -16,14 +16,14 @@ from pydantic import BaseModel
 from timetools import datetime_sgt
 
 
-class Location(BaseModel):
+class Location(BaseModel, frozen=True):
     """Geolocation consisting of longitude and latitude."""
 
     longitude: float
     latitude: float
 
 
-class Camera(BaseModel):
+class Camera(BaseModel, frozen=True):
     """Traffic Camera capturing traffic images."""
 
     id: str
@@ -93,7 +93,7 @@ class TrafficImage:
         self.model_id = model_id
 
 
-class Rating(BaseModel):
+class Rating(BaseModel, frozen=True):
     """Traffic Congestion rating performed by a model"""
 
     rated_on: datetime
@@ -129,7 +129,7 @@ class Rating(BaseModel):
         )
 
 
-class Congestion(BaseModel):
+class Congestion(BaseModel, frozen=True):
     """Traffic Congestion data."""
 
     camera: Camera
