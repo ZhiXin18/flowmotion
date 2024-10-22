@@ -380,9 +380,6 @@ function apply_congestion(profile, way, result, data)
   -- apply it to the way's routing speed.
   -- 0.0 (no congestion) - 1.0 (fully congested)
   local congestion = tonumber(way:get_value_by_key("congestion_rating")) or 0.0
-  if congestion > 0.0  then
-    print("GOT congestion: ", congestion)
-  end
   -- adjust routing speed based on congestion level
   result.forward_speed = math.max(0.0, result.forward_speed * (1 - congestion))
   result.backward_speed = math.max(0.0, result.backward_speed * (1 - congestion))
