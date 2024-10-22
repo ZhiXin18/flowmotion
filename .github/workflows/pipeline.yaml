@@ -15,7 +15,7 @@ permissions:
 jobs:
   run-pipeline:
     env:
-      ORSM_IMAGE: ghcr.io/zhixin18/flowmotion/orsm-congestion
+      OSRM_IMAGE: ghcr.io/zhixin18/flowmotion/osrm-congestion
     runs-on: ubuntu-22.04
     steps:
       # setup dependencies & source code
@@ -87,7 +87,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           # list of Docker images to use as base name for tags
-          images: ${{ env.ORSM_IMAGE }}
+          images: ${{ env.OSRM_IMAGE }}
           # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule
@@ -106,14 +106,14 @@ jobs:
           context: osrm
           tags: ${{ steps.osrm-meta.outputs.tags }}
           labels: ${{ steps.osrm-meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.ORSM_IMAGE }}:buildcache
-          cache-to: type=registry,ref=${{ env.ORSM_IMAGE }}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.OSRM_IMAGE }}:buildcache
+          cache-to: type=registry,ref=${{ env.OSRM_IMAGE }}:buildcache,mode=max
           
-      # deploy custom ORSM container
-      - name: Deploy custom ORSM container to GCP Cloud run
+      # deploy custom OSRM container
+      - name: Deploy custom OSRM container to GCP Cloud run
         run: |
-          gcloud run deploy orsm-congestion \
-            --image asia-southeast1-docker.pkg.dev/flowmotion-4e268/ghcr/zhixin18/flowmotion/orsm-congestion@${{ steps.osrm-build.outputs.imageid }} \
+          gcloud run deploy osrm-congestion \
+            --image asia-southeast1-docker.pkg.dev/flowmotion-4e268/ghcr/zhixin18/flowmotion/osrm-congestion@${{ steps.osrm-build.outputs.imageid }} \
             --platform managed \
             --region=asia-southeast1 \
             --allow-unauthenticated \
