@@ -6,10 +6,9 @@
 
 name: Flowmotion Pipeline
 on:
-  # schedule:
-  #   # run every 10 minutes
-  #   - cron: "*/10 * * * *"
-  push: {}
+  schedule:
+    # run every 10 minutes
+    - cron: "*/10 * * * *"
 permissions:
   # needed to push docker images to GHCR
   packages: write
@@ -51,9 +50,9 @@ jobs:
         with:
           credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
 
-      # # run congestion model to rate congestion points
-      # - name: Run Congestion Model Pipeline
-      #   run: source venv/bin/activate && python pipeline/pipeline.py
+      # run congestion model to rate congestion points
+      - name: Run Congestion Model Pipeline
+        run: source venv/bin/activate && python pipeline/pipeline.py
 
       # download & customize OSM map data with congestion ratings
       - name: Cache OSM Map Data
@@ -109,7 +108,7 @@ jobs:
           labels: ${{ steps.osrm-meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.ORSM_IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ env.ORSM_IMAGE }}:buildcache,mode=max
-
+          
       # deploy custom ORSM container
       - name: Deploy custom ORSM container to GCP Cloud run
         run: |
