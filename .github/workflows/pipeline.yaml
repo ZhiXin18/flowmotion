@@ -112,13 +112,13 @@ jobs:
 
       # deploy custom ORSM container
       - name: Deploy custom ORSM container to GCP Cloud run
-        run: >
-          gcloud run deploy orsm-congestion
-            --image asia-southeast1-docker.pkg.dev/flowmotion-4e268/ghcr/zhixin18/flowmotion/orsm-congestion@${{ steps.osrm-build.outputs.imageid }}
-            --platform managed
-            --region=asia-southeast1
-            --allow-unauthenticated
-            --port 5000
-            --cpu 1
-            --memory 1Gi
+        run: |
+          gcloud run deploy orsm-congestion \
+            --image asia-southeast1-docker.pkg.dev/flowmotion-4e268/ghcr/zhixin18/flowmotion/orsm-congestion@${{ steps.osrm-build.outputs.imageid }} \
+            --platform managed \
+            --region=asia-southeast1 \
+            --allow-unauthenticated \
+            --port 5000 \
+            --cpu 1 \
+            --memory 1Gi \
             --cpu-boost
