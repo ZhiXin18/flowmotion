@@ -27,11 +27,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10.13"
-          # cache pip dependencies
-          cache: "pip"
+
+      - name: Cache Pip dependencies
+        id: cache-pip
+        uses: actions/cache@v3
+        with:
+          path: venv
+          key: pip-${{ hashFiles('pipeline/requirements.txt') }}
 
       - name: Install Pip dependencies
-        run: pip install -r pipeline/requirements.txt
+        run: |
+          set -ex -o pipefail
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r pipeline/requirements.txt
+        if: steps.cache-venv.outputs.cache-hit != 'true'
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -61,10 +71,10 @@ jobs:
           # download map data
           curl https://download.geofabrik.de/asia/malaysia-singapore-brunei-latest.osm.pbf -o map.osm.pbf 
           # limit map data to bounding box for singapore to speed up processing
-          osmium extract --bbox=103.590088,1.210466,104.037094,1.475438 map_bbox.osm.pbf -o bbox.osm.pbf
+          osmium extract --bbox=103.590088,1.210466,104.037094,1.475438 map.osm.pbf -o map_bbox.osm.pbf
 
       - name: Tag OSM Map Data with Congestion Ratings
-        run: python pipeline/tag.py map_bbox.osm.pbf osrm/map_tagged.osm.pbf
+        run: source venv/bin/activate && python pipeline/tag.py map_bbox.osm.pbf osrm/map_tagged.osm.pbf
 
       # publish OSRM container with custom congestion profile
       - name: Docker Login to GHCR
