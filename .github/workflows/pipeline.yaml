@@ -61,7 +61,7 @@ jobs:
         id: cache-map
         uses: actions/cache@v3
         with:
-          path: map.osm.pbf
+          path: map_bbox.osm.pbf
           key: map-${{ hashFiles('.github/workflows/pipeline.yaml') }}
 
       - name: Download & Extract OSM Map data
