@@ -50,10 +50,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: map.osm.pbf
-          key: map-${{ hashFiles(".github/workflows/pipeline.yaml") }}
+          key: map-${{ hashFiles('.github/workflows/pipeline.yaml') }}
 
       - name: Download & Extract OSM Map data
-        if: ${{ steps.cache-map.outputs.cache-hit != "true" }}
+        if: ${{ steps.cache-map.outputs.cache-hit != 'true' }}
         run: |
           set -ex -o pipefail
           # download map data
