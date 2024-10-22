@@ -15,7 +15,7 @@ permissions:
 jobs:
   run-pipeline:
     env:
-      ORSM_IMAGE: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}
+      ORSM_IMAGE: ghcr.io/zhixin18/flowmotion/orsm-congestion
     runs-on: ubuntu-22.04
     steps:
       # setup dependencies & source code
