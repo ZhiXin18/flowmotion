@@ -383,6 +383,8 @@ function apply_congestion(profile, way, result, data)
   -- adjust routing speed based on congestion level
   result.forward_speed = math.max(0.0, result.forward_speed * (1 - congestion))
   result.backward_speed = math.max(0.0, result.backward_speed * (1 - congestion))
+  -- piggyback on the unused pronunciation field to output congestion doc id in routing result
+  result.pronunciation = way:get_value_by_key("congestion_doc_id")
 end
 
 function process_way(profile, way, result, relations)
