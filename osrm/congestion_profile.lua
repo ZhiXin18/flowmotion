@@ -379,10 +379,10 @@ function apply_congestion(profile, way, result, data)
   -- custom way handler to apply congestion rating from tags (if any) and
   -- apply it to the way's routing speed.
   -- 0.0 (no congestion) - 1.0 (fully congested)
-  result.congestion = tonumber(way:get_value_by_key("congestion_rating")) or 0.0
+  local congestion = tonumber(way:get_value_by_key("congestion_rating")) or 0.0
   -- adjust routing speed based on congestion level
-  result.forward_speed = math.max(0.0, result.forward_speed * (1 - result.congestion))
-  result.backward_speed = math.max(0.0, result.backward_speed * (1 - result.congestion))
+  result.forward_speed = math.max(0.0, result.forward_speed * (1 - congestion))
+  result.backward_speed = math.max(0.0, result.backward_speed * (1 - congestion))
 end
 
 function process_way(profile, way, result, relations)
