@@ -1,0 +1,339 @@
+#
+# Flowmotion
+# Backend API
+# OpenAPI schema
+# 
+
+openapi: 3.1.0
+info:
+  title: Flowmotion API
+  description: API exposed by the Flowmotion Backend Service.
+  version: 0.1.0
+# TODO: add servers: eg. - url: https:/petstore3.swagger.io/api/v3/
+servers: []
+tags:
+  - name: Congestion
+    description: Congestion API returns traffic congestion levels at camera locations.
+  - name: Routing
+    description: Routing API finds the fastest route between two locations.
+paths:
+  /congestions:
+    get:
+      tags: [Congestion]
+      summary: Retrieve congestion data
+      description: Returns congestion data camera ID. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day.
+      parameters:
+        - name: camera_id
+          in: query
+          description: Filter by congestion points by specific camera id.
+          required: false
+          schema:
+            type: string
+        - name: agg
+          in: query
+          description: Aggregation method applied to congestion rating. By default no aggregation is performed. Has no effect if `groupby` is not specified.
+          required: false
+          schema:
+            type: string
+            enum: [min, max, avg]
+            default: avg
+        - name: groupby
+          in: query
+          description: Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method.
+          required: false
+          schema:
+            type: string
+            enum: [hour, day]
+        - name: begin
+          in: query
+          description: Start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: end
+          in: query
+          description: End of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: A list of congestion data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Congestion"
+        "400":
+          description: Invalid request parameters
+        "500":
+          description: Internal server error
+
+  /congested/{camera_id}/{groupby}:
+    get:
+      tags: [Congestion]
+      summary: Retrieve congestion duration for a specific camera
+      description: Returns the total time in seconds (as a float) when the camera was "congested" according to a threshold, grouped by hour or day.
+      parameters:
+        - name: camera_id
+          in: path
+          description: ID of the camera to retrieve congestion duration for
+          required: true
+          schema:
+            type: string
+        - name: groupby
+          in: path
+          description: Group congestion duration by hour or day
+          required: true
+          schema:
+            type: string
+            enum: [hour, day]
+        - name: threshold
+          in: query
+          description: Congestion rating level (between 0 and 1) that is considered "congested"
+          required: false
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 1
+            default: 0.6
+
+      responses:
+        "200":
+          description: Total congested time in seconds, grouped by the specified interval
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+                  format: float
+                  description: Total time in seconds the camera was congested during the specified interval
+              examples:
+                hour_example:
+                  summary: Example of congestion times returned.
+                  value: [3600.5, 1800.0, 2400.25]
+        "400":
+          description: Invalid request parameters
+        "500":
+          description: Internal server error
+
+  /route:
+    post:
+      tags: [Routing]
+      summary: Retrieve recommended routes between source and destination
+      description: Returns a list of recommended routes from source to destination, including geometry, duration, distance, and step-by-step instructions.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                src:
+                  type: object
+                  properties:
+                    kind:
+                      type: string
+                      enum: [address, location]
+                      description: Specifies if the source is an address or a location
+                    address:
+                      $ref: "#/components/schemas/Address"
+                      type: [object, "null"]
+                      description: Required if `kind` is `address`.
+                    location:
+                      $ref: "#/components/schemas/Location"
+                      type: [object, "null"]
+                      description: Required if `kind` is `location`
+                dest:
+                  type: object
+                  properties:
+                    kind:
+                      type: string
+                      enum: [address, location]
+                      description: Specifies if the destination is an address or a location
+                    address:
+                      $ref: "#/components/schemas/Address"
+                      type: [object, "null"]
+                      description: Required if `kind` is `address`.
+                    location:
+                      $ref: "#/components/schemas/Location"
+                      type: [object, "null"]
+                      description: Required if `kind` is `location`
+      responses:
+        "200":
+          description: List of recommended routes with details on geometry, duration, distance, and steps
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  routes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        geometry:
+                          type: string
+                          description: Polyline (precision 5) for drawing the entire route on a map
+                        duration:
+                          type: number
+                          format: float
+                          description: Estimated travel duration in seconds
+                        distance:
+                          type: number
+                          format: float
+                          description: Total travel distance in meters
+                        steps:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: Name of the road
+                              duration:
+                                type: number
+                                format: float
+                                description: Estimated duration of the step in seconds
+                              distance:
+                                type: number
+                                format: float
+                                description: Travel distance of the step in meters
+                              geometry:
+                                type: string
+                                description: Polyline (precision 5) for drawing this step on a map
+                              direction:
+                                type: string
+                                description: Direction to take for the step
+                                enum:
+                                  - uturn
+                                  - sharp right
+                                  - right
+                                  - slight right
+                                  - straight
+                                  - slight left
+                                  - left
+                                  - sharp left
+                              maneuver:
+                                type: string
+                                description: The type of maneuver to perform
+                                enum:
+                                  - turn
+                                  - new name
+                                  - depart
+                                  - arrive
+                                  - merge
+                                  - on ramp
+                                  - off ramp
+                                  - fork
+                                  - end of road
+                                  - use lane
+                                  - continue
+                                  - roundabout
+                                  - rotary
+                                  - roundabout turn
+                                  - notification
+                              instruction:
+                                type: string
+                                description: OSRM-style text instructions for this step
+                              congestion:
+                                $ref: "#/components/schemas/Congestion"
+                                type: [object, "null"]
+                                description: Information about congestion, if applicable
+        "300":
+          description: Multiple matches found for the provided address
+        "400":
+          description: Invalid request parameters
+        "500":
+          description: Internal server error
+
+components:
+  schemas:
+    Congestion:
+      title: Congestion
+      description: Traffic camera congestion rating.
+      type: object
+      properties:
+        camera:
+          title: Camera
+          description: Traffic camera capturing traffic images
+          type: object
+          properties:
+            id:
+              type: string
+            captured_on:
+              type: string
+              format: date-time
+            retrieved_on:
+              type: string
+              format: date-time
+            location:
+              type: object
+              properties:
+                longitude:
+                  type: number
+                latitude:
+                  type: number
+              required:
+                - longitude
+                - latitude
+          required:
+            - id
+            - captured_on
+            - retrieved_on
+            - location
+        rating:
+          title: Rating
+          description: Traffic congestion rating
+          type: object
+          properties:
+            rated_on:
+              type: string
+              format: date-time
+            model_id:
+              type: string
+            value:
+              description: 0-1 congestion rating with 1 being 'most congested'
+              type: number
+              minimum: 0
+              maximum: 1
+        updated_on:
+          type: string
+          format: date-time
+      required:
+        - camera
+        - rating
+        - updated_on
+
+    Address:
+      type: object
+      properties:
+        text:
+          type: string
+          description: Full address text
+        postcode:
+          type: string
+          description: Postal code of the source address
+      required:
+        - text
+        - postcode
+
+    Location:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: float
+          description: Latitude of the source location
+        longitude:
+          type: number
+          format: float
+          description: Longitude of the source location
+      required:
+        - latitude
+        - longitude
