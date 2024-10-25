@@ -16,7 +16,6 @@ import 'package:flowmotion_api/src/model/date.dart';
 
 import 'package:flowmotion_api/src/model/address.dart';
 import 'package:flowmotion_api/src/model/camera.dart';
-import 'package:flowmotion_api/src/model/camera_location.dart';
 import 'package:flowmotion_api/src/model/congestion.dart';
 import 'package:flowmotion_api/src/model/location.dart';
 import 'package:flowmotion_api/src/model/rating.dart';
@@ -32,7 +31,6 @@ part 'serializers.g.dart';
 @SerializersFor([
   Address,
   Camera,
-  CameraLocation,
   Congestion,
   Location,
   Rating,

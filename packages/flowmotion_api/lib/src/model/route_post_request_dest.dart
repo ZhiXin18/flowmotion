@@ -15,8 +15,8 @@ part 'route_post_request_dest.g.dart';
 ///
 /// Properties:
 /// * [kind] - Specifies if the destination is an address or a location
-/// * [address] - Required if `kind` is `address`.
-/// * [location] - Required if `kind` is `location`
+/// * [address]
+/// * [location]
 @BuiltValue()
 abstract class RoutePostRequestDest
     implements Built<RoutePostRequestDest, RoutePostRequestDestBuilder> {
@@ -25,11 +25,9 @@ abstract class RoutePostRequestDest
   RoutePostRequestDestKindEnum? get kind;
   // enum kindEnum {  address,  location,  };
 
-  /// Required if `kind` is `address`.
   @BuiltValueField(wireName: r'address')
   Address? get address;
 
-  /// Required if `kind` is `location`
   @BuiltValueField(wireName: r'location')
   Location? get location;
 
@@ -73,14 +71,14 @@ class _$RoutePostRequestDestSerializer
       yield r'address';
       yield serializers.serialize(
         object.address,
-        specifiedType: const FullType(Address),
+        specifiedType: const FullType.nullable(Address),
       );
     }
     if (object.location != null) {
       yield r'location';
       yield serializers.serialize(
         object.location,
-        specifiedType: const FullType(Location),
+        specifiedType: const FullType.nullable(Location),
       );
     }
   }
@@ -118,15 +116,17 @@ class _$RoutePostRequestDestSerializer
         case r'address':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(Address),
-          ) as Address;
+            specifiedType: const FullType.nullable(Address),
+          ) as Address?;
+          if (valueDes == null) continue;
           result.address.replace(valueDes);
           break;
         case r'location':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(Location),
-          ) as Location;
+            specifiedType: const FullType.nullable(Location),
+          ) as Location?;
+          if (valueDes == null) continue;
           result.location.replace(valueDes);
           break;
         default:

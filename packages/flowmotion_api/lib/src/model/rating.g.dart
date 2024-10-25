@@ -8,16 +8,22 @@ part of 'rating.dart';
 
 class _$Rating extends Rating {
   @override
-  final DateTime? ratedOn;
+  final DateTime ratedOn;
   @override
-  final String? modelId;
+  final String modelId;
   @override
-  final num? value;
+  final num value;
 
   factory _$Rating([void Function(RatingBuilder)? updates]) =>
       (new RatingBuilder()..update(updates))._build();
 
-  _$Rating._({this.ratedOn, this.modelId, this.value}) : super._();
+  _$Rating._(
+      {required this.ratedOn, required this.modelId, required this.value})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(ratedOn, r'Rating', 'ratedOn');
+    BuiltValueNullFieldError.checkNotNull(modelId, r'Rating', 'modelId');
+    BuiltValueNullFieldError.checkNotNull(value, r'Rating', 'value');
+  }
 
   @override
   Rating rebuild(void Function(RatingBuilder) updates) =>
@@ -100,8 +106,14 @@ class RatingBuilder implements Builder<Rating, RatingBuilder> {
   Rating build() => _build();
 
   _$Rating _build() {
-    final _$result =
-        _$v ?? new _$Rating._(ratedOn: ratedOn, modelId: modelId, value: value);
+    final _$result = _$v ??
+        new _$Rating._(
+            ratedOn: BuiltValueNullFieldError.checkNotNull(
+                ratedOn, r'Rating', 'ratedOn'),
+            modelId: BuiltValueNullFieldError.checkNotNull(
+                modelId, r'Rating', 'modelId'),
+            value: BuiltValueNullFieldError.checkNotNull(
+                value, r'Rating', 'value'));
     replace(_$result);
     return _$result;
   }

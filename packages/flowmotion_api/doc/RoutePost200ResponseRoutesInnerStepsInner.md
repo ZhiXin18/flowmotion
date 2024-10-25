@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 **direction** | **String** | Direction to take for the step | [optional] 
 **maneuver** | **String** | The type of maneuver to perform | [optional] 
 **instruction** | **String** | OSRM-style text instructions for this step | [optional] 
-**congestion** | [**Congestion**](Congestion.md) | Information about congestion, if applicable | [optional] 
+**congestion** | [**Congestion**](Congestion.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

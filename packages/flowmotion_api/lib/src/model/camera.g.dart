@@ -14,7 +14,7 @@ class _$Camera extends Camera {
   @override
   final DateTime retrievedOn;
   @override
-  final CameraLocation location;
+  final Location location;
 
   factory _$Camera([void Function(CameraBuilder)? updates]) =>
       (new CameraBuilder()..update(updates))._build();
@@ -86,10 +86,9 @@ class CameraBuilder implements Builder<Camera, CameraBuilder> {
   DateTime? get retrievedOn => _$this._retrievedOn;
   set retrievedOn(DateTime? retrievedOn) => _$this._retrievedOn = retrievedOn;
 
-  CameraLocationBuilder? _location;
-  CameraLocationBuilder get location =>
-      _$this._location ??= new CameraLocationBuilder();
-  set location(CameraLocationBuilder? location) => _$this._location = location;
+  LocationBuilder? _location;
+  LocationBuilder get location => _$this._location ??= new LocationBuilder();
+  set location(LocationBuilder? location) => _$this._location = location;
 
   CameraBuilder() {
     Camera._defaults(this);

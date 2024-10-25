@@ -75,7 +75,6 @@ Class | Method | HTTP request | Description
 
  - [Address](doc/Address.md)
  - [Camera](doc/Camera.md)
- - [CameraLocation](doc/CameraLocation.md)
  - [Congestion](doc/Congestion.md)
  - [Location](doc/Location.md)
  - [Rating](doc/Rating.md)

@@ -1,10 +1,8 @@
 .gitignore
-.openapi-generator-ignore
 README.md
 analysis_options.yaml
 doc/Address.md
 doc/Camera.md
-doc/CameraLocation.md
 doc/Congestion.md
 doc/CongestionApi.md
 doc/Location.md
@@ -29,7 +27,6 @@ lib/src/auth/oauth.dart
 lib/src/date_serializer.dart
 lib/src/model/address.dart
 lib/src/model/camera.dart
-lib/src/model/camera_location.dart
 lib/src/model/congestion.dart
 lib/src/model/date.dart
 lib/src/model/location.dart
@@ -42,17 +39,3 @@ lib/src/model/route_post_request_dest.dart
 lib/src/model/route_post_request_src.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/address_test.dart
-test/camera_location_test.dart
-test/camera_test.dart
-test/congestion_api_test.dart
-test/congestion_test.dart
-test/location_test.dart
-test/rating_test.dart
-test/route_post200_response_routes_inner_steps_inner_test.dart
-test/route_post200_response_routes_inner_test.dart
-test/route_post200_response_test.dart
-test/route_post_request_dest_test.dart
-test/route_post_request_src_test.dart
-test/route_post_request_test.dart
-test/routing_api_test.dart

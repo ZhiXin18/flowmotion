@@ -65,7 +65,7 @@ No authorization required
 
 Retrieve congestion data
 
-Returns congestion data camera ID. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day.
+Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
 
 ### Example
 ```dart
@@ -73,7 +73,7 @@ import 'package:flowmotion_api/api.dart';
 
 final api = FlowmotionApi().getCongestionApi();
 final String cameraId = cameraId_example; // String | Filter by congestion points by specific camera id.
-final String agg = agg_example; // String | Aggregation method applied to congestion rating. By default no aggregation is performed. Has no effect if `groupby` is not specified.
+final String agg = agg_example; // String | Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified.
 final String groupby = groupby_example; // String | Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method.
 final DateTime begin = 2013-10-20T19:20:30+01:00; // DateTime | Start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
 final DateTime end = 2013-10-20T19:20:30+01:00; // DateTime | End of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
@@ -91,7 +91,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **cameraId** | **String**| Filter by congestion points by specific camera id. | [optional] 
- **agg** | **String**| Aggregation method applied to congestion rating. By default no aggregation is performed. Has no effect if `groupby` is not specified. | [optional] [default to 'avg']
+ **agg** | **String**| Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified. | [optional] [default to 'avg']
  **groupby** | **String**| Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method. | [optional] 
  **begin** | **DateTime**| Start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp. | [optional] 
  **end** | **DateTime**| End of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp. | [optional] 
