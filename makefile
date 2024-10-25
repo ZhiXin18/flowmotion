@@ -3,7 +3,8 @@
 # Project Makefile
 #
 
-.PHONY: schema
+.PHONY: all
+.DEFAULT: all
 
 # programs
 DART := dart
@@ -15,7 +16,7 @@ API_CLIENT := packages/flowmotion_api
 API_BACKEND := backend/api.d.ts
 
 
-schema: $(API_CLIENT) $(API_BACKEND)
+all: $(API_CLIENT) $(API_BACKEND)
 
 $(API_CLIENT): $(OPENAPI)
 	$(DART) run build_runner build --delete-conflicting-outputs
