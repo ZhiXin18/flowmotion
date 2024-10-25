@@ -65,7 +65,7 @@ No authorization required
 
 Retrieve congestion data
 
-Returns congestion data camera ID. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day.
+Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
 
 ### Example
 ```dart

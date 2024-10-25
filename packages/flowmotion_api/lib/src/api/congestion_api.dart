@@ -114,7 +114,7 @@ class CongestionApi {
   }
 
   /// Retrieve congestion data
-  /// Returns congestion data camera ID. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day.
+  /// Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. By default, if no time range is specified in &#x60;begin&#x60;, &#x60;end&#x60; return only congestions ingested from the latest &#x60;updated_on&#x60; timestamp.
   ///
   /// Parameters:
   /// * [cameraId] - Filter by congestion points by specific camera id.

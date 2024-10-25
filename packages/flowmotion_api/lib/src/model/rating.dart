@@ -17,14 +17,14 @@ part 'rating.g.dart';
 @BuiltValue()
 abstract class Rating implements Built<Rating, RatingBuilder> {
   @BuiltValueField(wireName: r'rated_on')
-  DateTime? get ratedOn;
+  DateTime get ratedOn;
 
   @BuiltValueField(wireName: r'model_id')
-  String? get modelId;
+  String get modelId;
 
   /// 0-1 congestion rating with 1 being 'most congested'
   @BuiltValueField(wireName: r'value')
-  num? get value;
+  num get value;
 
   Rating._();
 
@@ -49,27 +49,21 @@ class _$RatingSerializer implements PrimitiveSerializer<Rating> {
     Rating object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.ratedOn != null) {
-      yield r'rated_on';
-      yield serializers.serialize(
-        object.ratedOn,
-        specifiedType: const FullType(DateTime),
-      );
-    }
-    if (object.modelId != null) {
-      yield r'model_id';
-      yield serializers.serialize(
-        object.modelId,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.value != null) {
-      yield r'value';
-      yield serializers.serialize(
-        object.value,
-        specifiedType: const FullType(num),
-      );
-    }
+    yield r'rated_on';
+    yield serializers.serialize(
+      object.ratedOn,
+      specifiedType: const FullType(DateTime),
+    );
+    yield r'model_id';
+    yield serializers.serialize(
+      object.modelId,
+      specifiedType: const FullType(String),
+    );
+    yield r'value';
+    yield serializers.serialize(
+      object.value,
+      specifiedType: const FullType(num),
+    );
   }
 
   @override
