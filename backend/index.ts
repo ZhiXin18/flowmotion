@@ -5,14 +5,10 @@
  */
 import express, { Express } from "express";
 import { initialize as initOpenAPI } from "express-openapi";
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import CongestionSvc from "@/services/congestion";
+import { initDB } from "@/db";
 
-// setup firebase / firestore db access
-const firebase = initializeApp({
-  projectId: "flowmotion-4e268",
-});
-const firestore = getFirestore(firebase);
+const db = initDB();
 
 // setup express server
 const app: Express = express();
@@ -22,9 +18,8 @@ initOpenAPI({
   apiDoc: "../schema/flowmotion_api.yaml",
   paths: "routes",
   // dependency injection concrete implementations
-  // eg. request handlers with 'database' parameter will be injected with a firestore instance.
   dependencies: {
-    database: firestore,
+    congestion: new CongestionSvc(db),
   },
 });
 app.listen(port, () => {
