@@ -9,7 +9,6 @@ part of 'serializers.dart';
 Serializers _$serializers = (new Serializers().toBuilder()
       ..add(Address.serializer)
       ..add(Camera.serializer)
-      ..add(CameraLocation.serializer)
       ..add(Congestion.serializer)
       ..add(Location.serializer)
       ..add(Rating.serializer)
@@ -22,7 +21,6 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(RoutePostRequestDest.serializer)
       ..add(RoutePostRequestDestKindEnum.serializer)
       ..add(RoutePostRequestSrc.serializer)
-      ..add(RoutePostRequestSrcKindEnum.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList,
               const [const FullType(RoutePost200ResponseRoutesInner)]),

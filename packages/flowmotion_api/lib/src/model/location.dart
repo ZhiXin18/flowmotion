@@ -11,15 +11,15 @@ part 'location.g.dart';
 /// Location
 ///
 /// Properties:
-/// * [latitude] - Latitude of the source location
-/// * [longitude] - Longitude of the source location
+/// * [latitude] - Latitude of the location
+/// * [longitude] - Longitude of the location
 @BuiltValue()
 abstract class Location implements Built<Location, LocationBuilder> {
-  /// Latitude of the source location
+  /// Latitude of the location
   @BuiltValueField(wireName: r'latitude')
   double get latitude;
 
-  /// Longitude of the source location
+  /// Longitude of the location
   @BuiltValueField(wireName: r'longitude')
   double get longitude;
 

@@ -2,7 +2,7 @@
 # Flowmotion
 # Backend API
 # OpenAPI schema
-# 
+#
 
 openapi: 3.1.0
 info:
@@ -26,13 +26,11 @@ paths:
         - name: camera_id
           in: query
           description: Filter by congestion points by specific camera id.
-          required: false
           schema:
             type: string
         - name: agg
           in: query
-          description: Aggregation method applied to congestion rating. By default no aggregation is performed. Has no effect if `groupby` is not specified.
-          required: false
+          description: Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified.
           schema:
             type: string
             enum: [min, max, avg]
@@ -40,21 +38,18 @@ paths:
         - name: groupby
           in: query
           description: Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method.
-          required: false
           schema:
             type: string
             enum: [hour, day]
         - name: begin
           in: query
           description: Start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
-          required: false
           schema:
             type: string
             format: date-time
         - name: end
           in: query
           description: End of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
-          required: false
           schema:
             type: string
             format: date-time
@@ -94,14 +89,12 @@ paths:
         - name: threshold
           in: query
           description: Congestion rating level (between 0 and 1) that is considered "congested"
-          required: false
           schema:
             type: number
             format: float
             minimum: 0
             maximum: 1
             default: 0.6
-
       responses:
         "200":
           description: Total congested time in seconds, grouped by the specified interval
@@ -141,14 +134,13 @@ paths:
                       type: string
                       enum: [address, location]
                       description: Specifies if the source is an address or a location
-                    address:
-                      $ref: "#/components/schemas/Address"
-                      type: [object, "null"]
-                      description: Required if `kind` is `address`.
+                      oneOf:
+                        - $ref: "#/components/schemas/Address"
+                        - type: "null"
                     location:
-                      $ref: "#/components/schemas/Location"
-                      type: [object, "null"]
-                      description: Required if `kind` is `location`
+                      oneOf:
+                        - $ref: "#/components/schemas/Location"
+                        - type: "null"
                 dest:
                   type: object
                   properties:
@@ -157,13 +149,13 @@ paths:
                       enum: [address, location]
                       description: Specifies if the destination is an address or a location
                     address:
-                      $ref: "#/components/schemas/Address"
-                      type: [object, "null"]
-                      description: Required if `kind` is `address`.
+                      oneOf:
+                        - $ref: "#/components/schemas/Address"
+                        - type: "null"
                     location:
-                      $ref: "#/components/schemas/Location"
-                      type: [object, "null"]
-                      description: Required if `kind` is `location`
+                      oneOf:
+                        - $ref: "#/components/schemas/Location"
+                        - type: "null"
       responses:
         "200":
           description: List of recommended routes with details on geometry, duration, distance, and steps
@@ -242,9 +234,9 @@ paths:
                                 type: string
                                 description: OSRM-style text instructions for this step
                               congestion:
-                                $ref: "#/components/schemas/Congestion"
-                                type: [object, "null"]
-                                description: Information about congestion, if applicable
+                                oneOf:
+                                  - $ref: "#/components/schemas/Congestion"
+                                  - type: "null"
         "300":
           description: Multiple matches found for the provided address
         "400":
@@ -273,15 +265,7 @@ components:
               type: string
               format: date-time
             location:
-              type: object
-              properties:
-                longitude:
-                  type: number
-                latitude:
-                  type: number
-              required:
-                - longitude
-                - latitude
+              $ref: "#/components/schemas/Location"
           required:
             - id
             - captured_on
@@ -329,11 +313,11 @@ components:
         latitude:
           type: number
           format: float
-          description: Latitude of the source location
+          description: Latitude of the location
         longitude:
           type: number
           format: float
-          description: Longitude of the source location
+          description: Longitude of the location
       required:
         - latitude
         - longitude

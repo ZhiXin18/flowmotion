@@ -3,7 +3,7 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:flowmotion_api/src/model/camera_location.dart';
+import 'package:flowmotion_api/src/model/location.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -28,7 +28,7 @@ abstract class Camera implements Built<Camera, CameraBuilder> {
   DateTime get retrievedOn;
 
   @BuiltValueField(wireName: r'location')
-  CameraLocation get location;
+  Location get location;
 
   Camera._();
 
@@ -71,7 +71,7 @@ class _$CameraSerializer implements PrimitiveSerializer<Camera> {
     yield r'location';
     yield serializers.serialize(
       object.location,
-      specifiedType: const FullType(CameraLocation),
+      specifiedType: const FullType(Location),
     );
   }
 
@@ -122,8 +122,8 @@ class _$CameraSerializer implements PrimitiveSerializer<Camera> {
         case r'location':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(CameraLocation),
-          ) as CameraLocation;
+            specifiedType: const FullType(Location),
+          ) as Location;
           result.location.replace(valueDes);
           break;
         default:

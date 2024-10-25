@@ -118,7 +118,7 @@ class CongestionApi {
   ///
   /// Parameters:
   /// * [cameraId] - Filter by congestion points by specific camera id.
-  /// * [agg] - Aggregation method applied to congestion rating. By default no aggregation is performed. Has no effect if `groupby` is not specified.
+  /// * [agg] - Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified.
   /// * [groupby] - Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method.
   /// * [begin] - Start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
   /// * [end] - End of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.

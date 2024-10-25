@@ -20,7 +20,7 @@ part 'route_post200_response_routes_inner_steps_inner.g.dart';
 /// * [direction] - Direction to take for the step
 /// * [maneuver] - The type of maneuver to perform
 /// * [instruction] - OSRM-style text instructions for this step
-/// * [congestion] - Information about congestion, if applicable
+/// * [congestion]
 @BuiltValue()
 abstract class RoutePost200ResponseRoutesInnerStepsInner
     implements
@@ -56,7 +56,6 @@ abstract class RoutePost200ResponseRoutesInnerStepsInner
   @BuiltValueField(wireName: r'instruction')
   String? get instruction;
 
-  /// Information about congestion, if applicable
   @BuiltValueField(wireName: r'congestion')
   Congestion? get congestion;
 
@@ -146,7 +145,7 @@ class _$RoutePost200ResponseRoutesInnerStepsInnerSerializer
       yield r'congestion';
       yield serializers.serialize(
         object.congestion,
-        specifiedType: const FullType(Congestion),
+        specifiedType: const FullType.nullable(Congestion),
       );
     }
   }
@@ -228,8 +227,9 @@ class _$RoutePost200ResponseRoutesInnerStepsInnerSerializer
         case r'congestion':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(Congestion),
-          ) as Congestion;
+            specifiedType: const FullType.nullable(Congestion),
+          ) as Congestion?;
+          if (valueDes == null) continue;
           result.congestion.replace(valueDes);
           break;
         default:
