@@ -127,6 +127,7 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
       FirebaseCalls firebaseCalls = FirebaseCalls();
       await firebaseCalls.updateUser(widget.username, addressesWithLabels); // Use the new list with labels
       if (mounted) {
+        //await sendEmailVerification();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -250,6 +251,13 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
     });
   }*/
 
+  /*Future<void> sendEmailVerification() async {
+    try{
+      await _auth.currentUser?.sendEmailVerification();
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+  }*/
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

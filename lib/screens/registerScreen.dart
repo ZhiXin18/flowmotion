@@ -1,3 +1,4 @@
+import 'package:email_otp/email_otp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../screens/savedPlaceScreen.dart';
@@ -61,6 +62,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _register() async {
+    EmailOTP.config(
+      appName: 'Flowmotion',
+      otpType: OTPType.numeric, //OTP will consist only of numbers
+      expiry : 90000, //OTP expiry time in milliseconds
+      emailTheme: EmailTheme.v6, //Defines the theme for the OTP email.
+      otpLength: 6, //length of the OTP
+    );
+
     if (!_validateInputs()) {
       return;
     }
@@ -89,13 +98,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _username = _usernameController.text;
         });
 
-        // Navigate to SavedPlaceScreen after successful registration and email initialization
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SavedPlaceScreen(userId: user.uid, username: _username, userEmail: _userEmail),
-          ),
-        );
+        await EmailOTP.sendOTP(email: _emailController.text); //send otp to input email
+        _showVerificationModal(user.uid, _username, _userEmail); //show the modal to enter otp
       } else {
         _showErrorDialog('Failed to register. Please try again.');
       }
@@ -108,6 +112,122 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _showErrorDialog('An error occurred.');
     }
   }
+
+  void _showVerificationModal(String userId, String username, String userEmail) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,  // User cannot dismiss it by tapping outside
+      enableDrag: false,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Enter the 6-digit OTP sent to your email',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(6, (index) {
+                  return _buildOTPField(index);
+                }),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                key: WidgetKeys.confirmationButton,
+                onPressed: () => _verifyOTP(),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text(
+                  'Verify OTP',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildOTPField(int index) {
+    return SizedBox(
+      width: 40,
+      child: TextField(
+        key: Key('otp_$index'),
+        controller: _otpControllers[index],
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        maxLength: 1,
+        decoration: InputDecoration(
+          counterText: "",  // Hide character counter
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.black),
+          ),
+        ),
+        onChanged: (value) {
+          if (value.length == 1 && index < 5) {
+            FocusScope.of(context).nextFocus(); // Move to the next field
+          } else if (value.isEmpty && index > 0) {
+            FocusScope.of(context).previousFocus(); // Move to the previous field
+          }
+        },
+      ),
+    );
+  }
+  // OTP Controllers
+  final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+
+  Future<void> _verifyOTP() async {
+    final otpCode = _otpControllers.map((controller) => controller.text).join();
+
+    if (otpCode.length == 6) {
+      print('OTP entered: $otpCode');  // Log the OTP entered
+
+      await _auth.currentUser?.reload();
+
+      // Call the EmailOTP.verifyOTP function with the entered OTP
+      var isVerified = await EmailOTP.verifyOTP(otp: otpCode);
+
+      print('OTP verification result: $isVerified');  // Log the verification result
+
+      if (isVerified) {
+        Navigator.pop(context); // Close modal on success
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SavedPlaceScreen(
+              userId: _auth.currentUser!.uid,
+              username: _username,
+              userEmail: _userEmail,
+            ),
+          ),
+        );
+      } else {
+        _showErrorDialog('OTP verification failed. Please try again.');
+        Navigator.pop(context); // Close modal on success
+        _auth.currentUser?.delete();
+      }
+    } else {
+      _showErrorDialog('Please enter the complete 6-digit OTP.');
+    }
+  }
+
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -144,7 +264,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+            _auth.currentUser?.delete();
+          }
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,

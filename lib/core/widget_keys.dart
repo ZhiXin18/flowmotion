@@ -22,6 +22,7 @@ class WidgetKeys {
   static const Key registerButton = Key('registerButton');
   static const Key registerErrorDialog = Key('registerErrorDialog');
   static const Key registerErrorOK = Key('registerErrorOK');
+  static const Key confirmationButton = Key('confirmationButton');
 
   //saved place screen widgets
   static const Key savedPlaceScreen = Key('savedPlaceScreen');

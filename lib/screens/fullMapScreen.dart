@@ -9,6 +9,7 @@ import '../utilities/location_service.dart';
 import '../widgets/navigationBar.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+  import 'package:flowmotion_api/flowmotion_api.dart';
 
 class FullMapScreen extends StatefulWidget {
   const FullMapScreen(Position? currentPosition, {super.key});
