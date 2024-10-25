@@ -9,10 +9,10 @@ import { initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
 // setup firebase / firestore db access
-initializeApp({
+const firebase = initializeApp({
   projectId: "flowmotion-4e268",
 });
-const db = getFirestore();
+const firestore = getFirestore(firebase);
 
 // setup express server
 const app: Express = express();
@@ -21,6 +21,11 @@ initOpenAPI({
   app,
   apiDoc: "../schema/flowmotion_api.yaml",
   paths: "routes",
+  // dependency injection concrete implementations
+  // eg. request handlers with 'database' parameter will be injected with a firestore instance.
+  dependencies: {
+    database: firestore,
+  },
 });
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
