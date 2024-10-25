@@ -11,18 +11,18 @@ import 'forgetPasswordScreen.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 Future<void> main() async {
-  //make sure native code is set up correctly, need initialise native app before initialising firebase
-  WidgetsFlutterBinding.ensureInitialized(); //auto called inside runApp, but need do before runApp so need do this codes
-  await Firebase.initializeApp( //start firebase
+  // Make sure native code is set up correctly, need to initialize native app before initializing Firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(LoginScreen());
 }
 
 class LoginScreen extends StatefulWidget {
-  final FirebaseAuth? auth; // Add this line to accept an optional FirebaseAuth instance
+  final FirebaseAuth? auth;
 
-  LoginScreen({Key? key, this.auth}) : super(key: key); // Modify the constructor
+  LoginScreen({Key? key, this.auth}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -35,7 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
   int _success = 1;
   String _userEmail = "";
 
-  // Validation method
   bool _validateInputs() {
     if (_emailController.text.isEmpty) {
       _showErrorDialog('Please enter your email.');
@@ -48,7 +47,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return true;
   }
 
-  // Show error dialog if the inputs are missing
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -70,15 +68,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _signIn() async {
-    if (!_validateInputs()) {
-      return; // Stop if inputs are not valid
-    }
+    if (!_validateInputs()) return;
 
     try {
       final User? user = (await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
-      )).user;
+      ))
+          .user;
 
       if (user != null) {
         setState(() {
@@ -89,25 +86,13 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         setState(() {
           _success = 3;
-
         });
       }
     } on FirebaseAuthException catch (e) {
-      // Catch Firebase specific authentication errors
-      if (e.code == 'invalid-credential') {
-        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
-      } else if (e.code == 'user-not-found') {
-        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
-      } else if (e.code == 'wrong-password') {
-        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
-      } else {
-        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
-      }
+      print(e);
+      _showErrorDialog('The supplied credentials are incorrect. Please try again.');
     } catch (e) {
-      // Handle any other types of errors
-      setState(() {
-        _showErrorDialog('The supplied credentials are incorrect. Please try again.');
-      });
+      _showErrorDialog('The supplied credentials are incorrect. Please try again.');
     }
   }
 
@@ -127,9 +112,9 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Text(
                 "LOGIN",
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF2661FA),
-                    fontSize: 36
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2661FA),
+                  fontSize: 36,
                 ),
                 textAlign: TextAlign.left,
               ),
@@ -137,30 +122,44 @@ class _LoginScreenState extends State<LoginScreen> {
 
             SizedBox(height: size.height * 0.03),
 
+            // Email TextField with opacity
             Container(
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 40),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8), // Set opacity here
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: TextField(
                 key: WidgetKeys.loginEmailController,
                 controller: _emailController,
                 decoration: InputDecoration(
-                    labelText: "Email"
+                  labelText: "Email",
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                 ),
               ),
             ),
 
             SizedBox(height: size.height * 0.03),
 
+            // Password TextField with opacity
             Container(
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 40),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8), // Set opacity here
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: TextField(
                 key: WidgetKeys.loginPasswordController,
                 controller: _passwordController,
+                obscureText: true,
                 decoration: InputDecoration(
-                    labelText: "Password"
+                  labelText: "Password",
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                 ),
-                obscureText: true, //hide pwd with dots
               ),
             ),
 
@@ -176,8 +175,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Text(
                   "Forgot your password?",
                   style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0XFF2661FA)
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -190,9 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
               margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: ElevatedButton(
                 key: WidgetKeys.loginButton,
-                onPressed: () {
-                  _signIn();
-                },
+                onPressed: _signIn,
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
                   padding: EdgeInsets.all(0),
@@ -206,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     gradient: LinearGradient(
                       colors: [
                         Color.fromARGB(255, 255, 136, 34),
-                        Color.fromARGB(255, 255, 177, 41)
+                        Color.fromARGB(255, 255, 177, 41),
                       ],
                     ),
                   ),
@@ -222,25 +220,24 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
 
-
             Container(
               alignment: Alignment.centerRight,
               margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: GestureDetector(
                 key: WidgetKeys.goRegisterButton,
-                onTap: () => {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()))
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()));
                 },
                 child: Text(
                   "Don't Have an Account? Sign up",
                   style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2661FA)
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2661FA),
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

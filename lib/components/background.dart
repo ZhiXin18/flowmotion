@@ -18,7 +18,7 @@ class Background extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          Positioned(
+          /*Positioned(
             top: 0,
             right: 0,
             child: Image.asset(
@@ -33,16 +33,15 @@ class Background extends StatelessWidget {
               "images/top2.png",
               width: size.width
             ),
-          ),
-          Positioned(
-            top: 50,
-            right: 30,
+          ),*/
+          // Set the full background image using Positioned.fill
+          Positioned.fill(
             child: Image.asset(
-              "images/main.png",
-              width: size.width * 0.35
+              "images/main1.jpg",
+              fit: BoxFit.cover, // Ensures the image covers the entire background
             ),
           ),
-          Positioned(
+          /*Positioned(
             bottom: 0,
             right: 0,
             child: Image.asset(
@@ -57,7 +56,7 @@ class Background extends StatelessWidget {
               "images/bottom2.png",
               width: size.width
             ),
-          ),
+          ),*/
           child
         ],
       ),

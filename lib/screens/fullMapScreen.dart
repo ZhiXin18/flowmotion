@@ -11,7 +11,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FullMapScreen extends StatefulWidget {
-  const FullMapScreen({super.key});
+  const FullMapScreen(Position? currentPosition, {super.key});
 
   @override
   State<FullMapScreen> createState() => _FullMapScreenState();
@@ -22,7 +22,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
   late LocationService locationService;
   Position? _currentPosition;
   LatLng _initialCenter =
-  LatLng(1.2878, 103.8666); // Default location (Singapore)
+  LatLng(1.3402, 103.6755); // Default location (Singapore)
   LatLng? _currentLocationMarker; // To hold the user location for the marker
 
   // Add MapController
@@ -43,7 +43,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
     _fetchCongestionRatings(); // Fetch immediately on initialization
     locationService = LocationService(context);
     _mapController = MapController();
-    _getCurrentLocation();
+    //_getCurrentLocation();
 
     // Set up a timer to fetch data every 5 minutes
     _fetchTimer = Timer.periodic(Duration(minutes: 5), (Timer timer) {
@@ -126,7 +126,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
         initialCenter: _currentPosition != null
             ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
             : _initialCenter, // Default to initial center if location is not available yet
-        initialZoom: 14, // Initial zoom level
+        initialZoom: 10, // Initial zoom level
         interactionOptions:
         const InteractionOptions(flags: ~InteractiveFlag.doubleTapZoom),
       ),

@@ -48,44 +48,39 @@ class FirebaseCalls {
 
 
   Future<List<CongestionRating>> getCongestionRatings() async {
-    QuerySnapshot querySnap = await FirebaseFirestore.instance.collection(
-        'congestions').get();
+    QuerySnapshot querySnap = await congestionCollection
+        .orderBy('camera.captured_on', descending: true)
+        .limit(90)
+        .get();
 
     List<CongestionRating> congestionRatings = [];
 
     if (querySnap.docs.isNotEmpty) {
       for (QueryDocumentSnapshot doc in querySnap.docs) {
-        final data = doc.data() as Map<String,
-            dynamic>?; // Cast the data to a Map
+        final data = doc.data() as Map<String, dynamic>;
+        //print(data);
 
-        String docId = doc.id;
-        // Print the data for debugging
-        //print('Document ${doc.id} data: $data');
-
-        if (data != null &&
-            data.containsKey('camera') &&
+        if (data.containsKey('camera') &&
             data['camera'] is Map &&
             data['camera'].containsKey('location') &&
             data['camera']['location'] is Map &&
             data['camera']['location'].containsKey('latitude') &&
-            data['camera']['location'].containsKey(
-                'longitude') && 
+            data['camera']['location'].containsKey('longitude') &&
             data.containsKey('rating') &&
             data['rating'] is Map &&
             data['rating'].containsKey('value')) {
+
           double latitude = data['camera']['location']['latitude'];
           double longitude = data['camera']['location']['longitude'];
           double ratingValue = data['rating']['value'];
           String url = data['camera']['image_url'];
 
-          //print("Marker latitude: $latitude, longitude: $longitude");
-
           CongestionRating congestionRating = CongestionRating(
-            docId: docId,
+            docId: doc.id,
             latitude: latitude,
             longitude: longitude,
             value: ratingValue,
-            capturedOn: data['camera']['captured_on'], // Use 'data' instead of 'doc'
+            capturedOn: data['camera']['captured_on'],
             imageUrl: url,
           );
 

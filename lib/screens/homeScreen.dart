@@ -119,6 +119,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    // Cancel the timer when the widget is disposed
+    _mainMapController.dispose();
+    _homeMapController.dispose();
+    _workMapController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: WidgetKeys.homeScreen,
@@ -151,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FullMapScreen(),
+                    builder: (context) => FullMapScreen(_currentPosition),
                   ),
                 );
               },
