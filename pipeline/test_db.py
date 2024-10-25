@@ -40,19 +40,22 @@ def collection(db: DatabaseClient):
         document.delete()
 
 
-@pytest.fixture
-def model() -> Model:
-    return Model(field="test")
-
-
 @pytest.mark.integration
-def test_db_insert_get_delete_query(db: DatabaseClient, collection: str, model: Model):
+def test_db_insert_get_max_delete_query(db: DatabaseClient, collection: str):
     # test: insert model into collection
-    key = db.insert(table=collection, data=model)
-    assert len(key) > 0
+    model_a, model_b = Model(field="A"), Model(field="B")
+    key_a = db.insert(table=collection, data=model_a)
+    key_b = db.insert(table=collection, data=model_b)
+    assert len(key_a) > 0
     # test: get by key
-    assert db.get(table=collection, key=key) == to_json_dict(model)
+    assert db.get(table=collection, key=key_a) == to_json_dict(model_a)
     # test: query by field value
-    got_key = list(db.query(table=collection, field=("==", "test")))[0]
-    assert got_key == key
-    db.delete(collection, key)
+    got_key = [key for key, _ in db.query(table=collection, field=("==", "A"))][0]
+    assert got_key == key_a
+    # test: get max for field value
+    got_entry = db.max(table=collection, field="field")
+    assert got_entry is not None
+    assert got_entry[0] == key_b
+    # test: delete for key
+    db.delete(collection, key_a)
+    assert db.get(table=collection, key=key_a) is None
