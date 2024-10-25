@@ -47,13 +47,17 @@ dependencies:
   latlong2: ^0.9.1
   patrol: ^3.11.1
   flutter_popup_card: ^0.0.6
+  openapi_generator_annotations: ^4.11.0
+
+  flowmotion_api:
+    path: packages/flowmotion_api
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.3.2
   rxdart: ^0.28.0
-
+  openapi_generator: ^4.11.0
 
   integration_test:
     sdk: flutter
