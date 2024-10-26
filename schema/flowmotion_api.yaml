@@ -72,7 +72,7 @@ paths:
   /congested/{camera_id}/{groupby}:
     get:
       tags: [Congestion]
-      summary: Retrieve congestion duration for a specific camera
+      summary: Retrieve congestion duration for a specific camera for a given time range.
       description: Returns the total time in seconds (as a float) when the camera was "congested" according to a threshold, grouped by hour or day.
       parameters:
         - name: camera_id
@@ -97,6 +97,20 @@ paths:
             minimum: 0
             maximum: 1
             default: 0.6
+        - name: begin
+          in: query
+          description: Inclusive start of the time range (timestamp) to retrieve congestion duration.
+          schema:
+            type: string
+            format: date-time
+          required: true
+        - name: end
+          in: query
+          description: Exclusive end of the time range (timestamp) to retrieve congestion duration.
+          schema:
+            type: string
+            format: date-time
+          required: true
       responses:
         "200":
           description: Total congested time in seconds, grouped by the specified interval
