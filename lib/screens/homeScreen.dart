@@ -11,15 +11,13 @@ import '../utilities/location_service.dart';
 import '../widgets/navigationBar.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-
 import 'congestionRating.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 Future<void> main() async {
-  //make sure native code is set up correctly, need initialise native app before initialising firebase
-  WidgetsFlutterBinding.ensureInitialized(); //auto called inside runApp, but need do before runApp so need do this codes
-  await Firebase.initializeApp( //start firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(HomeScreen());
@@ -35,12 +33,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late LocationService locationService;
   Position? _currentPosition;
-  LatLng _initialCenter = LatLng(
-      1.2878, 103.8666); // Default location (Singapore)
-  LatLng? _currentLocationMarker; // To hold the user location for the marker
-  List<String> savedAddresses = []; // Store saved addresses
+  LatLng _initialCenter = LatLng(1.2878, 103.8666);
+  LatLng _initialDestination = LatLng(1.3656412, 103.8726954);
+  LatLng? _currentLocationMarker;
+  List<String> savedAddresses = [];
 
-  // Add separate MapControllers for each map
   late final MapController _mainMapController;
   late final MapController _homeMapController;
   late final MapController _workMapController;
@@ -53,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _homeMapController = MapController();
     _workMapController = MapController();
     _getCurrentLocation();
-    _fetchSavedAddresses(); // Fetch saved addresses
+    _fetchSavedAddresses();
   }
 
   Future<Position?> _getCurrentLocation() async {
@@ -62,19 +59,20 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _currentPosition = position;
         _currentLocationMarker = LatLng(
-            position.latitude, position.longitude); // Update marker position
+            position.latitude, position.longitude);
       });
 
-      // Programmatically update the main map's center using its MapController
-      _mainMapController.move(LatLng(position.latitude, position.longitude),
-          14.0); // Adjust the zoom level as needed
-      _homeMapController.move(LatLng(position.latitude, position.longitude),
-          14.0); // Adjust the zoom level as needed
-      _workMapController.move(LatLng(position.latitude, position.longitude),
-          14.0); // Adjust the zoom level as needed
+      _mainMapController.move(LatLng(position.latitude, position.longitude), 13.0);
 
-      print('Location obtained: Latitude - ${position
-          .latitude}, Longitude - ${position.longitude}');
+      LatLng midpoint = LatLng(
+        (_currentPosition!.latitude + _initialDestination.latitude) / 2,
+        (_currentPosition!.longitude + _initialDestination.longitude) / 2,
+      );
+
+      _homeMapController.move(midpoint, 11.0);
+      _workMapController.move(midpoint, 11.0);
+
+      print('Location obtained: Latitude - ${position.latitude}, Longitude - ${position.longitude}');
     } else {
       print('Failed to get location.');
     }
@@ -87,26 +85,21 @@ class _HomeScreenState extends State<HomeScreen> {
     if (currentUser != null) {
       try {
         QuerySnapshot querySnapshot = await usersCollection
-            .where('userid', isEqualTo: currentUser
-            .uid) // Assuming 'userid' is the field to filter by
+            .where('userid', isEqualTo: currentUser.uid)
             .get();
 
         if (querySnapshot.docs.isNotEmpty) {
           DocumentSnapshot userDoc = querySnapshot.docs.first;
 
-          // Assuming the addresses field is an array of maps
           List<dynamic> addresses = userDoc.get('addresses') ?? [];
 
-          // Extract address strings from the maps
           setState(() {
             savedAddresses = addresses.map((address) {
-              // Assuming each address is a map and we want the value of the 'address' key
-              return (address as Map<String, dynamic>)['address'] as String;
+              return (address as Map<String, dynamic>)['address'] as String? ?? '';
             }).toList();
           });
 
-          print(
-              'Saved Addresses: $savedAddresses'); // Print saved addresses for debugging
+          print('Saved Addresses: $savedAddresses');
         } else {
           print('User document does not exist.');
         }
@@ -118,9 +111,14 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  LatLng _calculateMidpoint(LatLng point1, LatLng point2) {
+    double midLatitude = (point1.latitude + point2.latitude) / 2;
+    double midLongitude = (point1.longitude + point2.longitude) / 2;
+    return LatLng(midLatitude, midLongitude);
+  }
+
   @override
   void dispose() {
-    // Cancel the timer when the widget is disposed
     _mainMapController.dispose();
     _homeMapController.dispose();
     _workMapController.dispose();
@@ -137,26 +135,15 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             SizedBox(height: 50),
-            // Dashboard Header Section
-            Text(
-              "Dashboard",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
+            Text("Dashboard", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
             SizedBox(height: 5),
-            Text(
-              "Where would you like to go today?",
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-            ),
+            Text("Where would you like to go today?", style: TextStyle(fontSize: 16, color: Colors.black54)),
             SizedBox(height: 20),
-
-            // Main Map View with "View Full Map" Button
             _buildMainMapView(),
             SizedBox(height: 20),
-
             GestureDetector(
               key: WidgetKeys.goMapButton,
               onTap: () {
-                // Handle "View Full Map" action
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -164,19 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               },
-              child: Text(
-                "View full map >",
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: Text("View full map >", style: TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)),
             ),
-
             SizedBox(height: 10),
-
-            // Saved Places Section
             _buildSavedPlacesSection(),
           ],
         ),
@@ -184,15 +161,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Build the main map view
   Widget _buildMainMapView() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(10),
-      ),
+      decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
           SizedBox(height: 10),
@@ -200,14 +173,12 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 200,
             width: double.infinity,
             child: FlutterMap(
-              mapController: _mainMapController, // Main map controller
+              mapController: _mainMapController,
               options: MapOptions(
                 initialCenter: _currentPosition != null
-                    ? LatLng(
-                    _currentPosition!.latitude, _currentPosition!.longitude)
+                    ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
                     : _initialCenter,
-                // Default to initial center if location is not available yet
-                initialZoom: 10, // Initial zoom level
+                initialZoom: 10,
               ),
               children: [
                 TileLayer(
@@ -219,7 +190,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     markers: [
                       Marker(
                         point: _currentLocationMarker!,
-                        // Use the user's current location
                         width: 60,
                         height: 60,
                         alignment: Alignment.centerLeft,
@@ -240,17 +210,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Build the saved places section (Home, Work)
   Widget _buildSavedPlacesSection() {
     return Column(
       children: [
         Container(
           alignment: Alignment.centerLeft,
           margin: EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            "Your saved places",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+          child: Text("Your saved places", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
         SizedBox(height: 10),
         SingleChildScrollView(
@@ -258,25 +224,19 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             children: [
               SizedBox(width: 20),
-              // Build saved place cards based on savedAddresses
               for (int i = 0; i < savedAddresses.length; i++)
                 Padding(
                   padding: const EdgeInsets.only(right: 20.0),
-                  // Add right padding for spacing
                   child: _buildSavedPlaceCard(
                     i == 0 ? "Home" : "Work",
-                    i == 0
-                        ? _homeMapController
-                        : _workMapController, // Alternate controllers or use your logic
+                    i == 0 ? _homeMapController : _workMapController,
                   ),
                 ),
-              // Add additional address fields only if there are 3 saved addresses
               if (savedAddresses.length >= 3 && savedAddresses.length > 2)
                 Padding(
                   padding: const EdgeInsets.only(right: 20.0),
-                  // Add right padding for spacing
                   child: _buildSavedPlaceCard(
-                    savedAddresses[2], // Use the third address
+                    savedAddresses[2],
                     _homeMapController,
                   ),
                 ),
@@ -289,25 +249,34 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Reusable method to build saved place cards (Home, Work, etc.)
   Widget _buildSavedPlaceCard(String title, MapController controller) {
     return GestureDetector(
       onTap: () {
-        // Navigate to CongestionRatingScreen with the corresponding title
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                CongestionRatingScreen(savedPlaceLabel: title),
+            builder: (context) => CongestionRatingScreen(
+              savedPlaceLabel: title,
+              mapController: controller, // Pass the controller
+              initialCenter: _currentPosition != null
+                  ? LatLng(
+                (_currentPosition!.latitude + _initialDestination.latitude) / 2,
+                (_currentPosition!.longitude + _initialDestination.longitude) / 2,
+              )
+                  : LatLng(
+                (_initialCenter.latitude + _initialDestination.latitude) / 2,
+                (_initialCenter.longitude + _initialDestination.longitude) / 2,
+              ),
+              initialZoom: 10, // Pass the initial zoom level
+              currentLocationMarker: _currentLocationMarker,
+              initialDestination: _initialDestination,
+            ),
           ),
         );
       },
       child: Container(
         width: 260,
-        decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(10),
-        ),
+        decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: [
             Padding(
@@ -317,50 +286,71 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            // Add map view for each saved place
             SizedBox(
               height: 120,
               width: double.infinity,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: FlutterMap(
-                  mapController: controller, // Use the respective MapController
-                  options: MapOptions(
-                    initialCenter: _currentPosition != null
-                        ? LatLng(
-                        _currentPosition!.latitude, _currentPosition!.longitude)
-                        : _initialCenter,
-                    // Default to initial center if location is not available yet
-                    initialZoom: 10, // Initial zoom level
+              child: FlutterMap(
+                mapController: controller,
+                options: MapOptions(
+                  initialCenter: _currentPosition != null
+                      ? LatLng(
+                    (_currentPosition!.latitude + _initialDestination.latitude) / 2,
+                    (_currentPosition!.longitude + _initialDestination.longitude) / 2,
+                  )
+                      : LatLng(
+                    (_initialCenter.latitude + _initialDestination.latitude) / 2,
+                    (_initialCenter.longitude + _initialDestination.longitude) / 2,
                   ),
-                  children: [
-                    TileLayer(
-                      urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-                    ),
-                    if (_currentLocationMarker != null)
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: _currentLocationMarker!,
-                            // Use the user's current location
-                            width: 60,
-                            height: 60,
-                            alignment: Alignment.centerLeft,
-                            child: const Icon(
-                              Icons.location_pin,
-                              size: 30,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
+                  initialZoom: 10,
                 ),
+                children: [
+                  TileLayer(
+                    urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                  ),
+                  if (_currentLocationMarker != null)
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: _currentLocationMarker!,
+                          width: 60,
+                          height: 60,
+                          alignment: Alignment.centerLeft,
+                          child: const Icon(
+                            Icons.location_pin,
+                            size: 30,
+                            color: Colors.red,
+                          ),
+                        ),
+                        Marker(
+                          point: _initialDestination,
+                          width: 60,
+                          height: 60,
+                          alignment: Alignment.centerLeft,
+                          child: const Icon(
+                            Icons.account_balance,
+                            size: 30,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    ),
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: [
+                          _currentLocationMarker ?? LatLng(0, 0), // Use a default value or handle null safely
+                          _initialDestination,
+                        ],
+                        strokeWidth: 4.0,
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(height: 10),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
               child: Row(
@@ -373,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const FittedBox(
-                      fit: BoxFit.scaleDown,  // Ensures the content scales down to fit the container
+                      fit: BoxFit.scaleDown,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -398,7 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10,),
+                  const SizedBox(width: 10),
                   SizedBox(
                     height: 80,
                     width: 150,
@@ -408,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const FittedBox(
-                        fit: BoxFit.scaleDown,  // Ensures the content scales down to fit the container
+                        fit: BoxFit.scaleDown,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -443,7 +433,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-
             SizedBox(height: 10),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
@@ -454,15 +443,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: const Column(
                 children: [
-                  // Congestion Rating
                   Text(
                     "Congestion Rating",
-                    style: TextStyle(
-                        color: Color(0xFFe9a59d),
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Color(0xFFe9a59d), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 5),
-                  // Rating graph placeholder
                   Center(
                     child: Text(
                       "Graph here",
@@ -472,9 +457,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 100,
-            )
+            SizedBox(height: 100),
           ],
         ),
       ),

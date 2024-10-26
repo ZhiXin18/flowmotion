@@ -50,6 +50,7 @@ dependencies:
   patrol_finders: ^2.1.2
   openapi_generator_annotations: ^4.11.0
   email_otp: ^3.0.2
+  geocode: 1.0.3
 
   flowmotion_api:
     path: packages/flowmotion_api
