@@ -10,7 +10,6 @@ final FirebaseCalls firebaseCalls = FirebaseCalls();
 
 class CongestionRatingScreen extends StatefulWidget {
   final String savedPlaceLabel;
-  final MapController mapController; // Add MapController
   final LatLng initialCenter; // Add initial center configuration
   final double initialZoom; // Add initial zoom configuration
   final LatLng? currentLocationMarker; // Current location marker
@@ -18,7 +17,6 @@ class CongestionRatingScreen extends StatefulWidget {
 
   CongestionRatingScreen({
     required this.savedPlaceLabel,
-    required this.mapController, // Accept MapController in the constructor
     required this.initialCenter, // Accept initial center
     required this.initialZoom, // Accept initial zoom level
     required this.currentLocationMarker, // Current location marker
@@ -31,12 +29,14 @@ class CongestionRatingScreen extends StatefulWidget {
 
 class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   final FirebaseCalls firebaseCalls = FirebaseCalls();
+  late final MapController _mapController;
   List<CongestionRating> congestionRatings = [];
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _mapController = MapController();
     fetchCongestionRatings();
   }
 
@@ -53,6 +53,12 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         isLoading = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
   }
 
   @override
@@ -94,7 +100,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
               height: 200,
               margin: EdgeInsets.symmetric(horizontal: 16),
               child: FlutterMap(
-                mapController: widget.mapController, // Use the passed controller
+                mapController: _mapController, // Use the passed controller
                 options: MapOptions(
                   initialCenter: widget.initialCenter, // Use the passed initial center
                   initialZoom: widget.initialZoom, // Use the passed initial zoom
@@ -111,7 +117,6 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                         point: widget.currentLocationMarker!,
                         width: 60,
                         height: 60,
-                        alignment: Alignment.centerLeft,
                         child: const Icon(
                           Icons.location_pin,
                           size: 30,
@@ -122,7 +127,6 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                         point: widget.initialDestination,
                         width: 60,
                         height: 60,
-                        alignment: Alignment.centerLeft,
                         child: const Icon(
                           Icons.account_balance,
                           size: 30,

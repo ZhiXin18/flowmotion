@@ -185,22 +185,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                 ),
-                if (_currentLocationMarker != null)
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        point: _currentLocationMarker!,
-                        width: 60,
-                        height: 60,
-                        alignment: Alignment.centerLeft,
-                        child: Icon(
-                          Icons.location_pin,
-                          size: 30,
-                          color: Colors.red,
-                        ),
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
+                      width: 60,
+                      height: 60,
+                      alignment: Alignment.centerLeft,
+                      child: Icon(
+                        Icons.location_pin,
+                        size: 30,
+                        color: Colors.red,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -257,7 +256,6 @@ class _HomeScreenState extends State<HomeScreen> {
           MaterialPageRoute(
             builder: (context) => CongestionRatingScreen(
               savedPlaceLabel: title,
-              mapController: controller, // Pass the controller
               initialCenter: _currentPosition != null
                   ? LatLng(
                 (_currentPosition!.latitude + _initialDestination.latitude) / 2,
@@ -268,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 (_initialCenter.longitude + _initialDestination.longitude) / 2,
               ),
               initialZoom: 10, // Pass the initial zoom level
-              currentLocationMarker: _currentLocationMarker,
+              currentLocationMarker: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
               initialDestination: _initialDestination,
             ),
           ),
@@ -289,33 +287,32 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 120,
               width: double.infinity,
-              child: FlutterMap(
-                mapController: controller,
-                options: MapOptions(
-                  initialCenter: _currentPosition != null
-                      ? LatLng(
-                    (_currentPosition!.latitude + _initialDestination.latitude) / 2,
-                    (_currentPosition!.longitude + _initialDestination.longitude) / 2,
-                  )
-                      : LatLng(
-                    (_initialCenter.latitude + _initialDestination.latitude) / 2,
-                    (_initialCenter.longitude + _initialDestination.longitude) / 2,
+              child: IgnorePointer( //make the map uninteractive
+                child: FlutterMap(
+                  mapController: controller,
+                  options: MapOptions(
+                    initialCenter: _currentPosition != null
+                        ? LatLng(
+                      (_currentPosition!.latitude + _initialDestination.latitude) / 2,
+                      (_currentPosition!.longitude + _initialDestination.longitude) / 2,
+                    )
+                        : LatLng(
+                      (_initialCenter.latitude + _initialDestination.latitude) / 2,
+                      (_initialCenter.longitude + _initialDestination.longitude) / 2,
+                    ),
+                    initialZoom: 10,
                   ),
-                  initialZoom: 10,
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-                  ),
-                  if (_currentLocationMarker != null)
+                  children: [
+                    TileLayer(
+                      urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                    ),
                     MarkerLayer(
                       markers: [
                         Marker(
-                          point: _currentLocationMarker!,
+                          point: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
                           width: 60,
                           height: 60,
-                          alignment: Alignment.centerLeft,
                           child: const Icon(
                             Icons.location_pin,
                             size: 30,
@@ -326,7 +323,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           point: _initialDestination,
                           width: 60,
                           height: 60,
-                          alignment: Alignment.centerLeft,
                           child: const Icon(
                             Icons.account_balance,
                             size: 30,
@@ -335,19 +331,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                  PolylineLayer(
-                    polylines: [
-                      Polyline(
-                        points: [
-                          _currentLocationMarker ?? LatLng(0, 0), // Use a default value or handle null safely
-                          _initialDestination,
-                        ],
-                        strokeWidth: 4.0,
-                        color: Colors.green,
-                      ),
-                    ],
-                  ),
-                ],
+                    PolylineLayer(
+                      polylines: [
+                        Polyline(
+                          points: [
+                            _currentLocationMarker ?? _initialCenter, // Use a default value or handle null safely
+                            _initialDestination,
+                          ],
+                          strokeWidth: 4.0,
+                          color: Colors.green,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 10),
