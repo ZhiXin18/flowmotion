@@ -1,8 +1,9 @@
-// Openapi Generator last run: : 2024-10-25T14:23:12.783412
+// Openapi Generator last run: : 2024-10-26T08:47:53.033108
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
 
 @Openapi(
   useNextGen: true,
+  alwaysRun: true,
   additionalProperties: DioProperties(
     pubName: 'flowmotion_api',
   ),

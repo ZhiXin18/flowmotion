@@ -45,13 +45,13 @@ paths:
             enum: [hour, day]
         - name: begin
           in: query
-          description: Start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
+          description: Inclusive start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp.
           schema:
             type: string
             format: date-time
         - name: end
           in: query
-          description: End of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
+          description: Exclusive end of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp.
           schema:
             type: string
             format: date-time
