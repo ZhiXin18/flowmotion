@@ -18,12 +18,14 @@ class CongestionApi {
 
   const CongestionApi(this._dio, this._serializers);
 
-  /// Retrieve congestion duration for a specific camera
+  /// Retrieve congestion duration for a specific camera for a given time range.
   /// Returns the total time in seconds (as a float) when the camera was \&quot;congested\&quot; according to a threshold, grouped by hour or day.
   ///
   /// Parameters:
   /// * [cameraId] - ID of the camera to retrieve congestion duration for
   /// * [groupby] - Group congestion duration by hour or day
+  /// * [begin] - Inclusive start of the time range (timestamp) to retrieve congestion duration.
+  /// * [end] - Exclusive end of the time range (timestamp) to retrieve congestion duration.
   /// * [threshold] - Congestion rating level (between 0 and 1) that is considered \"congested\"
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -37,6 +39,8 @@ class CongestionApi {
   Future<Response<BuiltList<double>>> congestedCameraIdGroupbyGet({
     required String cameraId,
     required String groupby,
+    required DateTime begin,
+    required DateTime end,
     double? threshold = 0.6,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -70,6 +74,9 @@ class CongestionApi {
       if (threshold != null)
         r'threshold': encodeQueryParameter(
             _serializers, threshold, const FullType(double)),
+      r'begin':
+          encodeQueryParameter(_serializers, begin, const FullType(DateTime)),
+      r'end': encodeQueryParameter(_serializers, end, const FullType(DateTime)),
     };
 
     final _response = await _dio.request<Object>(
@@ -120,8 +127,8 @@ class CongestionApi {
   /// * [cameraId] - Filter by congestion points by specific camera id.
   /// * [agg] - Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified.
   /// * [groupby] - Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method.
-  /// * [begin] - Start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
-  /// * [end] - End of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp.
+  /// * [begin] - Inclusive start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp.
+  /// * [end] - Exclusive end of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp.
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
