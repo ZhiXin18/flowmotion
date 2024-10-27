@@ -18,7 +18,7 @@ tags:
     description: Routing API finds the fastest route between two locations.
 paths:
   /congestions:
-    post:
+    get:
       tags: [Congestion]
       summary: Retrieve congestion data
       description: 
