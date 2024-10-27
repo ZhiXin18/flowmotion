@@ -132,7 +132,7 @@ paths:
           description: Internal server error
 
   /route:
-    get:
+    post:
       tags: [Routing]
       summary: Retrieve recommended routes between source and destination
       description: Returns a list of recommended routes from source to destination, including geometry, duration, distance, and step-by-step instructions.
