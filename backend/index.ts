@@ -5,7 +5,7 @@
  */
 import express from "express";
 import { CongestionSvc } from "@/services/congestion";
-import { initDB } from "@/db";
+import { initDB } from "@/clients/db";
 import { Request, Response } from "express";
 import * as OpenApiValidator from "express-openapi-validator";
 
