@@ -6,7 +6,7 @@
 
 import { components, paths } from "../api";
 import { CongestionSvc } from "./congestion";
-// osrm-text-instructions 
+// osrm-text-instructions
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const OSRMText = require("osrm-text-instructions")("v5");
 
