@@ -64,7 +64,7 @@ class _$RouteGetRequestDestKindEnumSerializer
 
 class _$RouteGetRequestDest extends RouteGetRequestDest {
   @override
-  final RouteGetRequestDestKindEnum? kind;
+  final RouteGetRequestDestKindEnum kind;
   @override
   final Address? address;
   @override
@@ -74,7 +74,10 @@ class _$RouteGetRequestDest extends RouteGetRequestDest {
           [void Function(RouteGetRequestDestBuilder)? updates]) =>
       (new RouteGetRequestDestBuilder()..update(updates))._build();
 
-  _$RouteGetRequestDest._({this.kind, this.address, this.location}) : super._();
+  _$RouteGetRequestDest._({required this.kind, this.address, this.location})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(kind, r'RouteGetRequestDest', 'kind');
+  }
 
   @override
   RouteGetRequestDest rebuild(
@@ -164,7 +167,8 @@ class RouteGetRequestDestBuilder
     try {
       _$result = _$v ??
           new _$RouteGetRequestDest._(
-              kind: kind,
+              kind: BuiltValueNullFieldError.checkNotNull(
+                  kind, r'RouteGetRequestDest', 'kind'),
               address: _address?.build(),
               location: _location?.build());
     } catch (_) {

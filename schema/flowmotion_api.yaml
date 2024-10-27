@@ -150,13 +150,12 @@ paths:
                       type: string
                       enum: [address, location]
                       description: Specifies if the source is an address or a location
-                      oneOf:
-                        - $ref: "#/components/schemas/Address"
-                        - type: "null"
+                    address:
+                      $ref: "#/components/schemas/Address"
                     location:
-                      oneOf:
-                        - $ref: "#/components/schemas/Location"
-                        - type: "null"
+                      $ref: "#/components/schemas/Location"
+                  required:
+                    - kind
                 dest:
                   type: object
                   properties:
@@ -172,6 +171,11 @@ paths:
                       oneOf:
                         - $ref: "#/components/schemas/Location"
                         - type: "null"
+                  required:
+                    - kind
+              required:
+                - src
+                - dest
       responses:
         "200":
           description: List of recommended routes with details on geometry, duration, distance, and steps
@@ -216,17 +220,19 @@ paths:
                                 type: string
                                 description: Polyline (precision 5) for drawing this step on a map
                               direction:
-                                type: string
-                                description: Direction to take for the step
-                                enum:
-                                  - uturn
-                                  - sharp right
-                                  - right
-                                  - slight right
-                                  - straight
-                                  - slight left
-                                  - left
-                                  - sharp left
+                                oneOf:
+                                  - type: string
+                                    description: Direction to take for the step
+                                    enum:
+                                      - uturn
+                                      - sharp right
+                                      - right
+                                      - slight right
+                                      - straight
+                                      - slight left
+                                      - left
+                                      - sharp left
+                                  - type: "null"
                               maneuver:
                                 type: string
                                 description: The type of maneuver to perform
@@ -243,7 +249,9 @@ paths:
                                   - use lane
                                   - continue
                                   - roundabout
+                                  - exit roundabout
                                   - rotary
+                                  - exit rotary
                                   - roundabout turn
                                   - notification
                               instruction:
@@ -253,12 +261,20 @@ paths:
                                 oneOf:
                                   - $ref: "#/components/schemas/Congestion"
                                   - type: "null"
-        "300":
-          description: Multiple matches found for the provided address
-        "400":
-          description: Invalid request parameters
-        "500":
-          description: Internal server error
+                            required:
+                              - name
+                              - duration
+                              - distance
+                              - geometry
+                              - direction
+                              - maneuver
+                              - instruction
+                              - congestion
+                      required:
+                        - geometry
+                        - duration
+                        - distance
+                        - steps
 
 components:
   schemas:

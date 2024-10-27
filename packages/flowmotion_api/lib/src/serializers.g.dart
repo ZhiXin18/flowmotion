@@ -21,6 +21,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(RouteGetRequestDest.serializer)
       ..add(RouteGetRequestDestKindEnum.serializer)
       ..add(RouteGetRequestSrc.serializer)
+      ..add(RouteGetRequestSrcKindEnum.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList,
               const [const FullType(RouteGet200ResponseRoutesInner)]),

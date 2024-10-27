@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:built_collection/built_collection.dart';
 import 'package:flowmotion_api/src/model/address.dart';
 import 'package:flowmotion_api/src/model/location.dart';
 import 'package:built_value/built_value.dart';
@@ -13,13 +14,19 @@ part 'route_get_request_src.g.dart';
 /// RouteGetRequestSrc
 ///
 /// Properties:
-/// * [kind]
+/// * [kind] - Specifies if the source is an address or a location
+/// * [address]
 /// * [location]
 @BuiltValue()
 abstract class RouteGetRequestSrc
     implements Built<RouteGetRequestSrc, RouteGetRequestSrcBuilder> {
+  /// Specifies if the source is an address or a location
   @BuiltValueField(wireName: r'kind')
-  Address? get kind;
+  RouteGetRequestSrcKindEnum get kind;
+  // enum kindEnum {  address,  location,  };
+
+  @BuiltValueField(wireName: r'address')
+  Address? get address;
 
   @BuiltValueField(wireName: r'location')
   Location? get location;
@@ -50,11 +57,16 @@ class _$RouteGetRequestSrcSerializer
     RouteGetRequestSrc object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.kind != null) {
-      yield r'kind';
+    yield r'kind';
+    yield serializers.serialize(
+      object.kind,
+      specifiedType: const FullType(RouteGetRequestSrcKindEnum),
+    );
+    if (object.address != null) {
+      yield r'address';
       yield serializers.serialize(
-        object.kind,
-        specifiedType: const FullType.nullable(Address),
+        object.address,
+        specifiedType: const FullType(Address),
       );
     }
     if (object.location != null) {
@@ -92,10 +104,16 @@ class _$RouteGetRequestSrcSerializer
         case r'kind':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType.nullable(Address),
-          ) as Address?;
-          if (valueDes == null) continue;
-          result.kind.replace(valueDes);
+            specifiedType: const FullType(RouteGetRequestSrcKindEnum),
+          ) as RouteGetRequestSrcKindEnum;
+          result.kind = valueDes;
+          break;
+        case r'address':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(Address),
+          ) as Address;
+          result.address.replace(valueDes);
           break;
         case r'location':
           final valueDes = serializers.deserialize(
@@ -132,4 +150,26 @@ class _$RouteGetRequestSrcSerializer
     );
     return result.build();
   }
+}
+
+class RouteGetRequestSrcKindEnum extends EnumClass {
+  /// Specifies if the source is an address or a location
+  @BuiltValueEnumConst(wireName: r'address')
+  static const RouteGetRequestSrcKindEnum address =
+      _$routeGetRequestSrcKindEnum_address;
+
+  /// Specifies if the source is an address or a location
+  @BuiltValueEnumConst(wireName: r'location')
+  static const RouteGetRequestSrcKindEnum location =
+      _$routeGetRequestSrcKindEnum_location;
+
+  static Serializer<RouteGetRequestSrcKindEnum> get serializer =>
+      _$routeGetRequestSrcKindEnumSerializer;
+
+  const RouteGetRequestSrcKindEnum._(String name) : super(name);
+
+  static BuiltSet<RouteGetRequestSrcKindEnum> get values =>
+      _$routeGetRequestSrcKindEnumValues;
+  static RouteGetRequestSrcKindEnum valueOf(String name) =>
+      _$routeGetRequestSrcKindEnumValueOf(name);
 }

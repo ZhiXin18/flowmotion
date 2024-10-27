@@ -8,7 +8,7 @@ import 'package:flowmotion_api/api.dart';
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**kind** | **String** | Specifies if the destination is an address or a location | [optional] 
+**kind** | **String** | Specifies if the destination is an address or a location | 
 **address** | [**Address**](Address.md) |  | [optional] 
 **location** | [**Location**](Location.md) |  | [optional] 
 
