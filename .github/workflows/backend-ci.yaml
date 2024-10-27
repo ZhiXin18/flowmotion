@@ -1,0 +1,42 @@
+#
+# Flowmotion
+# CI/CD
+# Backend CI
+#
+
+name: Flowmotion Backend CI/CD
+on:
+  push:
+    paths:
+      - .github/workflows/backend-ci.yaml
+      - "backend/**"
+jobs:
+  backend:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [lint, build, test]
+    name: "${{ matrix.target }} Backend"
+    defaults:
+      run:
+        working-directory: backend
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
+
+      - name: "${{ matrix.target }} Backend"
+        run: npm run ${{ matrix.target }}

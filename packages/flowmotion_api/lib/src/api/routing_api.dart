@@ -7,8 +7,8 @@ import 'dart:async';
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
-import 'package:flowmotion_api/src/model/route_get200_response.dart';
-import 'package:flowmotion_api/src/model/route_get_request.dart';
+import 'package:flowmotion_api/src/model/route_post200_response.dart';
+import 'package:flowmotion_api/src/model/route_post_request.dart';
 
 class RoutingApi {
   final Dio _dio;
@@ -21,7 +21,7 @@ class RoutingApi {
   /// Returns a list of recommended routes from source to destination, including geometry, duration, distance, and step-by-step instructions.
   ///
   /// Parameters:
-  /// * [routeGetRequest]
+  /// * [routePostRequest]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -29,10 +29,10 @@ class RoutingApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future] containing a [Response] with a [RouteGet200Response] as data
+  /// Returns a [Future] containing a [Response] with a [RoutePost200Response] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<RouteGet200Response>> routeGet({
-    required RouteGetRequest routeGetRequest,
+  Future<Response<RoutePost200Response>> routePost({
+    required RoutePostRequest routePostRequest,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -42,7 +42,7 @@ class RoutingApi {
   }) async {
     final _path = r'/route';
     final _options = Options(
-      method: r'GET',
+      method: r'POST',
       headers: <String, dynamic>{
         ...?headers,
       },
@@ -57,8 +57,9 @@ class RoutingApi {
     dynamic _bodyData;
 
     try {
-      const _type = FullType(RouteGetRequest);
-      _bodyData = _serializers.serialize(routeGetRequest, specifiedType: _type);
+      const _type = FullType(RoutePostRequest);
+      _bodyData =
+          _serializers.serialize(routePostRequest, specifiedType: _type);
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _options.compose(
@@ -80,7 +81,7 @@ class RoutingApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    RouteGet200Response? _responseData;
+    RoutePost200Response? _responseData;
 
     try {
       final rawResponse = _response.data;
@@ -88,8 +89,8 @@ class RoutingApi {
           ? null
           : _serializers.deserialize(
               rawResponse,
-              specifiedType: const FullType(RouteGet200Response),
-            ) as RouteGet200Response;
+              specifiedType: const FullType(RoutePost200Response),
+            ) as RoutePost200Response;
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -100,7 +101,7 @@ class RoutingApi {
       );
     }
 
-    return Response<RouteGet200Response>(
+    return Response<RoutePost200Response>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,

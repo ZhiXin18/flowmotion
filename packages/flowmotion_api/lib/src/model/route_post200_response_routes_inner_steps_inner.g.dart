@@ -110,8 +110,15 @@ const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum
     _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_roundabout =
     const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum._('roundabout');
 const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum
+    _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_exitRoundabout =
+    const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum._(
+        'exitRoundabout');
+const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum
     _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_rotary =
     const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum._('rotary');
+const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum
+    _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_exitRotary =
+    const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum._('exitRotary');
 const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum
     _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_roundaboutTurn =
     const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum._(
@@ -149,8 +156,12 @@ RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum
       return _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_continue_;
     case 'roundabout':
       return _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_roundabout;
+    case 'exitRoundabout':
+      return _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_exitRoundabout;
     case 'rotary':
       return _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_rotary;
+    case 'exitRotary':
+      return _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_exitRotary;
     case 'roundaboutTurn':
       return _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_roundaboutTurn;
     case 'notification':
@@ -176,7 +187,9 @@ final BuiltSet<RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum>
   _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_useLane,
   _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_continue_,
   _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_roundabout,
+  _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_exitRoundabout,
   _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_rotary,
+  _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_exitRotary,
   _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_roundaboutTurn,
   _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_notification,
 ]);
@@ -252,7 +265,9 @@ class _$RoutePost200ResponseRoutesInnerStepsInnerManeuverEnumSerializer
     'useLane': 'use lane',
     'continue_': 'continue',
     'roundabout': 'roundabout',
+    'exitRoundabout': 'exit roundabout',
     'rotary': 'rotary',
+    'exitRotary': 'exit rotary',
     'roundaboutTurn': 'roundabout turn',
     'notification': 'notification',
   };
@@ -269,7 +284,9 @@ class _$RoutePost200ResponseRoutesInnerStepsInnerManeuverEnumSerializer
     'use lane': 'useLane',
     'continue': 'continue_',
     'roundabout': 'roundabout',
+    'exit roundabout': 'exitRoundabout',
     'rotary': 'rotary',
+    'exit rotary': 'exitRotary',
     'roundabout turn': 'roundaboutTurn',
     'notification': 'notification',
   };
@@ -299,19 +316,19 @@ class _$RoutePost200ResponseRoutesInnerStepsInnerManeuverEnumSerializer
 class _$RoutePost200ResponseRoutesInnerStepsInner
     extends RoutePost200ResponseRoutesInnerStepsInner {
   @override
-  final String? name;
+  final String name;
   @override
-  final double? duration;
+  final double duration;
   @override
-  final double? distance;
+  final double distance;
   @override
-  final String? geometry;
+  final String geometry;
   @override
   final RoutePost200ResponseRoutesInnerStepsInnerDirectionEnum? direction;
   @override
-  final RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum? maneuver;
+  final RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum maneuver;
   @override
-  final String? instruction;
+  final String instruction;
   @override
   final Congestion? congestion;
 
@@ -322,15 +339,28 @@ class _$RoutePost200ResponseRoutesInnerStepsInner
           ._build();
 
   _$RoutePost200ResponseRoutesInnerStepsInner._(
-      {this.name,
-      this.duration,
-      this.distance,
-      this.geometry,
+      {required this.name,
+      required this.duration,
+      required this.distance,
+      required this.geometry,
       this.direction,
-      this.maneuver,
-      this.instruction,
+      required this.maneuver,
+      required this.instruction,
       this.congestion})
-      : super._();
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(
+        name, r'RoutePost200ResponseRoutesInnerStepsInner', 'name');
+    BuiltValueNullFieldError.checkNotNull(
+        duration, r'RoutePost200ResponseRoutesInnerStepsInner', 'duration');
+    BuiltValueNullFieldError.checkNotNull(
+        distance, r'RoutePost200ResponseRoutesInnerStepsInner', 'distance');
+    BuiltValueNullFieldError.checkNotNull(
+        geometry, r'RoutePost200ResponseRoutesInnerStepsInner', 'geometry');
+    BuiltValueNullFieldError.checkNotNull(
+        maneuver, r'RoutePost200ResponseRoutesInnerStepsInner', 'maneuver');
+    BuiltValueNullFieldError.checkNotNull(instruction,
+        r'RoutePost200ResponseRoutesInnerStepsInner', 'instruction');
+  }
 
   @override
   RoutePost200ResponseRoutesInnerStepsInner rebuild(
@@ -474,13 +504,19 @@ class RoutePost200ResponseRoutesInnerStepsInnerBuilder
     try {
       _$result = _$v ??
           new _$RoutePost200ResponseRoutesInnerStepsInner._(
-              name: name,
-              duration: duration,
-              distance: distance,
-              geometry: geometry,
+              name: BuiltValueNullFieldError.checkNotNull(
+                  name, r'RoutePost200ResponseRoutesInnerStepsInner', 'name'),
+              duration: BuiltValueNullFieldError.checkNotNull(
+                  duration, r'RoutePost200ResponseRoutesInnerStepsInner', 'duration'),
+              distance: BuiltValueNullFieldError.checkNotNull(
+                  distance, r'RoutePost200ResponseRoutesInnerStepsInner', 'distance'),
+              geometry: BuiltValueNullFieldError.checkNotNull(geometry,
+                  r'RoutePost200ResponseRoutesInnerStepsInner', 'geometry'),
               direction: direction,
-              maneuver: maneuver,
-              instruction: instruction,
+              maneuver: BuiltValueNullFieldError.checkNotNull(maneuver,
+                  r'RoutePost200ResponseRoutesInnerStepsInner', 'maneuver'),
+              instruction: BuiltValueNullFieldError.checkNotNull(instruction,
+                  r'RoutePost200ResponseRoutesInnerStepsInner', 'instruction'),
               congestion: _congestion?.build());
     } catch (_) {
       late String _$failedField;

@@ -1,0 +1,48 @@
+{
+  "name": "flowmotion-backend",
+  "version": "0.1.0",
+  "description": "Flowmotion Backend serves Flowmotion Backend API",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "tsx index.ts",
+    "test": "jest",
+    "build": "tsc",
+    "lint": "eslint . && prettier --check .",
+    "fmt": "eslint --fix . && prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZhiXin18/flowmotion.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ZhiXin18/flowmotion/issues"
+  },
+  "homepage": "https://github.com/ZhiXin18/flowmotion#readme",
+  "dependencies": {
+    "@date-fns/tz": "^1.1.2",
+    "date-fns": "^4.1.0",
+    "express": "^4.21.1",
+    "express-openapi-validator": "^6.0.0-alpha.4",
+    "firebase-admin": "^12.7.0",
+    "osrm-text-instructions": "^0.15.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@jest/globals": "^29.7.0",
+    "@swc/core": "^1.7.39",
+    "@swc/jest": "^0.2.36",
+    "@types/eslint__js": "^8.42.3",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.9",
+    "eslint": "^9.13.0",
+    "jest": "^29.7.0",
+    "openapi-typescript": "^7.4.1",
+    "prettier": "3.3.3",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.11.0"
+  }
+}

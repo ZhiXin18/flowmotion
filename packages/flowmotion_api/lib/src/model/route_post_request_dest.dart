@@ -22,7 +22,7 @@ abstract class RoutePostRequestDest
     implements Built<RoutePostRequestDest, RoutePostRequestDestBuilder> {
   /// Specifies if the destination is an address or a location
   @BuiltValueField(wireName: r'kind')
-  RoutePostRequestDestKindEnum? get kind;
+  RoutePostRequestDestKindEnum get kind;
   // enum kindEnum {  address,  location,  };
 
   @BuiltValueField(wireName: r'address')
@@ -60,13 +60,11 @@ class _$RoutePostRequestDestSerializer
     RoutePostRequestDest object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.kind != null) {
-      yield r'kind';
-      yield serializers.serialize(
-        object.kind,
-        specifiedType: const FullType(RoutePostRequestDestKindEnum),
-      );
-    }
+    yield r'kind';
+    yield serializers.serialize(
+      object.kind,
+      specifiedType: const FullType(RoutePostRequestDestKindEnum),
+    );
     if (object.address != null) {
       yield r'address';
       yield serializers.serialize(

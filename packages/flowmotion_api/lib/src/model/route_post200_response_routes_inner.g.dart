@@ -9,21 +9,33 @@ part of 'route_post200_response_routes_inner.dart';
 class _$RoutePost200ResponseRoutesInner
     extends RoutePost200ResponseRoutesInner {
   @override
-  final String? geometry;
+  final String geometry;
   @override
-  final double? duration;
+  final double duration;
   @override
-  final double? distance;
+  final double distance;
   @override
-  final BuiltList<RoutePost200ResponseRoutesInnerStepsInner>? steps;
+  final BuiltList<RoutePost200ResponseRoutesInnerStepsInner> steps;
 
   factory _$RoutePost200ResponseRoutesInner(
           [void Function(RoutePost200ResponseRoutesInnerBuilder)? updates]) =>
       (new RoutePost200ResponseRoutesInnerBuilder()..update(updates))._build();
 
   _$RoutePost200ResponseRoutesInner._(
-      {this.geometry, this.duration, this.distance, this.steps})
-      : super._();
+      {required this.geometry,
+      required this.duration,
+      required this.distance,
+      required this.steps})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(
+        geometry, r'RoutePost200ResponseRoutesInner', 'geometry');
+    BuiltValueNullFieldError.checkNotNull(
+        duration, r'RoutePost200ResponseRoutesInner', 'duration');
+    BuiltValueNullFieldError.checkNotNull(
+        distance, r'RoutePost200ResponseRoutesInner', 'distance');
+    BuiltValueNullFieldError.checkNotNull(
+        steps, r'RoutePost200ResponseRoutesInner', 'steps');
+  }
 
   @override
   RoutePost200ResponseRoutesInner rebuild(
@@ -101,7 +113,7 @@ class RoutePost200ResponseRoutesInnerBuilder
       _geometry = $v.geometry;
       _duration = $v.duration;
       _distance = $v.distance;
-      _steps = $v.steps?.toBuilder();
+      _steps = $v.steps.toBuilder();
       _$v = null;
     }
     return this;
@@ -126,15 +138,18 @@ class RoutePost200ResponseRoutesInnerBuilder
     try {
       _$result = _$v ??
           new _$RoutePost200ResponseRoutesInner._(
-              geometry: geometry,
-              duration: duration,
-              distance: distance,
-              steps: _steps?.build());
+              geometry: BuiltValueNullFieldError.checkNotNull(
+                  geometry, r'RoutePost200ResponseRoutesInner', 'geometry'),
+              duration: BuiltValueNullFieldError.checkNotNull(
+                  duration, r'RoutePost200ResponseRoutesInner', 'duration'),
+              distance: BuiltValueNullFieldError.checkNotNull(
+                  distance, r'RoutePost200ResponseRoutesInner', 'distance'),
+              steps: steps.build());
     } catch (_) {
       late String _$failedField;
       try {
         _$failedField = 'steps';
-        _steps?.build();
+        steps.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             r'RoutePost200ResponseRoutesInner', _$failedField, e.toString());
