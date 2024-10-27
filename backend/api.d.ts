@@ -140,13 +140,11 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
-    put?: never;
     /**
      * Retrieve recommended routes between source and destination
      * @description Returns a list of recommended routes from source to destination, including geometry, duration, distance, and step-by-step instructions.
      */
-    post: {
+    get: {
       parameters: {
         query?: never;
         header?: never;
@@ -156,20 +154,21 @@ export interface paths {
       requestBody: {
         content: {
           "application/json": {
-            src?: {
+            src: {
               /**
                * @description Specifies if the source is an address or a location
                * @enum {string}
                */
-              kind?: "address" | "location";
-              location?: components["schemas"]["Location"] | null;
+              kind: "address" | "location";
+              address?: components["schemas"]["Address"];
+              location?: components["schemas"]["Location"];
             };
-            dest?: {
+            dest: {
               /**
                * @description Specifies if the destination is an address or a location
                * @enum {string}
                */
-              kind?: "address" | "location";
+              kind: "address" | "location";
               address?: components["schemas"]["Address"] | null;
               location?: components["schemas"]["Location"] | null;
             };
@@ -186,50 +185,49 @@ export interface paths {
             "application/json": {
               routes?: {
                 /** @description Polyline (precision 5) for drawing the entire route on a map */
-                geometry?: string;
+                geometry: string;
                 /**
                  * Format: float
                  * @description Estimated travel duration in seconds
                  */
-                duration?: number;
+                duration: number;
                 /**
                  * Format: float
                  * @description Total travel distance in meters
                  */
-                distance?: number;
-                steps?: {
+                distance: number;
+                steps: {
                   /** @description Name of the road */
-                  name?: string;
+                  name: string;
                   /**
                    * Format: float
                    * @description Estimated duration of the step in seconds
                    */
-                  duration?: number;
+                  duration: number;
                   /**
                    * Format: float
                    * @description Travel distance of the step in meters
                    */
-                  distance?: number;
+                  distance: number;
                   /** @description Polyline (precision 5) for drawing this step on a map */
-                  geometry?: string;
-                  /**
-                   * @description Direction to take for the step
-                   * @enum {string}
-                   */
-                  direction?:
-                    | "uturn"
-                    | "sharp right"
-                    | "right"
-                    | "slight right"
-                    | "straight"
-                    | "slight left"
-                    | "left"
-                    | "sharp left";
+                  geometry: string;
+                  direction:
+                    | (
+                        | "uturn"
+                        | "sharp right"
+                        | "right"
+                        | "slight right"
+                        | "straight"
+                        | "slight left"
+                        | "left"
+                        | "sharp left"
+                      )
+                    | null;
                   /**
                    * @description The type of maneuver to perform
                    * @enum {string}
                    */
-                  maneuver?:
+                  maneuver:
                     | "turn"
                     | "new name"
                     | "depart"
@@ -242,40 +240,23 @@ export interface paths {
                     | "use lane"
                     | "continue"
                     | "roundabout"
+                    | "exit roundabout"
                     | "rotary"
+                    | "exit rotary"
                     | "roundabout turn"
                     | "notification";
                   /** @description OSRM-style text instructions for this step */
-                  instruction?: string;
-                  congestion?: components["schemas"]["Congestion"] | null;
+                  instruction: string;
+                  congestion: components["schemas"]["Congestion"] | null;
                 }[];
               }[];
             };
           };
         };
-        /** @description Multiple matches found for the provided address */
-        300: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Invalid request parameters */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Internal server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
       };
     };
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;

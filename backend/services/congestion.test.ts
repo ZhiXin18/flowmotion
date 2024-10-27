@@ -1,7 +1,7 @@
 /*
  * Flowmotion
  * Congestion Service
- * Unit Tests
+ * Tests
  */
 
 import { describe, expect, test } from "@jest/globals";
@@ -15,7 +15,7 @@ describe("CongestionSvc", () => {
     await congestion.lastUpdatedOn();
   });
 
-  test("get() gets last updated_on congestions", async () => {
+  test("getCongestions() gets last updated_on congestions", async () => {
     const lastUpdated = await congestion.lastUpdatedOn();
     const congestions = await congestion.getCongestions();
     expect(congestions.length).toBeGreaterThan(0);
@@ -28,7 +28,7 @@ describe("CongestionSvc", () => {
     ).toStrictEqual(true);
   });
 
-  test("get() filters by begin & end", async () => {
+  test("getCongestions() filters by begin & end", async () => {
     // unix epoch jan 1 1970
     const minDate = new Date(0);
     const congestions = await congestion.getCongestions({
@@ -38,7 +38,7 @@ describe("CongestionSvc", () => {
     expect(congestions.length).toStrictEqual(0);
   });
 
-  test("get() filters by camera_id", async () => {
+  test("getCongestions() filters by camera_id", async () => {
     const congestions = await congestion.getCongestions({ camera_id: "1703" });
     expect(congestions.length).toBeGreaterThan(0);
     expect(

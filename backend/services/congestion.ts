@@ -5,20 +5,18 @@
  */
 
 import { Firestore, Query } from "firebase-admin/firestore";
-import { components } from "@/api";
+import { components, paths } from "@/api";
 import { formatSGT } from "@/date";
 import { add as addDate } from "date-fns";
 
+type Params = paths["/congestions"]["get"]["parameters"]["query"];
 type Congestion = components["schemas"]["Congestion"];
 
 export class CongestionSvc {
-  collection: string;
-  db: Firestore;
-
-  constructor(db: Firestore) {
-    this.db = db;
-    this.collection = "congestions";
-  }
+  constructor(
+    private db: Firestore,
+    private collection: string = "congestions",
+  ) {}
 
   /**
    * Retrieves the date when traffic congestion data was last updated.
@@ -45,23 +43,14 @@ export class CongestionSvc {
    * Retrieve congestion data within an optional time range and/or for a specific camera.
    *
    * @param params - The parameters for querying congestion data.
-   * @param params.begin - The start of the time range for the query (inclusive). If not provided, defaults to the most recent `updated_on` timestamp.
-   * @param params.end - The end of the time range for the query (exclusive). If not provided, defaults to the most recent `updated_on` timestamp.
-   * @param params.camera_id - The ID of the camera to filter by. If not provided, retrieves congestion data from all cameras.
    * @returns A promise resolving to an array of congestion data objects matching the query criteria.
    *
    * @description Returns traffic congestion data inferred from traffic cameras, optionally filtered by camera ID and/or a specific time range.
    * If neither `begin` nor `end` timestamps are provided, the function defaults to querying based on the most recent `updated_on` timestamp for optimized performance.
    */
-  getCongestions = async ({
-    begin,
-    end,
-    camera_id,
-  }: {
-    begin?: string;
-    end?: string;
-    camera_id?: string;
-  } = {}): Promise<Congestion[]> => {
+  getCongestions = async ({ begin, end, camera_id }: Params = {}): Promise<
+    Congestion[]
+  > => {
     let query = this.db.collection(this.collection) as Query;
     // filter congestions by time range, or default to returning last updated
     // performance: only query last updated_on if 'begin' or 'end' timestamp is omitted.
@@ -87,6 +76,18 @@ export class CongestionSvc {
     }
 
     const congestions = await query.get();
+    // TODO(F-R-YEO): perform aggregation based on aggregation parameters
     return congestions.docs.map((d) => d.data() as Congestion);
+  };
+
+  /**
+   * Retrieves congestion data for a given document ID.
+   *
+   * @param {string} docId - The ID of the document to retrieve from the database.
+   * @returns {Promise<Congestion>} A promise that resolves to the congestion data.
+   */
+  getCongestion = async (docId: string): Promise<Congestion> => {
+    const doc = await this.db.doc(docId).get();
+    return doc.data() as Congestion;
   };
 }

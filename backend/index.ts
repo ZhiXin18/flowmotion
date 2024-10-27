@@ -8,6 +8,8 @@ import { CongestionSvc } from "@/services/congestion";
 import { initDB } from "@/clients/db";
 import { Request, Response } from "express";
 import * as OpenApiValidator from "express-openapi-validator";
+import { ROUTING_API, RoutingSvc } from "@/services/routing";
+import { paths } from "@/api";
 
 // parse command line args
 if (process.argv.length < 4) {
@@ -19,7 +21,8 @@ const port = parseInt(process.argv[3]);
 
 // setup services
 const db = initDB();
-const congestionSvc = new CongestionSvc(db);
+const congestion = new CongestionSvc(db);
+const routing = new RoutingSvc(ROUTING_API, fetch, congestion);
 
 // setup express server
 const app = express();
@@ -35,7 +38,20 @@ app.use(
   }),
 );
 app.get("/congestions", async (req: Request, res: Response) => {
-  res.json(await congestionSvc.getCongestions(req.query));
+  res.json(await congestion.getCongestions(req.query));
+});
+app.get("/route", async (req: Request, res: Response) => {
+  const r =
+    req.body as paths["/route"]["get"]["requestBody"]["content"]["application/json"];
+  if (r.src.kind === "location" && r.dest.kind == "location") {
+    const routes = await routing.route(r.src.location!, r.dest.location!);
+    console.log(JSON.stringify(routes, null, 2));
+    res.json({ routes });
+  } else {
+    // TODO(devlinwaluja), TODO(Inscrutablydistinct): implement RoutingSvc.geocode(address) -> location,
+    // use your new method to geocode to long/lat, then  call routing.route() to respond with routes. see above.
+    throw new Error("Address geocoding is not yet supported");
+  }
 });
 
 // catchall error handler with json response
