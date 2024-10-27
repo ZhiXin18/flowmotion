@@ -11,12 +11,12 @@ on:
       - .github/workflows/backend-ci.yaml
       - "backend/**"
 jobs:
-  pipeline:
+  backend:
     strategy:
       fail-fast: false
       matrix:
         target: [lint, build, test]
-    name: "${{ matrix.target }} Pipeline"
+    name: "${{ matrix.target }} Backend"
     defaults:
       run:
         working-directory: backend
