@@ -5,7 +5,7 @@
 import 'package:flowmotion_api/api.dart';
 ```
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *https://flowmotion-backend-210524342027.asia-southeast1.run.app*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------

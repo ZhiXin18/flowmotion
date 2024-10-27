@@ -13,7 +13,8 @@ import 'package:flowmotion_api/src/api/congestion_api.dart';
 import 'package:flowmotion_api/src/api/routing_api.dart';
 
 class FlowmotionApi {
-  static const String basePath = r'http://localhost';
+  static const String basePath =
+      r'https://flowmotion-backend-210524342027.asia-southeast1.run.app';
 
   final Dio dio;
   final Serializers serializers;
