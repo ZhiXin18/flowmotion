@@ -5,8 +5,8 @@
  */
 
 import { Firestore, Query } from "firebase-admin/firestore";
-import { components, paths } from "@/api";
-import { formatSGT } from "@/date";
+import { components, paths } from "../api";
+import { formatSGT } from "../date";
 import { add as addDate } from "date-fns";
 
 type Params = paths["/congestions"]["get"]["parameters"]["query"];

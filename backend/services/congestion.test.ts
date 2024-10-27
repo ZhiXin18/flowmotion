@@ -5,8 +5,8 @@
  */
 
 import { describe, expect, test } from "@jest/globals";
-import { CongestionSvc } from "@/services/congestion";
-import { initDB } from "@/clients/db";
+import { CongestionSvc } from "./congestion";
+import { initDB } from "../clients/db";
 import { add as addDate } from "date-fns";
 
 describe("CongestionSvc", () => {

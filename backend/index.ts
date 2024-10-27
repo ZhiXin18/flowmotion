@@ -4,12 +4,12 @@
  * Entrypoint
  */
 import express from "express";
-import { CongestionSvc } from "@/services/congestion";
-import { initDB } from "@/clients/db";
+import { CongestionSvc } from "./services/congestion";
+import { initDB } from "./clients/db";
 import { Request, Response } from "express";
 import * as OpenApiValidator from "express-openapi-validator";
-import { ROUTING_API, RoutingSvc } from "@/services/routing";
-import { paths } from "@/api";
+import { ROUTING_API, RoutingSvc } from "./services/routing";
+import { paths } from "./api";
 
 // parse command line args
 if (process.argv.length < 4) {

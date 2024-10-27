@@ -7,7 +7,7 @@
 import { describe, expect, test } from "@jest/globals";
 import { ROUTING_API, RoutingSvc } from "./routing";
 import { CongestionSvc } from "./congestion";
-import { initDB } from "@/clients/db";
+import { initDB } from "../clients/db";
 
 describe("RoutingSvc", () => {
   const osrm = new RoutingSvc(ROUTING_API, fetch, new CongestionSvc(initDB()));

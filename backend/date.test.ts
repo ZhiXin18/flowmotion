@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, test } from "@jest/globals";
-import { formatSGT } from "@/date";
+import { formatSGT } from "./date";
 
 describe("CongestionSvc", () => {
   test("formatSGT()", async () => {
