@@ -6,9 +6,9 @@
 
 FROM node:20.18.0-slim AS base
 WORKDIR /app
-RUN chown node /app
-USER node
 ADD https://raw.githubusercontent.com/ZhiXin18/flowmotion/refs/heads/master/schema/flowmotion_api.yaml /app/
+RUN chown -R node /app
+USER node
 # Install dependencies 
 COPY --chown=node:node package*.json ./
 RUN npm ci --omit=dev
