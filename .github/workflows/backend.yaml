@@ -66,6 +66,7 @@ jobs:
           credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
 
       - name: Deploy Backend Container to GCP Cloud run
+        if: github.ref == 'refs/heads/master'
         run: |
           gcloud run deploy flowmotion-backend \
             --image asia-southeast1-docker.pkg.dev/flowmotion-4e268/ghcr/zhixin18/flowmotion/backend@${{ steps.backend-build.outputs.imageid }} \

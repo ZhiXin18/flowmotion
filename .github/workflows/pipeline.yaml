@@ -112,6 +112,7 @@ jobs:
           
       # deploy custom OSRM container
       - name: Deploy custom OSRM container to GCP Cloud run
+        if: github.ref == 'refs/heads/master'
         run: |
           gcloud run deploy osrm-congestion \
             --image asia-southeast1-docker.pkg.dev/flowmotion-4e268/ghcr/zhixin18/flowmotion/osrm-congestion@${{ steps.osrm-build.outputs.imageid }} \
