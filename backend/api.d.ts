@@ -24,9 +24,9 @@ export interface paths {
                     agg?: "min" | "max" | "avg";
                     /** @description Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method. */
                     groupby?: "hour" | "day";
-                    /** @description Start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp. */
+                    /** @description Inclusive start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. */
                     begin?: string;
-                    /** @description End of the time range (timestamp) to filter congestion data. If unspecified, defaults to the current timestamp. */
+                    /** @description Exclusive end of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. */
                     end?: string;
                 };
                 header?: never;
@@ -76,14 +76,18 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Retrieve congestion duration for a specific camera
+         * Retrieve congestion duration for a specific camera for a given time range.
          * @description Returns the total time in seconds (as a float) when the camera was "congested" according to a threshold, grouped by hour or day.
          */
         get: {
             parameters: {
-                query?: {
+                query: {
                     /** @description Congestion rating level (between 0 and 1) that is considered "congested" */
                     threshold?: number;
+                    /** @description Inclusive start of the time range (timestamp) to retrieve congestion duration. */
+                    begin: string;
+                    /** @description Exclusive end of the time range (timestamp) to retrieve congestion duration. */
+                    end: string;
                 };
                 header?: never;
                 path: {
