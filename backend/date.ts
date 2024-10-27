@@ -23,9 +23,9 @@ import { formatDate } from "date-fns";
  * // Output: "2023-10-26T20:00:00.000000+08:00" (Example output in SGT)
  */
 export function formatSGT(date: Date): string {
-    const tzDate = new TZDate(date, "UTC");
-    return formatDate(
-        tzDate.withTimeZone("Asia/Singapore"),
-        "yyyy-MM-dd'T'HH:mm:ss.SSSXX",
-    );
+  const tzDate = new TZDate(date, "UTC");
+  return formatDate(
+    tzDate.withTimeZone("Asia/Singapore"),
+    "yyyy-MM-dd'T'HH:mm:ss.SSSXX",
+  );
 }

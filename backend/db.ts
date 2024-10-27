@@ -11,7 +11,7 @@ import { Firestore, getFirestore } from "firebase-admin/firestore";
  * Initializes and returns a Firestore database instance.
  *
  * This function sets up access to Firebase Firestore by initializing a Firebase app
- * with the specified project ID, and then returns the Firestore database instance 
+ * with the specified project ID, and then returns the Firestore database instance
  * associated with this app.
  *
  * @function
