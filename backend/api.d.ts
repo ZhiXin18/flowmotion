@@ -4,296 +4,324 @@
  */
 
 export interface paths {
-    "/congestions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Retrieve congestion data
-         * @description Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
-         */
-        get: {
-            parameters: {
-                query?: {
-                    /** @description Filter by congestion points by specific camera id. */
-                    camera_id?: string;
-                    /** @description Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified. */
-                    agg?: "min" | "max" | "avg";
-                    /** @description Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method. */
-                    groupby?: "hour" | "day";
-                    /** @description Inclusive start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. */
-                    begin?: string;
-                    /** @description Exclusive end of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. */
-                    end?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description A list of congestion data */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Congestion"][];
-                    };
-                };
-                /** @description Invalid request parameters */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/congestions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/congested/{camera_id}/{groupby}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /**
+     * Retrieve congestion data
+     * @description Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
+     */
+    get: {
+      parameters: {
+        query?: {
+          /** @description Filter by congestion points by specific camera id. */
+          camera_id?: string;
+          /** @description Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified. */
+          agg?: "min" | "max" | "avg";
+          /** @description Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method. */
+          groupby?: "hour" | "day";
+          /** @description Inclusive start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. */
+          begin?: string;
+          /** @description Exclusive end of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. */
+          end?: string;
         };
-        /**
-         * Retrieve congestion duration for a specific camera for a given time range.
-         * @description Returns the total time in seconds (as a float) when the camera was "congested" according to a threshold, grouped by hour or day.
-         */
-        get: {
-            parameters: {
-                query: {
-                    /** @description Congestion rating level (between 0 and 1) that is considered "congested" */
-                    threshold?: number;
-                    /** @description Inclusive start of the time range (timestamp) to retrieve congestion duration. */
-                    begin: string;
-                    /** @description Exclusive end of the time range (timestamp) to retrieve congestion duration. */
-                    end: string;
-                };
-                header?: never;
-                path: {
-                    /** @description ID of the camera to retrieve congestion duration for */
-                    camera_id: string;
-                    /** @description Group congestion duration by hour or day */
-                    groupby: "hour" | "day";
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Total congested time in seconds, grouped by the specified interval */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": number[];
-                    };
-                };
-                /** @description Invalid request parameters */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description A list of congestion data */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["Congestion"][];
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Invalid request parameters */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Internal server error */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
     };
-    "/route": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Retrieve recommended routes between source and destination
-         * @description Returns a list of recommended routes from source to destination, including geometry, duration, distance, and step-by-step instructions.
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": {
-                        src: {
-                            /**
-                             * @description Specifies if the source is an address or a location
-                             * @enum {string}
-                             */
-                            kind: "address" | "location";
-                            address?: components["schemas"]["Address"];
-                            location?: components["schemas"]["Location"];
-                        };
-                        dest: {
-                            /**
-                             * @description Specifies if the destination is an address or a location
-                             * @enum {string}
-                             */
-                            kind: "address" | "location";
-                            address?: components["schemas"]["Address"] | null;
-                            location?: components["schemas"]["Location"] | null;
-                        };
-                    };
-                };
-            };
-            responses: {
-                /** @description List of recommended routes with details on geometry, duration, distance, and steps */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            routes?: {
-                                /** @description Polyline (precision 5) for drawing the entire route on a map */
-                                geometry: string;
-                                /**
-                                 * Format: float
-                                 * @description Estimated travel duration in seconds
-                                 */
-                                duration: number;
-                                /**
-                                 * Format: float
-                                 * @description Total travel distance in meters
-                                 */
-                                distance: number;
-                                steps: {
-                                    /** @description Name of the road */
-                                    name: string;
-                                    /**
-                                     * Format: float
-                                     * @description Estimated duration of the step in seconds
-                                     */
-                                    duration: number;
-                                    /**
-                                     * Format: float
-                                     * @description Travel distance of the step in meters
-                                     */
-                                    distance: number;
-                                    /** @description Polyline (precision 5) for drawing this step on a map */
-                                    geometry: string;
-                                    direction: ("uturn" | "sharp right" | "right" | "slight right" | "straight" | "slight left" | "left" | "sharp left") | null;
-                                    /**
-                                     * @description The type of maneuver to perform
-                                     * @enum {string}
-                                     */
-                                    maneuver: "turn" | "new name" | "depart" | "arrive" | "merge" | "on ramp" | "off ramp" | "fork" | "end of road" | "use lane" | "continue" | "roundabout" | "exit roundabout" | "rotary" | "exit rotary" | "roundabout turn" | "notification";
-                                    /** @description OSRM-style text instructions for this step */
-                                    instruction: string;
-                                    congestion: components["schemas"]["Congestion"] | null;
-                                }[];
-                            }[];
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/congested/{camera_id}/{groupby}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /**
+     * Retrieve congestion duration for a specific camera for a given time range.
+     * @description Returns the total time in seconds (as a float) when the camera was "congested" according to a threshold, grouped by hour or day.
+     */
+    get: {
+      parameters: {
+        query: {
+          /** @description Congestion rating level (between 0 and 1) that is considered "congested" */
+          threshold?: number;
+          /** @description Inclusive start of the time range (timestamp) to retrieve congestion duration. */
+          begin: string;
+          /** @description Exclusive end of the time range (timestamp) to retrieve congestion duration. */
+          end: string;
+        };
+        header?: never;
+        path: {
+          /** @description ID of the camera to retrieve congestion duration for */
+          camera_id: string;
+          /** @description Group congestion duration by hour or day */
+          groupby: "hour" | "day";
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Total congested time in seconds, grouped by the specified interval */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": number[];
+          };
+        };
+        /** @description Invalid request parameters */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Internal server error */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/route": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Retrieve recommended routes between source and destination
+     * @description Returns a list of recommended routes from source to destination, including geometry, duration, distance, and step-by-step instructions.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          "application/json": {
+            src: {
+              /**
+               * @description Specifies if the source is an address or a location
+               * @enum {string}
+               */
+              kind: "address" | "location";
+              address?: components["schemas"]["Address"];
+              location?: components["schemas"]["Location"];
+            };
+            dest: {
+              /**
+               * @description Specifies if the destination is an address or a location
+               * @enum {string}
+               */
+              kind: "address" | "location";
+              address?: components["schemas"]["Address"] | null;
+              location?: components["schemas"]["Location"] | null;
+            };
+          };
+        };
+      };
+      responses: {
+        /** @description List of recommended routes with details on geometry, duration, distance, and steps */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              routes?: {
+                /** @description Polyline (precision 5) for drawing the entire route on a map */
+                geometry: string;
+                /**
+                 * Format: float
+                 * @description Estimated travel duration in seconds
+                 */
+                duration: number;
+                /**
+                 * Format: float
+                 * @description Total travel distance in meters
+                 */
+                distance: number;
+                steps: {
+                  /** @description Name of the road */
+                  name: string;
+                  /**
+                   * Format: float
+                   * @description Estimated duration of the step in seconds
+                   */
+                  duration: number;
+                  /**
+                   * Format: float
+                   * @description Travel distance of the step in meters
+                   */
+                  distance: number;
+                  /** @description Polyline (precision 5) for drawing this step on a map */
+                  geometry: string;
+                  direction:
+                    | (
+                        | "uturn"
+                        | "sharp right"
+                        | "right"
+                        | "slight right"
+                        | "straight"
+                        | "slight left"
+                        | "left"
+                        | "sharp left"
+                      )
+                    | null;
+                  /**
+                   * @description The type of maneuver to perform
+                   * @enum {string}
+                   */
+                  maneuver:
+                    | "turn"
+                    | "new name"
+                    | "depart"
+                    | "arrive"
+                    | "merge"
+                    | "on ramp"
+                    | "off ramp"
+                    | "fork"
+                    | "end of road"
+                    | "use lane"
+                    | "continue"
+                    | "roundabout"
+                    | "exit roundabout"
+                    | "rotary"
+                    | "exit rotary"
+                    | "roundabout turn"
+                    | "notification";
+                  /** @description OSRM-style text instructions for this step */
+                  instruction: string;
+                  congestion: components["schemas"]["Congestion"] | null;
+                }[];
+              }[];
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /**
-         * Congestion
-         * @description Traffic camera congestion rating.
-         */
-        Congestion: {
-            /**
-             * Camera
-             * @description Traffic camera capturing traffic images
-             */
-            camera: {
-                id: string;
-                /** Format: date-time */
-                captured_on: string;
-                /** Format: date-time */
-                retrieved_on: string;
-                location: components["schemas"]["Location"];
-            };
-            /**
-             * Rating
-             * @description Traffic congestion rating
-             */
-            rating: {
-                /** Format: date-time */
-                rated_on: string;
-                model_id: string;
-                /** @description 0-1 congestion rating with 1 being 'most congested' */
-                value: number;
-            };
-            /** Format: date-time */
-            updated_on: string;
-        };
-        Address: {
-            /** @description Full address text */
-            text: string;
-            /** @description Postal code of the source address */
-            postcode: string;
-        };
-        Location: {
-            /**
-             * Format: float
-             * @description Latitude of the location
-             */
-            latitude: number;
-            /**
-             * Format: float
-             * @description Longitude of the location
-             */
-            longitude: number;
-        };
+  schemas: {
+    /**
+     * Congestion
+     * @description Traffic camera congestion rating.
+     */
+    Congestion: {
+      /**
+       * Camera
+       * @description Traffic camera capturing traffic images
+       */
+      camera: {
+        id: string;
+        /** Format: date-time */
+        captured_on: string;
+        /** Format: date-time */
+        retrieved_on: string;
+        location: components["schemas"]["Location"];
+      };
+      /**
+       * Rating
+       * @description Traffic congestion rating
+       */
+      rating: {
+        /** Format: date-time */
+        rated_on: string;
+        model_id: string;
+        /** @description 0-1 congestion rating with 1 being 'most congested' */
+        value: number;
+      };
+      /** Format: date-time */
+      updated_on: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    Address: {
+      /** @description Full address text */
+      text: string;
+      /** @description Postal code of the source address */
+      postcode: string;
+    };
+    Location: {
+      /**
+       * Format: float
+       * @description Latitude of the location
+       */
+      latitude: number;
+      /**
+       * Format: float
+       * @description Longitude of the location
+       */
+      longitude: number;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;
