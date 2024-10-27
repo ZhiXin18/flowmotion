@@ -9,11 +9,11 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**routePost**](RoutingApi.md#routepost) | **POST** /route | Retrieve recommended routes between source and destination
+[**routeGet**](RoutingApi.md#routeget) | **GET** /route | Retrieve recommended routes between source and destination
 
 
-# **routePost**
-> RoutePost200Response routePost(routePostRequest)
+# **routeGet**
+> RouteGet200Response routeGet(routeGetRequest)
 
 Retrieve recommended routes between source and destination
 
@@ -24,13 +24,13 @@ Returns a list of recommended routes from source to destination, including geome
 import 'package:flowmotion_api/api.dart';
 
 final api = FlowmotionApi().getRoutingApi();
-final RoutePostRequest routePostRequest = ; // RoutePostRequest | 
+final RouteGetRequest routeGetRequest = ; // RouteGetRequest | 
 
 try {
-    final response = api.routePost(routePostRequest);
+    final response = api.routeGet(routeGetRequest);
     print(response);
 } catch on DioException (e) {
-    print('Exception when calling RoutingApi->routePost: $e\n');
+    print('Exception when calling RoutingApi->routeGet: $e\n');
 }
 ```
 
@@ -38,11 +38,11 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **routePostRequest** | [**RoutePostRequest**](RoutePostRequest.md)|  | 
+ **routeGetRequest** | [**RouteGetRequest**](RouteGetRequest.md)|  | 
 
 ### Return type
 
-[**RoutePost200Response**](RoutePost200Response.md)
+[**RouteGet200Response**](RouteGet200Response.md)
 
 ### Authorization
 

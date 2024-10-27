@@ -19,12 +19,12 @@ import 'package:flowmotion_api/src/model/camera.dart';
 import 'package:flowmotion_api/src/model/congestion.dart';
 import 'package:flowmotion_api/src/model/location.dart';
 import 'package:flowmotion_api/src/model/rating.dart';
-import 'package:flowmotion_api/src/model/route_post200_response.dart';
-import 'package:flowmotion_api/src/model/route_post200_response_routes_inner.dart';
-import 'package:flowmotion_api/src/model/route_post200_response_routes_inner_steps_inner.dart';
-import 'package:flowmotion_api/src/model/route_post_request.dart';
-import 'package:flowmotion_api/src/model/route_post_request_dest.dart';
-import 'package:flowmotion_api/src/model/route_post_request_src.dart';
+import 'package:flowmotion_api/src/model/route_get200_response.dart';
+import 'package:flowmotion_api/src/model/route_get200_response_routes_inner.dart';
+import 'package:flowmotion_api/src/model/route_get200_response_routes_inner_steps_inner.dart';
+import 'package:flowmotion_api/src/model/route_get_request.dart';
+import 'package:flowmotion_api/src/model/route_get_request_dest.dart';
+import 'package:flowmotion_api/src/model/route_get_request_src.dart';
 
 part 'serializers.g.dart';
 
@@ -34,12 +34,12 @@ part 'serializers.g.dart';
   Congestion,
   Location,
   Rating,
-  RoutePost200Response,
-  RoutePost200ResponseRoutesInner,
-  RoutePost200ResponseRoutesInnerStepsInner,
-  RoutePostRequest,
-  RoutePostRequestDest,
-  RoutePostRequestSrc,
+  RouteGet200Response,
+  RouteGet200ResponseRoutesInner,
+  RouteGet200ResponseRoutesInnerStepsInner,
+  RouteGetRequest,
+  RouteGetRequestDest,
+  RouteGetRequestSrc,
 ])
 Serializers serializers = (_$serializers.toBuilder()
       ..addBuilderFactory(

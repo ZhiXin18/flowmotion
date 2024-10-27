@@ -12,24 +12,23 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(Congestion.serializer)
       ..add(Location.serializer)
       ..add(Rating.serializer)
-      ..add(RoutePost200Response.serializer)
-      ..add(RoutePost200ResponseRoutesInner.serializer)
-      ..add(RoutePost200ResponseRoutesInnerStepsInner.serializer)
-      ..add(RoutePost200ResponseRoutesInnerStepsInnerDirectionEnum.serializer)
-      ..add(RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum.serializer)
-      ..add(RoutePostRequest.serializer)
-      ..add(RoutePostRequestDest.serializer)
-      ..add(RoutePostRequestDestKindEnum.serializer)
-      ..add(RoutePostRequestSrc.serializer)
+      ..add(RouteGet200Response.serializer)
+      ..add(RouteGet200ResponseRoutesInner.serializer)
+      ..add(RouteGet200ResponseRoutesInnerStepsInner.serializer)
+      ..add(RouteGet200ResponseRoutesInnerStepsInnerDirectionEnum.serializer)
+      ..add(RouteGet200ResponseRoutesInnerStepsInnerManeuverEnum.serializer)
+      ..add(RouteGetRequest.serializer)
+      ..add(RouteGetRequestDest.serializer)
+      ..add(RouteGetRequestDestKindEnum.serializer)
+      ..add(RouteGetRequestSrc.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList,
-              const [const FullType(RoutePost200ResponseRoutesInner)]),
-          () => new ListBuilder<RoutePost200ResponseRoutesInner>())
+              const [const FullType(RouteGet200ResponseRoutesInner)]),
+          () => new ListBuilder<RouteGet200ResponseRoutesInner>())
       ..addBuilderFactory(
-          const FullType(BuiltList, const [
-            const FullType(RoutePost200ResponseRoutesInnerStepsInner)
-          ]),
-          () => new ListBuilder<RoutePost200ResponseRoutesInnerStepsInner>()))
+          const FullType(BuiltList,
+              const [const FullType(RouteGet200ResponseRoutesInnerStepsInner)]),
+          () => new ListBuilder<RouteGet200ResponseRoutesInnerStepsInner>()))
     .build();
 
 // ignore_for_file: deprecated_member_use_from_same_package,type=lint
