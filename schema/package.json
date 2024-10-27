@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@seriousme/openapi-schema-validator": "^2.2.3",
     "ajv-cli": "^5.0.0",
     "ajv-formats": "^3.0.1",
     "ajv-keywords": "^5.1.0"

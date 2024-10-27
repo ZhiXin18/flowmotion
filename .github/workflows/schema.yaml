@@ -29,3 +29,5 @@ jobs:
         run: npm ci
       - name: Validate json schema
         run: npx ajv compile -s "*.schema.json" --spec=draft2020 -c ajv-formats
+      - name: Valid Flowmotion Backend OpenAPI Schema
+        run: npx validate-api flowmotion_api.yaml
