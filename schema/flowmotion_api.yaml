@@ -9,8 +9,9 @@ info:
   title: Flowmotion API
   description: API exposed by the Flowmotion Backend Service.
   version: 0.1.0
-# TODO: add servers: eg. - url: https:/petstore3.swagger.io/api/v3/
-servers: []
+servers: 
+  - description: Flowmotion Backend on Google Cloud Run
+    url: https://flowmotion-backend-210524342027.asia-southeast1.run.app/
 tags:
   - name: Congestion
     description: Congestion API returns traffic congestion levels at camera locations.
