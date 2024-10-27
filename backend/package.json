@@ -4,8 +4,11 @@
   "description": "Flowmotion Backend serves Flowmotion Backend API",
   "main": "index.ts",
   "scripts": {
+    "dev": "tsx index.ts",
     "test": "jest",
-    "build": "npx tsc"
+    "build": "tsc",
+    "lint": "eslint . && prettier --check .",
+    "fmt": "eslint --fix . && prettier --write ."
   },
   "repository": {
     "type": "git",

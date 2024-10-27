@@ -31,7 +31,7 @@ app.use(
     apiSpec: apiYaml,
     validateRequests: true,
     // turn off response validation for performance in production
-    validateResponses: app.get("env") === "development",
+    validateResponses: app.get("env") != "production",
   }),
 );
 app.get("/congestions", async (req: Request, res: Response) => {
@@ -50,5 +50,6 @@ app.use((err: any, _req: Request, res: Response) => {
 
 // listen for requests
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: Running in ${app.get("env")} environment`);
+  console.log(`[server]: Listening at http://localhost:${port}`);
 });
