@@ -40,7 +40,7 @@ app.use(
 app.get("/congestions", async (req: Request, res: Response) => {
   res.json(await congestion.getCongestions(req.query));
 });
-app.get("/route", async (req: Request, res: Response) => {
+app.post("/route", async (req: Request, res: Response) => {
   const r =
     req.body as paths["/route"]["get"]["requestBody"]["content"]["application/json"];
   if (r.src.kind === "location" && r.dest.kind == "location") {

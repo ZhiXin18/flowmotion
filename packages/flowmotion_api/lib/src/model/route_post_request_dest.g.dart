@@ -65,7 +65,7 @@ class _$RoutePostRequestDestKindEnumSerializer
 
 class _$RoutePostRequestDest extends RoutePostRequestDest {
   @override
-  final RoutePostRequestDestKindEnum? kind;
+  final RoutePostRequestDestKindEnum kind;
   @override
   final Address? address;
   @override
@@ -75,8 +75,11 @@ class _$RoutePostRequestDest extends RoutePostRequestDest {
           [void Function(RoutePostRequestDestBuilder)? updates]) =>
       (new RoutePostRequestDestBuilder()..update(updates))._build();
 
-  _$RoutePostRequestDest._({this.kind, this.address, this.location})
-      : super._();
+  _$RoutePostRequestDest._({required this.kind, this.address, this.location})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(
+        kind, r'RoutePostRequestDest', 'kind');
+  }
 
   @override
   RoutePostRequestDest rebuild(
@@ -166,7 +169,8 @@ class RoutePostRequestDestBuilder
     try {
       _$result = _$v ??
           new _$RoutePostRequestDest._(
-              kind: kind,
+              kind: BuiltValueNullFieldError.checkNotNull(
+                  kind, r'RoutePostRequestDest', 'kind'),
               address: _address?.build(),
               location: _location?.build());
     } catch (_) {

@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:built_collection/built_collection.dart';
 import 'package:flowmotion_api/src/model/address.dart';
 import 'package:flowmotion_api/src/model/location.dart';
 import 'package:built_value/built_value.dart';
@@ -13,13 +14,19 @@ part 'route_post_request_src.g.dart';
 /// RoutePostRequestSrc
 ///
 /// Properties:
-/// * [kind]
+/// * [kind] - Specifies if the source is an address or a location
+/// * [address]
 /// * [location]
 @BuiltValue()
 abstract class RoutePostRequestSrc
     implements Built<RoutePostRequestSrc, RoutePostRequestSrcBuilder> {
+  /// Specifies if the source is an address or a location
   @BuiltValueField(wireName: r'kind')
-  Address? get kind;
+  RoutePostRequestSrcKindEnum get kind;
+  // enum kindEnum {  address,  location,  };
+
+  @BuiltValueField(wireName: r'address')
+  Address? get address;
 
   @BuiltValueField(wireName: r'location')
   Location? get location;
@@ -53,11 +60,16 @@ class _$RoutePostRequestSrcSerializer
     RoutePostRequestSrc object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.kind != null) {
-      yield r'kind';
+    yield r'kind';
+    yield serializers.serialize(
+      object.kind,
+      specifiedType: const FullType(RoutePostRequestSrcKindEnum),
+    );
+    if (object.address != null) {
+      yield r'address';
       yield serializers.serialize(
-        object.kind,
-        specifiedType: const FullType.nullable(Address),
+        object.address,
+        specifiedType: const FullType(Address),
       );
     }
     if (object.location != null) {
@@ -95,10 +107,16 @@ class _$RoutePostRequestSrcSerializer
         case r'kind':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType.nullable(Address),
-          ) as Address?;
-          if (valueDes == null) continue;
-          result.kind.replace(valueDes);
+            specifiedType: const FullType(RoutePostRequestSrcKindEnum),
+          ) as RoutePostRequestSrcKindEnum;
+          result.kind = valueDes;
+          break;
+        case r'address':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(Address),
+          ) as Address;
+          result.address.replace(valueDes);
           break;
         case r'location':
           final valueDes = serializers.deserialize(
@@ -135,4 +153,26 @@ class _$RoutePostRequestSrcSerializer
     );
     return result.build();
   }
+}
+
+class RoutePostRequestSrcKindEnum extends EnumClass {
+  /// Specifies if the source is an address or a location
+  @BuiltValueEnumConst(wireName: r'address')
+  static const RoutePostRequestSrcKindEnum address =
+      _$routePostRequestSrcKindEnum_address;
+
+  /// Specifies if the source is an address or a location
+  @BuiltValueEnumConst(wireName: r'location')
+  static const RoutePostRequestSrcKindEnum location =
+      _$routePostRequestSrcKindEnum_location;
+
+  static Serializer<RoutePostRequestSrcKindEnum> get serializer =>
+      _$routePostRequestSrcKindEnumSerializer;
+
+  const RoutePostRequestSrcKindEnum._(String name) : super(name);
+
+  static BuiltSet<RoutePostRequestSrcKindEnum> get values =>
+      _$routePostRequestSrcKindEnumValues;
+  static RoutePostRequestSrcKindEnum valueOf(String name) =>
+      _$routePostRequestSrcKindEnumValueOf(name);
 }

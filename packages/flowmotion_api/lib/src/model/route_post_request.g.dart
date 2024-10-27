@@ -8,15 +8,18 @@ part of 'route_post_request.dart';
 
 class _$RoutePostRequest extends RoutePostRequest {
   @override
-  final RoutePostRequestSrc? src;
+  final RoutePostRequestSrc src;
   @override
-  final RoutePostRequestDest? dest;
+  final RoutePostRequestDest dest;
 
   factory _$RoutePostRequest(
           [void Function(RoutePostRequestBuilder)? updates]) =>
       (new RoutePostRequestBuilder()..update(updates))._build();
 
-  _$RoutePostRequest._({this.src, this.dest}) : super._();
+  _$RoutePostRequest._({required this.src, required this.dest}) : super._() {
+    BuiltValueNullFieldError.checkNotNull(src, r'RoutePostRequest', 'src');
+    BuiltValueNullFieldError.checkNotNull(dest, r'RoutePostRequest', 'dest');
+  }
 
   @override
   RoutePostRequest rebuild(void Function(RoutePostRequestBuilder) updates) =>
@@ -71,8 +74,8 @@ class RoutePostRequestBuilder
   RoutePostRequestBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _src = $v.src?.toBuilder();
-      _dest = $v.dest?.toBuilder();
+      _src = $v.src.toBuilder();
+      _dest = $v.dest.toBuilder();
       _$v = null;
     }
     return this;
@@ -95,15 +98,15 @@ class RoutePostRequestBuilder
   _$RoutePostRequest _build() {
     _$RoutePostRequest _$result;
     try {
-      _$result = _$v ??
-          new _$RoutePostRequest._(src: _src?.build(), dest: _dest?.build());
+      _$result =
+          _$v ?? new _$RoutePostRequest._(src: src.build(), dest: dest.build());
     } catch (_) {
       late String _$failedField;
       try {
         _$failedField = 'src';
-        _src?.build();
+        src.build();
         _$failedField = 'dest';
-        _dest?.build();
+        dest.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             r'RoutePostRequest', _$failedField, e.toString());

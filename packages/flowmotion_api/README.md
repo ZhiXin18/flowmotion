@@ -70,7 +70,7 @@ Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 [*CongestionApi*](doc/CongestionApi.md) | [**congestedCameraIdGroupbyGet**](doc/CongestionApi.md#congestedcameraidgroupbyget) | **GET** /congested/{camera_id}/{groupby} | Retrieve congestion duration for a specific camera for a given time range.
 [*CongestionApi*](doc/CongestionApi.md) | [**congestionsGet**](doc/CongestionApi.md#congestionsget) | **GET** /congestions | Retrieve congestion data
-[*RoutingApi*](doc/RoutingApi.md) | [**routeGet**](doc/RoutingApi.md#routeget) | **GET** /route | Retrieve recommended routes between source and destination
+[*RoutingApi*](doc/RoutingApi.md) | [**routePost**](doc/RoutingApi.md#routepost) | **POST** /route | Retrieve recommended routes between source and destination
 
 
 ## Documentation For Models
@@ -80,12 +80,12 @@ Class | Method | HTTP request | Description
  - [Congestion](doc/Congestion.md)
  - [Location](doc/Location.md)
  - [Rating](doc/Rating.md)
- - [RouteGet200Response](doc/RouteGet200Response.md)
- - [RouteGet200ResponseRoutesInner](doc/RouteGet200ResponseRoutesInner.md)
- - [RouteGet200ResponseRoutesInnerStepsInner](doc/RouteGet200ResponseRoutesInnerStepsInner.md)
- - [RouteGetRequest](doc/RouteGetRequest.md)
- - [RouteGetRequestDest](doc/RouteGetRequestDest.md)
- - [RouteGetRequestSrc](doc/RouteGetRequestSrc.md)
+ - [RoutePost200Response](doc/RoutePost200Response.md)
+ - [RoutePost200ResponseRoutesInner](doc/RoutePost200ResponseRoutesInner.md)
+ - [RoutePost200ResponseRoutesInnerStepsInner](doc/RoutePost200ResponseRoutesInnerStepsInner.md)
+ - [RoutePostRequest](doc/RoutePostRequest.md)
+ - [RoutePostRequestDest](doc/RoutePostRequestDest.md)
+ - [RoutePostRequestSrc](doc/RoutePostRequestSrc.md)
 
 
 ## Documentation For Authorization

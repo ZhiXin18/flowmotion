@@ -28,19 +28,19 @@ abstract class RoutePost200ResponseRoutesInnerStepsInner
             RoutePost200ResponseRoutesInnerStepsInnerBuilder> {
   /// Name of the road
   @BuiltValueField(wireName: r'name')
-  String? get name;
+  String get name;
 
   /// Estimated duration of the step in seconds
   @BuiltValueField(wireName: r'duration')
-  double? get duration;
+  double get duration;
 
   /// Travel distance of the step in meters
   @BuiltValueField(wireName: r'distance')
-  double? get distance;
+  double get distance;
 
   /// Polyline (precision 5) for drawing this step on a map
   @BuiltValueField(wireName: r'geometry')
-  String? get geometry;
+  String get geometry;
 
   /// Direction to take for the step
   @BuiltValueField(wireName: r'direction')
@@ -49,12 +49,12 @@ abstract class RoutePost200ResponseRoutesInnerStepsInner
 
   /// The type of maneuver to perform
   @BuiltValueField(wireName: r'maneuver')
-  RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum? get maneuver;
-  // enum maneuverEnum {  turn,  new name,  depart,  arrive,  merge,  on ramp,  off ramp,  fork,  end of road,  use lane,  continue,  roundabout,  rotary,  roundabout turn,  notification,  };
+  RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum get maneuver;
+  // enum maneuverEnum {  turn,  new name,  depart,  arrive,  merge,  on ramp,  off ramp,  fork,  end of road,  use lane,  continue,  roundabout,  exit roundabout,  rotary,  exit rotary,  roundabout turn,  notification,  };
 
   /// OSRM-style text instructions for this step
   @BuiltValueField(wireName: r'instruction')
-  String? get instruction;
+  String get instruction;
 
   @BuiltValueField(wireName: r'congestion')
   Congestion? get congestion;
@@ -90,64 +90,52 @@ class _$RoutePost200ResponseRoutesInnerStepsInnerSerializer
     RoutePost200ResponseRoutesInnerStepsInner object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.name != null) {
-      yield r'name';
-      yield serializers.serialize(
-        object.name,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.duration != null) {
-      yield r'duration';
-      yield serializers.serialize(
-        object.duration,
-        specifiedType: const FullType(double),
-      );
-    }
-    if (object.distance != null) {
-      yield r'distance';
-      yield serializers.serialize(
-        object.distance,
-        specifiedType: const FullType(double),
-      );
-    }
-    if (object.geometry != null) {
-      yield r'geometry';
-      yield serializers.serialize(
-        object.geometry,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.direction != null) {
-      yield r'direction';
-      yield serializers.serialize(
-        object.direction,
-        specifiedType: const FullType(
-            RoutePost200ResponseRoutesInnerStepsInnerDirectionEnum),
-      );
-    }
-    if (object.maneuver != null) {
-      yield r'maneuver';
-      yield serializers.serialize(
-        object.maneuver,
-        specifiedType: const FullType(
-            RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum),
-      );
-    }
-    if (object.instruction != null) {
-      yield r'instruction';
-      yield serializers.serialize(
-        object.instruction,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.congestion != null) {
-      yield r'congestion';
-      yield serializers.serialize(
-        object.congestion,
-        specifiedType: const FullType.nullable(Congestion),
-      );
-    }
+    yield r'name';
+    yield serializers.serialize(
+      object.name,
+      specifiedType: const FullType(String),
+    );
+    yield r'duration';
+    yield serializers.serialize(
+      object.duration,
+      specifiedType: const FullType(double),
+    );
+    yield r'distance';
+    yield serializers.serialize(
+      object.distance,
+      specifiedType: const FullType(double),
+    );
+    yield r'geometry';
+    yield serializers.serialize(
+      object.geometry,
+      specifiedType: const FullType(String),
+    );
+    yield r'direction';
+    yield object.direction == null
+        ? null
+        : serializers.serialize(
+            object.direction,
+            specifiedType: const FullType.nullable(
+                RoutePost200ResponseRoutesInnerStepsInnerDirectionEnum),
+          );
+    yield r'maneuver';
+    yield serializers.serialize(
+      object.maneuver,
+      specifiedType:
+          const FullType(RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum),
+    );
+    yield r'instruction';
+    yield serializers.serialize(
+      object.instruction,
+      specifiedType: const FullType(String),
+    );
+    yield r'congestion';
+    yield object.congestion == null
+        ? null
+        : serializers.serialize(
+            object.congestion,
+            specifiedType: const FullType.nullable(Congestion),
+          );
   }
 
   @override
@@ -204,9 +192,10 @@ class _$RoutePost200ResponseRoutesInnerStepsInnerSerializer
         case r'direction':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(
+            specifiedType: const FullType.nullable(
                 RoutePost200ResponseRoutesInnerStepsInnerDirectionEnum),
-          ) as RoutePost200ResponseRoutesInnerStepsInnerDirectionEnum;
+          ) as RoutePost200ResponseRoutesInnerStepsInnerDirectionEnum?;
+          if (valueDes == null) continue;
           result.direction = valueDes;
           break;
         case r'maneuver':
@@ -384,9 +373,21 @@ class RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum extends EnumClass {
       _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_roundabout;
 
   /// The type of maneuver to perform
+  @BuiltValueEnumConst(wireName: r'exit roundabout')
+  static const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum
+      exitRoundabout =
+      _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_exitRoundabout;
+
+  /// The type of maneuver to perform
   @BuiltValueEnumConst(wireName: r'rotary')
   static const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum rotary =
       _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_rotary;
+
+  /// The type of maneuver to perform
+  @BuiltValueEnumConst(wireName: r'exit rotary')
+  static const RoutePost200ResponseRoutesInnerStepsInnerManeuverEnum
+      exitRotary =
+      _$routePost200ResponseRoutesInnerStepsInnerManeuverEnum_exitRotary;
 
   /// The type of maneuver to perform
   @BuiltValueEnumConst(wireName: r'roundabout turn')

@@ -19,10 +19,10 @@ part 'route_post_request.g.dart';
 abstract class RoutePostRequest
     implements Built<RoutePostRequest, RoutePostRequestBuilder> {
   @BuiltValueField(wireName: r'src')
-  RoutePostRequestSrc? get src;
+  RoutePostRequestSrc get src;
 
   @BuiltValueField(wireName: r'dest')
-  RoutePostRequestDest? get dest;
+  RoutePostRequestDest get dest;
 
   RoutePostRequest._();
 
@@ -50,20 +50,16 @@ class _$RoutePostRequestSerializer
     RoutePostRequest object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.src != null) {
-      yield r'src';
-      yield serializers.serialize(
-        object.src,
-        specifiedType: const FullType(RoutePostRequestSrc),
-      );
-    }
-    if (object.dest != null) {
-      yield r'dest';
-      yield serializers.serialize(
-        object.dest,
-        specifiedType: const FullType(RoutePostRequestDest),
-      );
-    }
+    yield r'src';
+    yield serializers.serialize(
+      object.src,
+      specifiedType: const FullType(RoutePostRequestSrc),
+    );
+    yield r'dest';
+    yield serializers.serialize(
+      object.dest,
+      specifiedType: const FullType(RoutePostRequestDest),
+    );
   }
 
   @override

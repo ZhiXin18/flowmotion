@@ -24,18 +24,18 @@ abstract class RoutePost200ResponseRoutesInner
             RoutePost200ResponseRoutesInnerBuilder> {
   /// Polyline (precision 5) for drawing the entire route on a map
   @BuiltValueField(wireName: r'geometry')
-  String? get geometry;
+  String get geometry;
 
   /// Estimated travel duration in seconds
   @BuiltValueField(wireName: r'duration')
-  double? get duration;
+  double get duration;
 
   /// Total travel distance in meters
   @BuiltValueField(wireName: r'distance')
-  double? get distance;
+  double get distance;
 
   @BuiltValueField(wireName: r'steps')
-  BuiltList<RoutePost200ResponseRoutesInnerStepsInner>? get steps;
+  BuiltList<RoutePost200ResponseRoutesInnerStepsInner> get steps;
 
   RoutePost200ResponseRoutesInner._();
 
@@ -67,35 +67,27 @@ class _$RoutePost200ResponseRoutesInnerSerializer
     RoutePost200ResponseRoutesInner object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.geometry != null) {
-      yield r'geometry';
-      yield serializers.serialize(
-        object.geometry,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.duration != null) {
-      yield r'duration';
-      yield serializers.serialize(
-        object.duration,
-        specifiedType: const FullType(double),
-      );
-    }
-    if (object.distance != null) {
-      yield r'distance';
-      yield serializers.serialize(
-        object.distance,
-        specifiedType: const FullType(double),
-      );
-    }
-    if (object.steps != null) {
-      yield r'steps';
-      yield serializers.serialize(
-        object.steps,
-        specifiedType: const FullType(
-            BuiltList, [FullType(RoutePost200ResponseRoutesInnerStepsInner)]),
-      );
-    }
+    yield r'geometry';
+    yield serializers.serialize(
+      object.geometry,
+      specifiedType: const FullType(String),
+    );
+    yield r'duration';
+    yield serializers.serialize(
+      object.duration,
+      specifiedType: const FullType(double),
+    );
+    yield r'distance';
+    yield serializers.serialize(
+      object.distance,
+      specifiedType: const FullType(double),
+    );
+    yield r'steps';
+    yield serializers.serialize(
+      object.steps,
+      specifiedType: const FullType(
+          BuiltList, [FullType(RoutePost200ResponseRoutesInnerStepsInner)]),
+    );
   }
 
   @override
