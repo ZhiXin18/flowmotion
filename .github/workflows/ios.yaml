@@ -6,22 +6,7 @@
 
 name: Flowmotion iOS CI/CD
 on:
-  push:
-    paths:
-      - .github/workflows/ios.yaml
-      - "ios/**"
-      - "flutter/**"
-      - "images/**"
-      - "integration_test/**"
-      - "lib/**"
-      - "test/**"
-      - "test_driver/**"
-      - .firebaserc
-      - storage.rules
-      - pubspec.lock
-      - remoteconfig.template.json
-      - "*.yaml"
-      - "*.json"
+  push: {}
 jobs:
   build-mobile-ios:
     name: Build Mobile App (iOS)

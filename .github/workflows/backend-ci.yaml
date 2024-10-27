@@ -6,10 +6,7 @@
 
 name: Flowmotion Backend CI/CD
 on:
-  push:
-    paths:
-      - .github/workflows/backend-ci.yaml
-      - "backend/**"
+  push: {}
 jobs:
   backend:
     strategy:

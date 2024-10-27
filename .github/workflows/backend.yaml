@@ -6,10 +6,7 @@
 
 name: Flowmotion Backend Deployment
 on:
-  push:
-    paths:
-      - .github/workflows/backend-ci.yaml
-      - "backend/**"
+  push: {}
 permissions:
   # needed to push docker images to GHCR
   packages: write

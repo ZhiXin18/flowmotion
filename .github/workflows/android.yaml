@@ -6,21 +6,7 @@
 
 name: Flowmotion Android CI/CD
 on:
-  push:
-    paths:
-      - .github/workflows/android.yaml
-      - "android/**"
-      - "flutter/**"
-      - "images/**"
-      - "integration_test/**"
-      - "lib/**"
-      - "test/**"
-      - "test_driver/**"
-      - .firebaserc
-      - storage.rules
-      - pubspec.lock
-      - "*.yaml"
-      - "*.json"
+  push: {}
 env:
   ANDROID_API_LEVEL: 23
 jobs:
