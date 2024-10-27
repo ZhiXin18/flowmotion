@@ -25,7 +25,8 @@
     "date-fns": "^4.1.0",
     "express": "^4.21.1",
     "express-openapi-validator": "^6.0.0-alpha.4",
-    "firebase-admin": "^12.7.0"
+    "firebase-admin": "^12.7.0",
+    "osrm-text-instructions": "^0.15.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
