@@ -42,7 +42,7 @@ app.get("/congestions", async (req: Request, res: Response) => {
 });
 app.post("/route", async (req: Request, res: Response) => {
   const r =
-    req.body as paths["/route"]["get"]["requestBody"]["content"]["application/json"];
+    req.body as paths["/route"]["post"]["requestBody"]["content"]["application/json"];
   if (r.src.kind === "location" && r.dest.kind == "location") {
     const routes = await routing.route(r.src.location!, r.dest.location!);
     console.log(JSON.stringify(routes, null, 2));

@@ -12,7 +12,7 @@ const OSRMText = require("osrm-text-instructions")("v5");
 
 type Location = components["schemas"]["Location"];
 type Routes = NonNullable<
-  paths["/route"]["get"]["responses"]["200"]["content"]["application/json"]["routes"]
+  paths["/route"]["post"]["responses"]["200"]["content"]["application/json"]["routes"]
 >;
 
 export const ROUTING_API =
