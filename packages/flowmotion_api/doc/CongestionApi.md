@@ -95,7 +95,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **cameraId** | **String**| Filter by congestion points by specific camera id. | [optional] 
- **agg** | **String**| Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified. | [optional] [default to 'avg']
+ **agg** | **String**| Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified. | [optional] 
  **groupby** | **String**| Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method. | [optional] 
  **begin** | **DateTime**| Inclusive start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. | [optional] 
  **end** | **DateTime**| Exclusive end of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. | [optional] 

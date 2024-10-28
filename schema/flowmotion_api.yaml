@@ -37,7 +37,6 @@ paths:
           schema:
             type: string
             enum: [min, max, avg]
-            default: avg
         - name: groupby
           in: query
           description: Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method.

@@ -140,7 +140,7 @@ class CongestionApi {
   /// Throws [DioException] if API call or serialization fails
   Future<Response<BuiltList<Congestion>>> congestionsGet({
     String? cameraId,
-    String? agg = 'avg',
+    String? agg,
     String? groupby,
     DateTime? begin,
     DateTime? end,
