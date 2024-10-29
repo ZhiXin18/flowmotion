@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **String** |  | 
 **capturedOn** | [**DateTime**](DateTime.md) |  | 
+**imageUrl** | **String** |  | 
 **retrievedOn** | [**DateTime**](DateTime.md) |  | 
 **location** | [**Location**](Location.md) |  | 
 

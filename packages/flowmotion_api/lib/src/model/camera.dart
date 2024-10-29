@@ -14,6 +14,7 @@ part 'camera.g.dart';
 /// Properties:
 /// * [id]
 /// * [capturedOn]
+/// * [imageUrl]
 /// * [retrievedOn]
 /// * [location]
 @BuiltValue()
@@ -23,6 +24,9 @@ abstract class Camera implements Built<Camera, CameraBuilder> {
 
   @BuiltValueField(wireName: r'captured_on')
   DateTime get capturedOn;
+
+  @BuiltValueField(wireName: r'image_url')
+  String get imageUrl;
 
   @BuiltValueField(wireName: r'retrieved_on')
   DateTime get retrievedOn;
@@ -62,6 +66,11 @@ class _$CameraSerializer implements PrimitiveSerializer<Camera> {
     yield serializers.serialize(
       object.capturedOn,
       specifiedType: const FullType(DateTime),
+    );
+    yield r'image_url';
+    yield serializers.serialize(
+      object.imageUrl,
+      specifiedType: const FullType(String),
     );
     yield r'retrieved_on';
     yield serializers.serialize(
@@ -111,6 +120,13 @@ class _$CameraSerializer implements PrimitiveSerializer<Camera> {
             specifiedType: const FullType(DateTime),
           ) as DateTime;
           result.capturedOn = valueDes;
+          break;
+        case r'image_url':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String;
+          result.imageUrl = valueDes;
           break;
         case r'retrieved_on':
           final valueDes = serializers.deserialize(

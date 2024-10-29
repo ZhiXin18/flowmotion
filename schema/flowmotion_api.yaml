@@ -293,6 +293,8 @@ components:
             captured_on:
               type: string
               format: date-time
+            image_url:
+              type: string
             retrieved_on:
               type: string
               format: date-time
@@ -300,6 +302,7 @@ components:
               $ref: "#/components/schemas/Location"
           required:
             - id
+            - image_url
             - captured_on
             - retrieved_on
             - location

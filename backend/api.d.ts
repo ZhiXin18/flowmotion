@@ -252,6 +252,7 @@ export interface components {
                 id: string;
                 /** Format: date-time */
                 captured_on: string;
+                image_url: string;
                 /** Format: date-time */
                 retrieved_on: string;
                 location: components["schemas"]["Location"];

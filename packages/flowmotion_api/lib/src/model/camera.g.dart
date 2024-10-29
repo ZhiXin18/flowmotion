@@ -12,6 +12,8 @@ class _$Camera extends Camera {
   @override
   final DateTime capturedOn;
   @override
+  final String imageUrl;
+  @override
   final DateTime retrievedOn;
   @override
   final Location location;
@@ -22,11 +24,13 @@ class _$Camera extends Camera {
   _$Camera._(
       {required this.id,
       required this.capturedOn,
+      required this.imageUrl,
       required this.retrievedOn,
       required this.location})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(id, r'Camera', 'id');
     BuiltValueNullFieldError.checkNotNull(capturedOn, r'Camera', 'capturedOn');
+    BuiltValueNullFieldError.checkNotNull(imageUrl, r'Camera', 'imageUrl');
     BuiltValueNullFieldError.checkNotNull(
         retrievedOn, r'Camera', 'retrievedOn');
     BuiltValueNullFieldError.checkNotNull(location, r'Camera', 'location');
@@ -45,6 +49,7 @@ class _$Camera extends Camera {
     return other is Camera &&
         id == other.id &&
         capturedOn == other.capturedOn &&
+        imageUrl == other.imageUrl &&
         retrievedOn == other.retrievedOn &&
         location == other.location;
   }
@@ -54,6 +59,7 @@ class _$Camera extends Camera {
     var _$hash = 0;
     _$hash = $jc(_$hash, id.hashCode);
     _$hash = $jc(_$hash, capturedOn.hashCode);
+    _$hash = $jc(_$hash, imageUrl.hashCode);
     _$hash = $jc(_$hash, retrievedOn.hashCode);
     _$hash = $jc(_$hash, location.hashCode);
     _$hash = $jf(_$hash);
@@ -65,6 +71,7 @@ class _$Camera extends Camera {
     return (newBuiltValueToStringHelper(r'Camera')
           ..add('id', id)
           ..add('capturedOn', capturedOn)
+          ..add('imageUrl', imageUrl)
           ..add('retrievedOn', retrievedOn)
           ..add('location', location))
         .toString();
@@ -81,6 +88,10 @@ class CameraBuilder implements Builder<Camera, CameraBuilder> {
   DateTime? _capturedOn;
   DateTime? get capturedOn => _$this._capturedOn;
   set capturedOn(DateTime? capturedOn) => _$this._capturedOn = capturedOn;
+
+  String? _imageUrl;
+  String? get imageUrl => _$this._imageUrl;
+  set imageUrl(String? imageUrl) => _$this._imageUrl = imageUrl;
 
   DateTime? _retrievedOn;
   DateTime? get retrievedOn => _$this._retrievedOn;
@@ -99,6 +110,7 @@ class CameraBuilder implements Builder<Camera, CameraBuilder> {
     if ($v != null) {
       _id = $v.id;
       _capturedOn = $v.capturedOn;
+      _imageUrl = $v.imageUrl;
       _retrievedOn = $v.retrievedOn;
       _location = $v.location.toBuilder();
       _$v = null;
@@ -128,6 +140,8 @@ class CameraBuilder implements Builder<Camera, CameraBuilder> {
               id: BuiltValueNullFieldError.checkNotNull(id, r'Camera', 'id'),
               capturedOn: BuiltValueNullFieldError.checkNotNull(
                   capturedOn, r'Camera', 'capturedOn'),
+              imageUrl: BuiltValueNullFieldError.checkNotNull(
+                  imageUrl, r'Camera', 'imageUrl'),
               retrievedOn: BuiltValueNullFieldError.checkNotNull(
                   retrievedOn, r'Camera', 'retrievedOn'),
               location: location.build());
