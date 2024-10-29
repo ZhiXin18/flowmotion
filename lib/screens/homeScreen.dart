@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flowmotion/screens/fullMapScreen.dart';
+import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import '../core/widget_keys.dart';
 import '../firebase_options.dart';
 import '../utilities/firebase_calls.dart';
@@ -37,6 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng _initialDestination = LatLng(1.3656412, 103.8726954);
   LatLng? _currentLocationMarker;
   List<String> savedAddresses = [];
+  List<LatLng> _stepPoints = [];
+  List<LatLng> allStepPoints = [];
+  List<String> allInstructions = [];
+  List<String> congestionPoints = [];
+  late RoutePost200Response? routeData;
 
   late final MapController _mainMapController;
   late final MapController _homeMapController;
@@ -51,6 +58,79 @@ class _HomeScreenState extends State<HomeScreen> {
     _workMapController = MapController();
     _getCurrentLocation();
     _fetchSavedAddresses();
+    _fetchRoute();
+  }
+
+  Future<void> _fetchRoute() async {
+    final routeApi = FlowmotionApi().getRoutingApi();
+    final routePostRequest = RoutePostRequest((b) => b
+      ..src.update((srcBuilder) => srcBuilder
+        ..kind = RoutePostRequestSrcKindEnum.location //state that location lat long is provided
+        ..location.update((locationBuilder) => locationBuilder
+          ..latitude = _initialCenter.latitude // Set the latitude
+          ..longitude = _initialCenter.longitude // Set the longitude
+        )
+      )
+      ..dest.update((destBuilder) => destBuilder
+        ..kind = RoutePostRequestDestKindEnum.location //state that location lat long is provided
+        ..location.update((locationBuilder) => locationBuilder
+          ..latitude = _initialDestination.latitude // Set the destination latitude
+          ..longitude = _initialDestination.longitude // Set the destination longitude
+        )
+      )
+    );
+
+    try {
+      final response = await routeApi.routePost(routePostRequest: routePostRequest);
+      print(routePostRequest);
+      print("/////////////////////////");
+      print(response.realUri);
+      routeData = response.data;
+      _processRouteResponse(routeData);
+
+    } catch (e) {
+      print('Exception when calling RoutingApi->routePost: $e\n');
+    }
+  }
+
+  void _processRouteResponse(RoutePost200Response? response) {
+    if (response != null && response.routes!.isNotEmpty) {
+      final route = response.routes!.first;
+
+      for (var step in route.steps) {
+        // Decode the step points to List<List<num>>
+        List<List<num>> stepPoints = decodePolyline(step.geometry); // This remains List<List<num>>
+
+        // Convert each step point (List<num>) to LatLng
+        for (var point in stepPoints) {
+          if (point.length >= 2) { // Ensure that we have enough data
+            // Convert point to LatLng
+            LatLng latLngPoint = LatLng(point[0].toDouble(), point[1].toDouble());
+            allStepPoints.add(latLngPoint); // Add to the List<LatLng>
+          }
+          // Add unique instructions
+          if (!allInstructions.contains(step.instruction)) {
+            allInstructions.add(step.instruction);
+          }
+
+          // Add unique instructions
+          if (!congestionPoints.contains(step.name)) {
+            congestionPoints.add(step.name);
+          }
+        }
+      }
+      print(allInstructions);
+      print(congestionPoints);
+
+      setState(() {
+        _stepPoints = allStepPoints; // Set _stepPoints to the new List<LatLng>
+      });
+
+      print("Step Points: $_stepPoints");
+      print("Route duration: ${route.duration}, distance: ${route.distance}");
+    } else {
+      print("No routes found in the response.");
+    }
   }
 
   Future<Position?> _getCurrentLocation() async {
@@ -268,6 +348,9 @@ class _HomeScreenState extends State<HomeScreen> {
               initialZoom: 10, // Pass the initial zoom level
               currentLocationMarker: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
               initialDestination: _initialDestination,
+              route: routeData ?? null, // Handle null case appropriately
+              congestionPoints: congestionPoints,
+              allInstructions: allInstructions
             ),
           ),
         );
@@ -334,10 +417,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     PolylineLayer(
                       polylines: [
                         Polyline(
-                          points: [
-                            _currentLocationMarker ?? _initialCenter, // Use a default value or handle null safely
-                            _initialDestination,
-                          ],
+                          points: _stepPoints, // This is now correctly a List<LatLng>
                           strokeWidth: 4.0,
                           color: Colors.green,
                         ),
@@ -359,26 +439,42 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const FittedBox(
+                    child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            "3",
-                            style: TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFe9a59d),
-                            ),
-                          ),
-                          Text(
-                            "Congestion\nPoints",
+                          RichText(
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "${congestionPoints.length}",
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFFe9a59d),
+                                  ),
+                                ),
+                                TextSpan(text: "\n"),
+                                TextSpan(
+                                    text: "Congestion",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  TextSpan(text: "\n"),
+                                  TextSpan(
+                                    text: "Points",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -386,20 +482,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  SizedBox(
-                    height: 80,
-                    width: 150,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const FittedBox(
-                        fit: BoxFit.scaleDown,
+                  IgnorePointer(
+                    child: SizedBox(
+                      height: 80,
+                      width: 150,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            const Text(
                               "Recommended Route",
                               style: TextStyle(
                                 fontSize: 13,
@@ -407,54 +502,50 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Color(0xFFe9a59d),
                               ),
                             ),
-                            Text(
-                              "Congestion Points",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Text(
-                              "Congestion Points",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                            // Scrollable area for instructions
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(allInstructions.length, (index) {
+                                    return Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                          child: Text(
+                                            allInstructions[index],
+                                            textAlign: TextAlign.start,
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 9,
+                                            ),
+                                          ),
+                                        ),
+                                        if (index < allInstructions.length - 1) // Avoid adding a divider after the last instruction
+                                          const Divider(
+                                            color: Colors.grey, // You can customize the color
+                                            thickness: 1,
+                                            height: 10, // Space between the text and the divider
+                                            indent: 20, // Adds padding to the left of the divider
+                                            endIndent: 20, // Adds padding to the right of the divider
+                                          ),
+                                      ],
+                                    );
+                                  }),
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ),
+                  )
+
                 ],
               ),
             ),
             SizedBox(height: 10),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Column(
-                children: [
-                  Text(
-                    "Congestion Rating",
-                    style: TextStyle(color: Color(0xFFe9a59d), fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 5),
-                  Center(
-                    child: Text(
-                      "Graph here",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 100),
+
           ],
         ),
       ),

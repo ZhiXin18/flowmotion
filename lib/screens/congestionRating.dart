@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import 'package:latlong2/latlong.dart';
 import '../models/congestion_rating.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utilities/firebase_calls.dart';
+import 'package:flowmotion_api/flowmotion_api.dart';
 
 final FirebaseCalls firebaseCalls = FirebaseCalls();
+final api = FlowmotionApi().getCongestionApi();
 
 class CongestionRatingScreen extends StatefulWidget {
   final String savedPlaceLabel;
@@ -14,6 +15,9 @@ class CongestionRatingScreen extends StatefulWidget {
   final double initialZoom; // Add initial zoom configuration
   final LatLng? currentLocationMarker; // Current location marker
   final LatLng initialDestination; // Initial destination
+  final RoutePost200Response? route;
+  List<String> allInstructions = [];
+  List<String> congestionPoints = [];
 
   CongestionRatingScreen({
     required this.savedPlaceLabel,
@@ -21,6 +25,9 @@ class CongestionRatingScreen extends StatefulWidget {
     required this.initialZoom, // Accept initial zoom level
     required this.currentLocationMarker, // Current location marker
     required this.initialDestination, // Initial destination
+    required this.route,
+    required this.congestionPoints,
+    required this.allInstructions,
   });
 
   @override
@@ -31,13 +38,55 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   final FirebaseCalls firebaseCalls = FirebaseCalls();
   late final MapController _mapController;
   List<CongestionRating> congestionRatings = [];
+  List<Congestion> allCongestionRatings = [];
   bool isLoading = true;
+  List<LatLng> _stepPoints = [];
+  List<LatLng> allStepPoints = [];
+
+  // Counters for marker categories
+  int greenMarkersCount = 0;
+  int orangeMarkersCount = 0;
+  int redMarkersCount = 0;
+  int questionMarkCount = 0; // For missing congestion ratings
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
     fetchCongestionRatings();
+    fetchAllRatings();
+    _processRouteResponse(widget.route);
+    print(widget.route);
+
+  }
+
+  void _processRouteResponse(RoutePost200Response? response) {
+    if (response != null && response.routes!.isNotEmpty) {
+      final route = response.routes!.first;
+
+      for (var step in route.steps) {
+        // Decode the step points to List<List<num>>
+        List<List<num>> stepPoints = decodePolyline(step.geometry); // This remains List<List<num>>
+
+        // Convert each step point (List<num>) to LatLng
+        for (var point in stepPoints) {
+          if (point.length >= 2) { // Ensure that we have enough data
+            // Convert point to LatLng
+            LatLng latLngPoint = LatLng(point[0].toDouble(), point[1].toDouble());
+            allStepPoints.add(latLngPoint); // Add to the List<LatLng>
+          }
+        }
+      }
+
+      setState(() {
+        _stepPoints = allStepPoints; // Set _stepPoints to the new List<LatLng>
+      });
+
+      print("Step Points: $_stepPoints");
+      print("Route duration: ${route.duration}, distance: ${route.distance}");
+    } else {
+      print("No routes found in the response.");
+    }
   }
 
   Future<void> fetchCongestionRatings() async {
@@ -55,6 +104,20 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     }
   }
 
+  Future<void> fetchAllRatings() async {
+    final api = FlowmotionApi().getCongestionApi();
+    try {
+      final response = await api.congestionsGet();
+      print(response.data);
+
+      setState(() {
+        allCongestionRatings = response.data!.toList(); // Convert Iterable to List
+      });
+    } catch (e) {
+      print('Exception when calling CongestionApi->congestionsGet: $e\n');
+    }
+  }
+
   @override
   void dispose() {
     _mapController.dispose();
@@ -63,6 +126,15 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate the widths for the boxes
+    double congestionBoxWidth = screenWidth / 3; // 1/3 of the screen width
+    double recommendedBoxWidth = (screenWidth * 2) / 3; // 2/3 of the screen width
+
+    print(congestionBoxWidth);
+    print(recommendedBoxWidth);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.savedPlaceLabel),
@@ -103,14 +175,15 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                 mapController: _mapController, // Use the passed controller
                 options: MapOptions(
                   initialCenter: widget.initialCenter, // Use the passed initial center
-                  initialZoom: widget.initialZoom, // Use the passed initial zoom
+                  initialZoom: 14, // Use the passed initial zoom
+                  initialCameraFit: CameraFit.coordinates(coordinates: _stepPoints)
                 ),
                 children: [
                   TileLayer(
                     urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                   ),
-
+                  MarkerLayer(markers: _buildMarkers()), // Add the congestion markers
                   if (widget.currentLocationMarker != null)
                     MarkerLayer(markers: [
                       Marker(
@@ -137,12 +210,9 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                   PolylineLayer(
                     polylines: [
                       Polyline(
-                        points: [
-                          widget.currentLocationMarker ?? LatLng(0, 0), // Use a default value or handle null safely
-                          widget.initialDestination,
-                        ],
-                        strokeWidth: 4.0,
-                        color: Colors.green,
+                      points: _stepPoints, // This is now correctly a List<LatLng>
+                      strokeWidth: 4.0,
+                      color: Colors.green,
                       ),
                     ],
                   ),
@@ -151,21 +221,22 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
             ),
             SizedBox(height: 20),
 
+            _buildCongestionAndRecommendedBoxes(widget.congestionPoints, widget.allInstructions, context),
             // Row 1: Congestion Points and Recommended Route
-            Padding(
+            /*Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 children: [
                   Expanded(
-                    child: _buildCongestionPointsBox(),
+                    child: _buildCongestionPointsBox(widget.congestionPoints, congestionBoxWidth),
                   ),
                   SizedBox(width: 10),
                   Expanded(
-                    child: _buildRecommendedRouteBox(),
+                    child: _buildRecommendedRouteBox(widget.allInstructions, recommendedBoxWidth),
                   ),
                 ],
               ),
-            ),
+            ),*/
             SizedBox(height: 20),
 
             // Additional rows for congestion ratings and history...
@@ -175,46 +246,238 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     );
   }
 
-  Widget _buildCongestionPointsBox() {
+  List<Marker> _buildMarkers() {
+    print("Building markers...");
+
+    // Reset the counters each time markers are built
+    greenMarkersCount = 0;
+    orangeMarkersCount = 0;
+    redMarkersCount = 0;
+    questionMarkCount = 0;
+
+
+    // Create a list of markers
+    List<Marker> markers = allCongestionRatings
+        .map((allCongestionRatings) {
+      String coordinateKey =
+          "${allCongestionRatings.camera.location.latitude},${allCongestionRatings.camera.location.longitude}";
+
+
+      // Handle locations where congestion rating is not available
+      if (allCongestionRatings.rating.value == null) {
+        questionMarkCount++;
+        return Marker(
+          point: LatLng(allCongestionRatings.camera.location.latitude, allCongestionRatings.camera.location.longitude),
+          width: 60,
+          height: 60,
+          child: Icon(
+                  Icons.question_mark,
+                  size: 40,
+                  color: Colors.blue,
+                ),
+
+        );
+      }
+
+      // Handle locations where congestion rating is available
+      Color markerColor = _getMarkerColor(allCongestionRatings.rating.value.toDouble());
+
+      // Increment the corresponding counter based on the marker color
+      if (markerColor == Colors.green) {
+        greenMarkersCount++;
+      } else if (markerColor == Colors.orange) {
+        orangeMarkersCount++;
+      } else if (markerColor == Colors.red) {
+        redMarkersCount++;
+      }
+
+      return Marker(
+        point: LatLng(allCongestionRatings.camera.location.latitude, allCongestionRatings.camera.location.longitude),
+        width: 60,
+        height: 60,
+        child: Icon(
+            Icons.circle,
+            size: 15, // Increased size for visibility
+            color: markerColor,
+          )
+      );
+    })
+        .where((marker) => marker != null)
+        .cast<Marker>()
+        .toList(); // Filter out null markers and cast to List<Marker>
+
+    // Print the counts for each category
+    print("Number of green markers: $greenMarkersCount");
+    print("Number of orange markers: $orangeMarkersCount");
+    print("Number of red markers: $redMarkersCount");
+    print("Number of question mark markers: $questionMarkCount");
+    print("Number of unique markers: ${markers.length}");
+
+    return markers;
+  }
+
+  Color _getMarkerColor(double value) {
+    if (value <= 0.3) {
+      return Colors.green;
+    } else if (value > 0.3 && value <= 0.6) {
+      return Colors.orange;
+    } else {
+      return Colors.red;
+    }
+  }
+
+  Widget _buildCongestionAndRecommendedBoxes(List<String> congestionPoints, List<String> allInstructions, BuildContext context) {
+    // Get screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+    double congestionBoxWidth = screenWidth / 3; // 1/3 of the screen width
+    double recommendedBoxWidth = (screenWidth * 2) / 3; // 2/3 of the screen width
+
+    return Row(
+      children: [
+        // Congestion Points Box
+        SizedBox(width: 15,),
+        Expanded(
+          flex: 1, // 1 part of the total 3 parts
+          child: _buildCongestionPointsBox(congestionPoints),
+        ),
+        SizedBox(width: 10,),
+        // Recommended Route Box
+        Expanded(
+          flex: 2, // 2 parts of the total 3 parts
+          child: _buildRecommendedRouteBox(allInstructions),
+        ),
+        SizedBox(width: 15,),
+      ],
+    );
+  }
+
+  Widget _buildCongestionPointsBox(List<String> congestionPoints) {
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(8),
       ),
+      height: 150,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            "${congestionRatings.length} Congestion Points",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "${congestionPoints.length}",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+                TextSpan(text: "\n"),
+                TextSpan(
+                  text: "Congestion Points",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(height: 10),
-          ...congestionRatings.map((rating) {
-            return Text("Lat: ${rating.latitude}, Lng: ${rating.longitude}, Rating: ${rating.value}");
-          }).toList(),
+          Container(
+            height: 80,
+            child: SingleChildScrollView(
+              child: Column(
+                children: List.generate(congestionPoints.length, (index) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          congestionPoints[index],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ),
+                      if (index < congestionPoints.length - 1)
+                        const Divider(
+                          color: Colors.grey,
+                          thickness: 1,
+                          height: 10,
+                          indent: 25,
+                          endIndent: 25,
+                        ),
+                    ],
+                  );
+                }),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildRecommendedRouteBox() {
+  Widget _buildRecommendedRouteBox(List<String> allInstructions) {
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(8),
       ),
+      height: 150,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Recommended Route", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            "Recommended Route",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 10),
-          Text("1. Turn right onto XYZ\n2. Continue straight\n3. Exit at ABC"), // Simplified directions
+          Container(
+            height: 80,
+            child: SingleChildScrollView(
+              child: Column(
+                children: List.generate(allInstructions.length, (index) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          allInstructions[index],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ),
+                      if (index < allInstructions.length - 1)
+                        const Divider(
+                          color: Colors.grey,
+                          thickness: 1,
+                          height: 10,
+                          indent: 25,
+                          endIndent: 25,
+                        ),
+                    ],
+                  );
+                }),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
+
 
   // Placeholder methods for graphs
   Widget _buildHourlyCongestionRatingGraph() {

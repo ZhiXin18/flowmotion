@@ -1,14 +1,11 @@
 import 'dart:async'; // Import Timer
 import 'package:flowmotion/core/widget_keys.dart';
-import 'package:flowmotion/utilities/firebase_calls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
-import '../models/congestion_rating.dart';
 import '../utilities/location_service.dart';
 import '../widgets/navigationBar.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
   import 'package:flowmotion_api/flowmotion_api.dart';
 
 class FullMapScreen extends StatefulWidget {
@@ -19,7 +16,7 @@ class FullMapScreen extends StatefulWidget {
 }
 
 class _FullMapScreenState extends State<FullMapScreen> {
-  List<CongestionRating> congestionRatings = [];
+  List<Congestion> congestionRatings = [];
   late LocationService locationService;
   Position? _currentPosition;
   LatLng _initialCenter =
@@ -72,37 +69,18 @@ class _FullMapScreenState extends State<FullMapScreen> {
   }
 
   Future<void> _fetchCongestionRatings() async {
-    congestionRatings = await FirebaseCalls().getCongestionRatings();
+    final api = FlowmotionApi().getCongestionApi();
+    try {
+      final response = await api.congestionsGet();
+      print(response.data);
 
-    // Create a map to hold the latest congestion ratings for each unique location
-    Map<String, CongestionRating> latestRatingsMap = {};
-
-    for (var rating in congestionRatings) {
-      String coordinateKey = "${rating.latitude},${rating.longitude}";
-
-      // Check if this coordinate already has a recorded rating
-      if (latestRatingsMap.containsKey(coordinateKey)) {
-        // Compare timestamps to find the latest rating
-        DateTime existingRatingDate =
-        DateTime.parse(latestRatingsMap[coordinateKey]!.capturedOn);
-        DateTime newRatingDate = DateTime.parse(rating.capturedOn);
-
-        // Update if the new rating is more recent
-        if (newRatingDate.isAfter(existingRatingDate)) {
-          latestRatingsMap[coordinateKey] = rating;
-        }
-      } else {
-        // If no rating exists for this location, add it to the map
-        latestRatingsMap[coordinateKey] = rating;
-      }
+      setState(() {
+        congestionRatings = response.data!.toList(); // Convert Iterable to List
+      });
+    } catch (e) {
+      print('Exception when calling CongestionApi->congestionsGet: $e\n');
     }
-
-    // Convert the map back to a list for use in the app
-    congestionRatings = latestRatingsMap.values.toList();
-
-    setState(() {}); // Update UI after fetching data
   }
-
 
   @override
   void dispose() {
@@ -147,27 +125,18 @@ class _FullMapScreenState extends State<FullMapScreen> {
     redMarkersCount = 0;
     questionMarkCount = 0;
 
-    // Create a Set to track unique coordinates
-    Set<String> uniqueCoordinates = {};
-
     // Create a list of markers
     List<Marker> markers = congestionRatings
         .map((congestionRating) {
       String coordinateKey =
-          "${congestionRating.latitude},${congestionRating.longitude}";
+          "${congestionRating.camera.location.latitude},${congestionRating.camera.location.longitude}";
 
-      // Check if this coordinate is already processed
-      if (uniqueCoordinates.contains(coordinateKey)) {
-        // Skip duplicate locations
-        return null;
-      } else {
-        uniqueCoordinates.add(coordinateKey);
 
         // Handle locations where congestion rating is not available
-        if (congestionRating.value == null) {
+        if (congestionRating.rating.value == null) {
           questionMarkCount++;
           return Marker(
-            point: LatLng(congestionRating.latitude, congestionRating.longitude),
+            point: LatLng(congestionRating.camera.location.latitude, congestionRating.camera.location.longitude),
             width: 60,
             height: 60,
             child: GestureDetector(
@@ -178,14 +147,14 @@ class _FullMapScreenState extends State<FullMapScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: Text("No Congestion Data Available"),
-                      content: congestionRating.imageUrl != null
+                      content: congestionRating.camera.imageUrl != null
                           ? Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text("No congestion rating available."),
                           const SizedBox(height: 10),
                           Image.network(
-                            congestionRating.imageUrl!,
+                            congestionRating.camera.imageUrl!,
                             width: 200,
                             height: 100,
                             fit: BoxFit.cover,
@@ -220,7 +189,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
         }
 
         // Handle locations where congestion rating is available
-        Color markerColor = _getMarkerColor(congestionRating.value!);
+        Color markerColor = _getMarkerColor(congestionRating.rating.value.toDouble());
 
         // Increment the corresponding counter based on the marker color
         if (markerColor == Colors.green) {
@@ -232,7 +201,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
         }
 
         return Marker(
-          point: LatLng(congestionRating.latitude, congestionRating.longitude),
+          point: LatLng(congestionRating.camera.location.latitude, congestionRating.camera.location.longitude),
           width: 60,
           height: 60,
           child: GestureDetector(
@@ -243,13 +212,13 @@ class _FullMapScreenState extends State<FullMapScreen> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     //title: Text("Congestion Rating: ${congestionRating.value}"),
-                    content: congestionRating.imageUrl != null
+                    content: congestionRating.camera.imageUrl != null
                         ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const SizedBox(height: 10),
                         Image.network(
-                          congestionRating.imageUrl!,
+                          congestionRating.camera.imageUrl!,
                           width: 250,
                           height: 200,
                           fit: BoxFit.cover,
@@ -276,7 +245,6 @@ class _FullMapScreenState extends State<FullMapScreen> {
             ),
           ),
         );
-      }
     })
         .where((marker) => marker != null)
         .cast<Marker>()
