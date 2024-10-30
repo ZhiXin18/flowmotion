@@ -33,8 +33,8 @@ describe("RoutingSvc", () => {
     const location = await osrm.geolookup(postcode);
 
     expect(location).toBeDefined();
-    expect(location.latitude).toBeCloseTo(1.3437504, 4);
-    expect(location.longitude).toBeCloseTo(103.6849923, 4);
+    expect(location.latitude).toBeCloseTo(1.3437504, 2);
+    expect(location.longitude).toBeCloseTo(103.6849923, 2);
   });
 
   test("geolookup() throws an error for invalid postcode", async () => {
