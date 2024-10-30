@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import '../core/widget_keys.dart';
 import '../firebase_options.dart';
+import '../models/RouteData.dart';
 import '../utilities/firebase_calls.dart';
 import '../utilities/location_service.dart';
 import '../widgets/navigationBar.dart';
@@ -39,15 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng _initialDestination = LatLng(1.3656412, 103.8726954);
   LatLng? _currentLocationMarker;
   List<String> savedAddresses = [];
-  List<LatLng> _stepPoints = [];
-  List<LatLng> allStepPoints = [];
-  List<String> allInstructions = [];
-  List<String> congestionPoints = [];
   late RoutePost200Response? routeData;
+  List<LatLng> destinations = [LatLng(1.3521, 103.8198), LatLng(1.3656412, 103.8726954)];
 
   late final MapController _mainMapController;
   late final MapController _homeMapController;
   late final MapController _workMapController;
+
+  List<RouteData> routeDataList = []; // List to store route data for each destination
 
   @override
   void initState() {
@@ -58,24 +58,30 @@ class _HomeScreenState extends State<HomeScreen> {
     _workMapController = MapController();
     _getCurrentLocation();
     _fetchSavedAddresses();
-    _fetchRoute();
+
+    // Initialize route data for each destination
+    for (int i = 0; i < destinations.length; i++) {
+      routeDataList.add(RouteData()); // Add a new RouteData instance for each destination
+      _fetchRoute(_initialCenter, destinations[i], i);
+      print('Route Data List length: ${routeDataList.length}');
+    }
   }
 
-  Future<void> _fetchRoute() async {
+  Future<void> _fetchRoute(LatLng src, LatLng dest, int index) async {
     final routeApi = FlowmotionApi().getRoutingApi();
     final routePostRequest = RoutePostRequest((b) => b
       ..src.update((srcBuilder) => srcBuilder
-        ..kind = RoutePostRequestSrcKindEnum.location //state that location lat long is provided
+        ..kind = RoutePostRequestSrcKindEnum.location // Indicate that location lat long is provided
         ..location.update((locationBuilder) => locationBuilder
-          ..latitude = _initialCenter.latitude // Set the latitude
-          ..longitude = _initialCenter.longitude // Set the longitude
+          ..latitude = src.latitude // Set the latitude
+          ..longitude = src.longitude // Set the longitude
         )
       )
       ..dest.update((destBuilder) => destBuilder
-        ..kind = RoutePostRequestDestKindEnum.location //state that location lat long is provided
+        ..kind = RoutePostRequestDestKindEnum.location // Indicate that location lat long is provided
         ..location.update((locationBuilder) => locationBuilder
-          ..latitude = _initialDestination.latitude // Set the destination latitude
-          ..longitude = _initialDestination.longitude // Set the destination longitude
+          ..latitude = dest.latitude // Set the destination latitude
+          ..longitude = dest.longitude // Set the destination longitude
         )
       )
     );
@@ -85,53 +91,68 @@ class _HomeScreenState extends State<HomeScreen> {
       print(routePostRequest);
       print("/////////////////////////");
       print(response.realUri);
-      routeData = response.data;
-      _processRouteResponse(routeData);
 
+      // Assuming routeDataList is defined and is an instance of a class that holds multiple RouteData
+      RouteData routeData = RouteData(); // Create a new instance of RouteData
+      routeData.routeResponse = response.data; // Store the entire response data
+      // Add routeData to the list
+      routeDataList.add(routeData); // Assuming routeDataList is a List<RouteData>
+
+      _processRouteResponse(routeData.routeResponse, index); // Pass the index to process the response
+
+      print(routeDataList[0].routeResponse);
     } catch (e) {
       print('Exception when calling RoutingApi->routePost: $e\n');
     }
   }
 
-  void _processRouteResponse(RoutePost200Response? response) {
+
+  void _processRouteResponse(RoutePost200Response? response, int index) {
+    print("testing");
+    print(response);
     if (response != null && response.routes!.isNotEmpty) {
       final route = response.routes!.first;
 
+      // Reference to the route data for the current index
+      RouteData currentRouteData = routeDataList[index];
+
       for (var step in route.steps) {
         // Decode the step points to List<List<num>>
-        List<List<num>> stepPoints = decodePolyline(step.geometry); // This remains List<List<num>>
+        List<List<num>> stepPoints = decodePolyline(step.geometry);
 
         // Convert each step point (List<num>) to LatLng
         for (var point in stepPoints) {
           if (point.length >= 2) { // Ensure that we have enough data
             // Convert point to LatLng
             LatLng latLngPoint = LatLng(point[0].toDouble(), point[1].toDouble());
-            allStepPoints.add(latLngPoint); // Add to the List<LatLng>
-          }
-          // Add unique instructions
-          if (!allInstructions.contains(step.instruction)) {
-            allInstructions.add(step.instruction);
+            currentRouteData.stepPoints.add(latLngPoint); // Add to the List<LatLng>
           }
 
           // Add unique instructions
-          if (!congestionPoints.contains(step.name)) {
-            congestionPoints.add(step.name);
+          if (!currentRouteData.instructions.contains(step.instruction)) {
+            currentRouteData.instructions.add(step.instruction);
+          }
+
+          // Add unique congestion points
+          if (!currentRouteData.congestionPoints.contains(step.name)) {
+            currentRouteData.congestionPoints.add(step.name);
           }
         }
       }
-      print(allInstructions);
-      print(congestionPoints);
 
+      print("Route data for destination $index: ${currentRouteData.congestionPoints}");
       setState(() {
-        _stepPoints = allStepPoints; // Set _stepPoints to the new List<LatLng>
+        // Optionally update the UI or any relevant state
       });
 
-      print("Step Points: $_stepPoints");
+      print("Step Points for destination $index: ${currentRouteData.stepPoints}");
       print("Route duration: ${route.duration}, distance: ${route.distance}");
     } else {
       print("No routes found in the response.");
     }
   }
+
+
 
   Future<Position?> _getCurrentLocation() async {
     Position? position = await locationService.getCurrentPosition();
@@ -309,6 +330,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: _buildSavedPlaceCard(
                     i == 0 ? "Home" : "Work",
                     i == 0 ? _homeMapController : _workMapController,
+                    i == 0 ? destinations[0] : destinations[1],
+                    i,
                   ),
                 ),
               if (savedAddresses.length >= 3 && savedAddresses.length > 2)
@@ -317,6 +340,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: _buildSavedPlaceCard(
                     savedAddresses[2],
                     _homeMapController,
+                    destinations[2],
+                    2
                   ),
                 ),
               SizedBox(width: 30),
@@ -328,29 +353,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSavedPlaceCard(String title, MapController controller) {
+  Widget _buildSavedPlaceCard(String title, MapController controller, LatLng destination, int index) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CongestionRatingScreen(
-              savedPlaceLabel: title,
-              initialCenter: _currentPosition != null
-                  ? LatLng(
-                (_currentPosition!.latitude + _initialDestination.latitude) / 2,
-                (_currentPosition!.longitude + _initialDestination.longitude) / 2,
-              )
-                  : LatLng(
-                (_initialCenter.latitude + _initialDestination.latitude) / 2,
-                (_initialCenter.longitude + _initialDestination.longitude) / 2,
-              ),
-              initialZoom: 10, // Pass the initial zoom level
-              currentLocationMarker: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
-              initialDestination: _initialDestination,
-              route: routeData ?? null, // Handle null case appropriately
-              congestionPoints: congestionPoints,
-              allInstructions: allInstructions
+                savedPlaceLabel: title,
+                initialCenter: _currentPosition != null
+                    ? LatLng(
+                  (_currentPosition!.latitude + _initialDestination.latitude) / 2,
+                  (_currentPosition!.longitude + _initialDestination.longitude) / 2,
+                )
+                    : LatLng(
+                  (_initialCenter.latitude + _initialDestination.latitude) / 2,
+                  (_initialCenter.longitude + _initialDestination.longitude) / 2,
+                ),
+                initialZoom: 10, // Pass the initial zoom level
+                currentLocationMarker: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
+                initialDestination: destination,
+                route: routeDataList[index].routeResponse,
+                congestionPoints: routeDataList[index].congestionPoints,
+                allInstructions: routeDataList[index].instructions
             ),
           ),
         );
@@ -403,7 +428,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Marker(
-                          point: _initialDestination,
+                          point: destination != null ? destination : _initialDestination,
                           width: 60,
                           height: 60,
                           child: const Icon(
@@ -417,7 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     PolylineLayer(
                       polylines: [
                         Polyline(
-                          points: _stepPoints, // This is now correctly a List<LatLng>
+                          points: routeDataList[index].stepPoints, // This is now correctly a List<LatLng>
                           strokeWidth: 4.0,
                           color: Colors.green,
                         ),
@@ -449,7 +474,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: "${congestionPoints.length}",
+                                  text: "${routeDataList[index].congestionPoints.length}",
                                   style: TextStyle(
                                     fontSize: 30,
                                     fontWeight: FontWeight.bold,
@@ -458,21 +483,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 TextSpan(text: "\n"),
                                 TextSpan(
-                                    text: "Congestion",
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
+                                  text: "Congestion",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
-                                  TextSpan(text: "\n"),
-                                  TextSpan(
-                                    text: "Points",
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
+                                ),
+                                TextSpan(text: "\n"),
+                                TextSpan(
+                                  text: "Points",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ],
                             ),
@@ -507,13 +532,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: SingleChildScrollView(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(allInstructions.length, (index) {
+                                  children: List.generate(routeDataList[index].instructions.length, (listIndex) {
                                     return Column(
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                           child: Text(
-                                            allInstructions[index],
+                                            routeDataList[index].instructions[listIndex],
                                             textAlign: TextAlign.start,
                                             style: const TextStyle(
                                               color: Colors.black,
@@ -521,7 +546,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                           ),
                                         ),
-                                        if (index < allInstructions.length - 1) // Avoid adding a divider after the last instruction
+                                        if (index < routeDataList[index].instructions.length - 1) // Avoid adding a divider after the last instruction
                                           const Divider(
                                             color: Colors.grey, // You can customize the color
                                             thickness: 1,

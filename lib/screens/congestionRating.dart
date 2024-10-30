@@ -55,12 +55,14 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     _mapController = MapController();
     fetchCongestionRatings();
     fetchAllRatings();
-    _processRouteResponse(widget.route);
-    print(widget.route);
-
+    _fetchRoute(
+        widget.currentLocationMarker ?? LatLng(0, 0), // Provide a default LatLng if null
+        widget.initialDestination
+    );
+    //_processRouteResponseTest(widget.route);
   }
 
-  void _processRouteResponse(RoutePost200Response? response) {
+  void _processRouteResponseTest(RoutePost200Response? response) {
     if (response != null && response.routes!.isNotEmpty) {
       final route = response.routes!.first;
 
@@ -78,6 +80,65 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         }
       }
 
+      setState(() {
+        _stepPoints = allStepPoints; // Set _stepPoints to the new List<LatLng>
+      });
+
+      print("Step Points: $_stepPoints");
+      print("Route duration: ${route.duration}, distance: ${route.distance}");
+    } else {
+      print("No routes found in the response.");
+    }
+  }
+
+  Future<void> _fetchRoute(LatLng src, LatLng dest) async {
+    final routeApi = FlowmotionApi().getRoutingApi();
+    final routePostRequest = RoutePostRequest((b) => b
+      ..src.update((srcBuilder) => srcBuilder
+        ..kind = RoutePostRequestSrcKindEnum.location // Indicate that location lat long is provided
+        ..location.update((locationBuilder) => locationBuilder
+          ..latitude = src.latitude // Set the latitude
+          ..longitude = src.longitude // Set the longitude
+        )
+      )
+      ..dest.update((destBuilder) => destBuilder
+        ..kind = RoutePostRequestDestKindEnum.location // Indicate that location lat long is provided
+        ..location.update((locationBuilder) => locationBuilder
+          ..latitude = dest.latitude // Set the destination latitude
+          ..longitude = dest.longitude // Set the destination longitude
+        )
+      )
+    );
+
+    try {
+      final response = await routeApi.routePost(routePostRequest: routePostRequest);
+      _processRouteResponse(response.data); // Pass the index to process the response
+
+    } catch (e) {
+      print('Exception when calling RoutingApi->routePost: $e\n');
+    }
+  }
+  void _processRouteResponse(RoutePost200Response? response) {
+    print("--------------------------------");
+    print(response);
+    if (response != null && response.routes!.isNotEmpty) {
+      final route = response.routes!.first;
+
+      for (var step in route.steps) {
+        // Decode the step points to List<List<num>>
+        List<List<num>> stepPoints = decodePolyline(
+            step.geometry); // This remains List<List<num>>
+
+        // Convert each step point (List<num>) to LatLng
+        for (var point in stepPoints) {
+          if (point.length >= 2) { // Ensure that we have enough data
+            // Convert point to LatLng
+            LatLng latLngPoint = LatLng(
+                point[0].toDouble(), point[1].toDouble());
+            allStepPoints.add(latLngPoint); // Add to the List<LatLng>
+          }
+        }
+      }
       setState(() {
         _stepPoints = allStepPoints; // Set _stepPoints to the new List<LatLng>
       });
@@ -176,7 +237,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                 options: MapOptions(
                   initialCenter: widget.initialCenter, // Use the passed initial center
                   initialZoom: 14, // Use the passed initial zoom
-                  initialCameraFit: CameraFit.coordinates(coordinates: _stepPoints)
+                  initialCameraFit: CameraFit.coordinates(coordinates: _stepPoints == null ? _stepPoints : [widget.initialCenter,widget.initialDestination])
                 ),
                 children: [
                   TileLayer(
@@ -259,9 +320,6 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     // Create a list of markers
     List<Marker> markers = allCongestionRatings
         .map((allCongestionRatings) {
-      String coordinateKey =
-          "${allCongestionRatings.camera.location.latitude},${allCongestionRatings.camera.location.longitude}";
-
 
       // Handle locations where congestion rating is not available
       if (allCongestionRatings.rating.value == null) {
