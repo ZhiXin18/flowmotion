@@ -409,6 +409,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     );
   }
 
+  int? selectedIndex;
   Widget _buildCongestionPointsBox(List<String> congestionPoints) {
     return Container(
       padding: EdgeInsets.all(10),
@@ -451,7 +452,13 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: List.generate(congestionPoints.length, (index) {
-                  return Column(
+                  return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedIndex = index; // Update selected congestion point
+                        });
+                      },
+                  child: Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -473,12 +480,15 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                           endIndent: 25,
                         ),
                     ],
-                  );
+                  ));
                 }),
               ),
             ),
           ),
-        ],
+          if (selectedIndex != null)
+            _buildHourlyCongestionRatingGraph(congestionPoints[selectedIndex!]),
+            _buildCongestionHistoryGraph(congestionPoints[selectedIndex!]),
+            _buildImageViewer(congestionPoints[selectedIndex!])],
       ),
     );
   }
@@ -536,35 +546,48 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     );
   }
 
-
-  // Placeholder methods for graphs
-  Widget _buildHourlyCongestionRatingGraph() {
-    return Container(
-      height: 200,
-      color: Colors.redAccent[100],
-      child: Center(
-        child: Text('Hourly Congestion Rating Graph'),
-      ),
+  // Placeholder methods for graphs and image viewer
+  Widget _buildHourlyCongestionRatingGraph(String congestionPoint) {
+    return Column(
+      children: [
+        Text(
+          congestionPoint,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 8),
+        Container(
+          height: 200,
+          color: Colors.redAccent[100],
+          child: Center(
+            child: Text('Hourly Congestion Rating'),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildCongestionHistoryGraph() {
+  Widget _buildCongestionHistoryGraph(String congestionPoint) {
     return Container(
       height: 150,
       color: Colors.blueAccent[100],
       child: Center(
-        child: Text('Congestion Rating History Graph'),
+        child: Text('Congestion Rating History'),
       ),
     );
   }
 
-  Widget _buildTotalCongestionTimeGraph() {
+  Widget _buildImageViewer(String congestionPoint) {
     return Container(
-      height: 150,
-      color: Colors.greenAccent[100],
+      height: 200,
+      color: Colors.redAccent[100],
       child: Center(
-        child: Text('Total Congestion Time Graph'),
+        child: Text('Congestion History Captures'),
       ),
     );
   }
+
+
 }
