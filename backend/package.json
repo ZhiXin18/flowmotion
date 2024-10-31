@@ -22,10 +22,12 @@
   "homepage": "https://github.com/ZhiXin18/flowmotion#readme",
   "dependencies": {
     "@date-fns/tz": "^1.1.2",
+    "@types/lodash": "^4.17.13",
     "date-fns": "^4.1.0",
     "express": "^4.21.1",
     "express-openapi-validator": "^6.0.0-alpha.4",
     "firebase-admin": "^12.7.0",
+    "lodash": "^4.17.21",
     "osrm-text-instructions": "^0.15.0"
   },
   "devDependencies": {
