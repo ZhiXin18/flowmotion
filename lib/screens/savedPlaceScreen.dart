@@ -77,7 +77,7 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
       setState(() {
         addressLabels.add(newName);
         savedAddresses.add({
-          'label': '',
+          'label': newName,
           'postalCode': '',
           'address': '',
           'city': '',
@@ -237,27 +237,6 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
     }
   }
 
-  /*Future<void> _getAddressFromLatLng(Position position) async {
-    await placemarkFromCoordinates(
-        _currentPosition!.latitude, _currentPosition!.longitude)
-        .then((List<Placemark> placemarks) {
-      Placemark place = placemarks[0];
-      setState(() {
-        _currentAddress =
-        '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.postalCode}';
-      });
-    }).catchError((e) {
-      debugPrint(e);
-    });
-  }*/
-
-  /*Future<void> sendEmailVerification() async {
-    try{
-      await _auth.currentUser?.sendEmailVerification();
-    } on FirebaseAuthException catch (e) {
-      print(e);
-    }
-  }*/
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

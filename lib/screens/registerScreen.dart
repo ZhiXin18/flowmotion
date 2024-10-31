@@ -98,8 +98,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _username = _usernameController.text;
         });
 
+        //actual mode
         await EmailOTP.sendOTP(email: _emailController.text); //send otp to input email
         _showVerificationModal(user.uid, _username, _userEmail); //show the modal to enter otp
+        //test mode
+        /*Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SavedPlaceScreen(
+                userId: _auth.currentUser!.uid,
+                username: _username,
+                userEmail: _userEmail,
+              ),
+            ),
+        );*/
       } else {
         _showErrorDialog('Failed to register. Please try again.');
       }

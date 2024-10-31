@@ -36,7 +36,19 @@ class FirebaseCalls {
     } else {
       // New user, set created_on and updated_on, and add an empty routes array
       await usersCollection.add({
-        'addresses': addresses,
+        //'addresses': addresses,
+        'addresses': addresses.map((address) {
+          return {
+            'address': address['address'], // Actual address string
+            'city': address['city'] ?? '', // City
+            'countryCode': address['countryCode'] ?? '', // Country code
+            'deleted': address['deleted'] ?? false, // Deleted flag
+            'label': address['label'], // Label for the address
+            'postalCode': address['postalCode'], // Postal code
+            'state': address['state'] ?? '', // State
+            // Add any additional fields if necessary
+          };
+        }).toList(),
         'created_on': currentTime,
         'routes': [], // Empty routes array
         'username': username,
@@ -46,6 +58,34 @@ class FirebaseCalls {
     }
   }
 
+  Future<Map<String, dynamic>?> getUserData() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      throw Exception("No user is logged in.");
+    }
+
+    QuerySnapshot querySnap = await FirebaseFirestore.instance
+        .collection('users')
+        .where('userid', isEqualTo: currentUser.uid)
+        .get();
+    if (querySnap.docs.isNotEmpty) {
+      QueryDocumentSnapshot userDoc = querySnap.docs[0];
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+      String username = userData['username']; // Registered name
+      List<dynamic> addresses = userData['addresses']; // List of saved addresses
+
+      // Return both the username and addresses
+      return {
+        'username': username,
+        'addresses': addresses,
+      };
+    } else {
+      print("No user data found.");
+      return null;
+    }
+  }
 
   Future<List<CongestionRating>> getCongestionRatings() async {
     QuerySnapshot querySnap = await congestionCollection

@@ -16,18 +16,10 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
     setState(() {
       switch (index) {
         case 0:
-         // if (newUser == true) {
             Navigator.pushReplacementNamed(context, '/home');
-         // } else {
-           // Navigator.pushReplacementNamed(context, '/home');
-          //}
           break;
         case 1:
-          //if (newUser == true) {
             Navigator.pushReplacementNamed(context, '/profile');
-         // } else {
-           // Navigator.pushReplacementNamed(context, '/exercise');
-         // }
           break;
       }
     });
@@ -36,7 +28,8 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: Colors.black38,
+      backgroundColor: Colors.white,
+      selectedItemColor: Colors.red,
       items: const [
         BottomNavigationBarItem(
           label: 'Dashboard',

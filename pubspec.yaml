@@ -52,6 +52,7 @@ dependencies:
   email_otp: ^3.0.2
   geocode: 1.0.3
   google_polyline_algorithm: ^3.1.0
+  fl_chart: ^0.69.0
 
   flowmotion_api:
     path: ./flowmotion_api
