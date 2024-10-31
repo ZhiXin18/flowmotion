@@ -233,6 +233,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+  decimal:
+    dependency: transitive
+    description:
+      name: decimal
+      sha256: "24a261d5d5c87e86c7651c417a5dbdf8bcd7080dd592533910e8d0505a279f21"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.3"
   desktop_webview_auth:
     dependency: transitive
     description:
@@ -461,6 +469,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_charts:
+    dependency: "direct main"
+    description:
+      name: flutter_charts
+      sha256: eb9d2bf98bfc779c1da9cf1fe80afd598094aed33e536cf04845d8f266f48c11
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.2"
   flutter_driver:
     dependency: transitive
     description: flutter
@@ -590,6 +606,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  google_fonts:
+    dependency: transitive
+    description:
+      name: google_fonts
+      sha256: b1ac0fe2832c9cc95e5e88b57d627c5e68c223b9657f4b96e1487aa9098c7b82
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.1"
   google_polyline_algorithm:
     dependency: "direct main"
     description:
@@ -851,6 +875,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+  path_provider:
+    dependency: transitive
+    description:
+      name: path_provider
+      sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.5"
+  path_provider_android:
+    dependency: transitive
+    description:
+      name: path_provider_android
+      sha256: c464428172cb986b758c6d1724c603097febb8fb855aa265aeecc9280c294d4a
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.12"
+  path_provider_foundation:
+    dependency: transitive
+    description:
+      name: path_provider_foundation
+      sha256: f234384a3fdd67f989b4d54a5d73ca2a6c422fa55ae694381ae0f4375cd1ea16
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.0"
   path_provider_linux:
     dependency: transitive
     description:
@@ -987,6 +1035,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.2"
+  rational:
+    dependency: transitive
+    description:
+      name: rational
+      sha256: cb808fb6f1a839e6fc5f7d8cb3b0a10e1db48b3be102de73938c627f0b636336
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
   rxdart:
     dependency: "direct dev"
     description:
@@ -1160,6 +1216,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+  tuple:
+    dependency: transitive
+    description:
+      name: tuple
+      sha256: a97ce2013f240b2f3807bcbaf218765b6f301c3eff91092bcfa23a039e7dd151
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   typed_data:
     dependency: transitive
     description:

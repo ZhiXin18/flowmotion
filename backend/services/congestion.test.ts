@@ -11,6 +11,7 @@ import { add as addDate } from "date-fns";
 
 describe("CongestionSvc", () => {
   const congestion = new CongestionSvc(initDB());
+
   test("lastUpdatedOn() gets last updated_on date", async () => {
     await congestion.lastUpdatedOn();
   });
@@ -29,7 +30,6 @@ describe("CongestionSvc", () => {
   });
 
   test("getCongestions() filters by begin & end", async () => {
-    // unix epoch jan 1 1970
     const minDate = new Date(0);
     const congestions = await congestion.getCongestions({
       begin: minDate.toISOString(),
@@ -44,5 +44,71 @@ describe("CongestionSvc", () => {
     expect(
       congestions.reduce((actual, c) => actual && c.camera.id === "1703", true),
     ).toStrictEqual(true);
+  });
+
+  test("getCongestions() performs aggregation by hour with max", async () => {
+    const congestions = await congestion.getCongestions({
+      groupby: "hour",
+      agg: "max",
+    });
+    expect(congestions.length).toBeGreaterThan(0);
+    expect(congestions.every((c) => typeof c.rating.value === "number")).toBe(
+      true,
+    );
+  });
+
+  test("getCongestions() performs aggregation by day with avg", async () => {
+    const congestions = await congestion.getCongestions({
+      groupby: "day",
+      agg: "avg",
+    });
+    expect(congestions.length).toBeGreaterThan(0);
+    expect(congestions.every((c) => typeof c.rating.value === "number")).toBe(
+      true,
+    );
+  });
+
+  test("getCongestions() performs aggregation by day with min", async () => {
+    const congestions = await congestion.getCongestions({
+      groupby: "day",
+      agg: "min",
+    });
+    expect(congestions.length).toBeGreaterThan(0);
+    expect(congestions.every((c) => typeof c.rating.value === "number")).toBe(
+      true,
+    );
+  });
+
+  // Edge case test for invalid agg parameter
+  test("getCongestions() throws error for invalid agg parameter", async () => {
+    try {
+      await congestion.getCongestions({
+        groupby: "day",
+        agg: "invalid_agg" as unknown as "min" | "max" | "avg", // Cast to a valid agg type
+      });
+    } catch (e) {
+      expect((e as Error).message).toMatch(/Invalid aggregation method/);
+    }
+  });
+
+  // Edge case test for missing groupby when agg is provided
+  test("getCongestions() throws error when agg is provided without groupby", async () => {
+    try {
+      await congestion.getCongestions({
+        agg: "max",
+      });
+    } catch (e) {
+      expect((e as Error).message).toMatch(
+        /groupby must be provided if agg is specified/,
+      );
+    }
+  });
+
+  // New test for filtering by min_rating
+  test("getCongestions() filters by min_rating", async () => {
+    const congestions = await congestion.getCongestions({
+      min_rating: 0.7,
+    });
+    expect(congestions.every((c) => c.rating.value >= 0.7)).toBe(true);
   });
 });
