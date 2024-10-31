@@ -8,7 +8,7 @@ import { CongestionSvc } from "./services/congestion";
 import { initDB } from "./clients/db";
 import { Request, Response } from "express";
 import * as OpenApiValidator from "express-openapi-validator";
-import { ROUTING_API, RoutingSvc } from './services/routing';
+import { ROUTING_API, RoutingSvc } from "./services/routing";
 import { paths } from "./api";
 
 type GeoLocation = {
@@ -51,7 +51,10 @@ app.post("/route", async (req: Request, res: Response) => {
   // const location = await routing_service.geolookup("636959");
   // console.log(location);
   if (r.src.kind === "location" && r.dest.kind === "location") {
-    const routes = await routing_service.route(r.src.location!, r.dest.location!);
+    const routes = await routing_service.route(
+      r.src.location!,
+      r.dest.location!,
+    );
     res.json({ routes });
   } else {
     try {

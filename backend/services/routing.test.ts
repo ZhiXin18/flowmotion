@@ -41,7 +41,7 @@ describe("RoutingSvc", () => {
     const invalidPostcode = "000000"; // Example of an invalid postcode
 
     await expect(osrm.geolookup(invalidPostcode)).rejects.toThrow(
-      `No location found for postcode: ${invalidPostcode}`
+      `No location found for postcode: ${invalidPostcode}`,
     );
   });
 });
