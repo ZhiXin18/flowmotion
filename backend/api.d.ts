@@ -274,6 +274,15 @@ export interface paths {
             "application/json": components["schemas"]["Error"];
           };
         };
+        /** @description No location found for one or more addresses. */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["Error"];
+          };
+        };
         /** @description Internal server error */
         500: {
           headers: {
@@ -323,8 +332,17 @@ export interface paths {
             "application/json": components["schemas"]["Location"];
           };
         };
-        /** @description Invalid postcode. */
+        /** @description Invalid request parameters. */
         400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["Error"];
+          };
+        };
+        /** @description No Location for postcode found. */
+        404: {
           headers: {
             [name: string]: unknown;
           };

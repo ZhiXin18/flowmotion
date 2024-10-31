@@ -43,4 +43,3 @@ lib/src/model/route_post_request_dest.dart
 lib/src/model/route_post_request_src.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/geocoding_api_test.dart

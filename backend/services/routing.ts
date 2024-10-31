@@ -9,7 +9,7 @@ import * as path from "path";
 import csv from "csv-parser";
 import { components, paths } from "../api";
 import { CongestionSvc } from "./congestion";
-import { ValidationError } from "../error";
+import { NotFoundError } from "../error";
 
 // OSRMText instructions
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -54,7 +54,7 @@ export class RoutingSvc {
     const location = this.postcodeLookup.get(normalizedPostcode);
 
     if (!location) {
-      throw new ValidationError(`No location found for postcode: ${postcode}`);
+      throw new NotFoundError(`No location found for postcode: ${postcode}`);
     }
 
     return location;

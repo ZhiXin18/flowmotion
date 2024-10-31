@@ -10,6 +10,7 @@ import { Request, Response } from "express";
 import * as OpenApiValidator from "express-openapi-validator";
 import { ROUTING_API, RoutingSvc } from "./services/routing";
 import { paths } from "./api";
+import { ValidationError } from "./error";
 
 type GeoLocation = {
   latitude: number;
@@ -49,37 +50,31 @@ app.post("/route", async (req: Request, res: Response) => {
   const r =
     req.body as paths["/route"]["post"]["requestBody"]["content"]["application/json"];
 
-  try {
-    let srcLocation: GeoLocation;
-    let destLocation: GeoLocation;
+  let srcLocation: GeoLocation;
+  let destLocation: GeoLocation;
 
-    if (r.src.kind === "address") {
-      const postcode = r.src.address?.postcode?.trim();
-      if (!postcode) {
-        throw new Error("Source address must include a postcode.");
-      }
-      srcLocation = await routing_service.geolookup(postcode);
-    } else {
-      srcLocation = r.src.location!;
+  if (r.src.kind === "address") {
+    const postcode = r.src.address?.postcode?.trim();
+    if (!postcode) {
+      throw new ValidationError("Source address must include a postcode.");
     }
-
-    if (r.dest.kind === "address") {
-      const postcode = r.dest.address?.postcode?.trim();
-      if (!postcode) {
-        throw new Error("Destination address must include a postcode.");
-      }
-      destLocation = await routing_service.geolookup(postcode);
-    } else {
-      destLocation = r.dest.location!;
-    }
-
-    const routes = await routing_service.route(srcLocation, destLocation);
-    res.json({ routes });
-  } catch (error) {
-    console.error(error);
-    const err = error as Error;
-    res.status(500).json({ message: err.message });
+    srcLocation = await routing_service.geolookup(postcode);
+  } else {
+    srcLocation = r.src.location!;
   }
+
+  if (r.dest.kind === "address") {
+    const postcode = r.dest.address?.postcode?.trim();
+    if (!postcode) {
+      throw new ValidationError("Destination address must include a postcode.");
+    }
+    destLocation = await routing_service.geolookup(postcode);
+  } else {
+    destLocation = r.dest.location!;
+  }
+
+  const routes = await routing_service.route(srcLocation, destLocation);
+  res.json({ routes });
 });
 
 app.get("/geocode/:postcode", async (req: Request, res: Response) => {

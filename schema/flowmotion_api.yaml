@@ -305,6 +305,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "404":
+          description: No location found for one or more addresses.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "500":
           description: Internal server error
           content:
@@ -332,7 +338,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Location"
         "400":
-          description: Invalid postcode.
+          description: Invalid request parameters.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: No Location for postcode found.
           content:
             application/json:
               schema:

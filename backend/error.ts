@@ -27,3 +27,27 @@ export class ValidationError extends Error {
     this.status = 400;
   }
 }
+
+/**
+ * Represents an error that occurs when a requested resource is not found.
+ * Extends the standard JavaScript `Error` class with an additional `status` property, indicating
+ * an HTTP status code for "Not Found".
+ *
+ * @property {number} status - HTTP status code associated with the error, set to 404 (Not Found).
+ *
+ * @constructor
+ * @param {string} message - A descriptive message explaining the missing resource error.
+ *
+ * @example
+ * throw new NotFoundError("Resource not found");
+ */
+export class NotFoundError extends Error {
+  status: number;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundError";
+    // not found status code
+    this.status = 404;
+  }
+}
