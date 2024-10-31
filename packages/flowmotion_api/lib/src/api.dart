@@ -10,6 +10,7 @@ import 'package:flowmotion_api/src/auth/basic_auth.dart';
 import 'package:flowmotion_api/src/auth/bearer_auth.dart';
 import 'package:flowmotion_api/src/auth/oauth.dart';
 import 'package:flowmotion_api/src/api/congestion_api.dart';
+import 'package:flowmotion_api/src/api/geocoding_api.dart';
 import 'package:flowmotion_api/src/api/routing_api.dart';
 
 class FlowmotionApi {
@@ -82,6 +83,12 @@ class FlowmotionApi {
   /// by doing that all interceptors will not be executed
   CongestionApi getCongestionApi() {
     return CongestionApi(dio, serializers);
+  }
+
+  /// Get GeocodingApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  GeocodingApi getGeocodingApi() {
+    return GeocodingApi(dio, serializers);
   }
 
   /// Get RoutingApi instance, base route and serializer can be overridden by a given but be careful,

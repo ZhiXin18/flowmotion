@@ -9,7 +9,7 @@ info:
   title: Flowmotion API
   description: API exposed by the Flowmotion Backend Service.
   version: 0.1.0
-servers: 
+servers:
   - description: Flowmotion Backend on Google Cloud Run
     url: https://flowmotion-backend-210524342027.asia-southeast1.run.app/
 tags:
@@ -22,9 +22,9 @@ paths:
     get:
       tags: [Congestion]
       summary: Retrieve congestion data
-      description: 
-          Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day.
-          By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
+      description:
+        Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day.
+        By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
       parameters:
         - name: camera_id
           in: query
@@ -311,6 +311,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+  /geocode/{postcode}:
+    get:
+      tags: [Geocoding]
+      summary: Retrieve location coordinates by postal code
+      description: Returns the geographical coordinates (latitude and longitude) for a given postal code.
+      parameters:
+        - name: postcode
+          in: path
+          description: Postal code to retrieve location coordinates for.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Location coordinates for the provided postal code
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Location"
+        "400":
+          description: Invalid postcode.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
   schemas:
     Congestion:

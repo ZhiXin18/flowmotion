@@ -10,6 +10,7 @@ export 'package:flowmotion_api/src/serializers.dart';
 export 'package:flowmotion_api/src/model/date.dart';
 
 export 'package:flowmotion_api/src/api/congestion_api.dart';
+export 'package:flowmotion_api/src/api/geocoding_api.dart';
 export 'package:flowmotion_api/src/api/routing_api.dart';
 
 export 'package:flowmotion_api/src/model/address.dart';

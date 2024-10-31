@@ -6,6 +6,7 @@ doc/Camera.md
 doc/Congestion.md
 doc/CongestionApi.md
 doc/Error.md
+doc/GeocodingApi.md
 doc/Location.md
 doc/Rating.md
 doc/RoutePost200Response.md
@@ -18,6 +19,7 @@ doc/RoutingApi.md
 lib/flowmotion_api.dart
 lib/src/api.dart
 lib/src/api/congestion_api.dart
+lib/src/api/geocoding_api.dart
 lib/src/api/routing_api.dart
 lib/src/api_util.dart
 lib/src/auth/api_key_auth.dart
@@ -41,4 +43,4 @@ lib/src/model/route_post_request_dest.dart
 lib/src/model/route_post_request_src.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/error_test.dart
+test/geocoding_api_test.dart

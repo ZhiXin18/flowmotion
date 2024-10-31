@@ -1,7 +1,7 @@
 /*
  * Flowmotion
  * Backend
- * Entrypoin
+ * Entrypoint
  */
 import express, { NextFunction } from "express";
 import { CongestionSvc } from "./services/congestion";
@@ -80,6 +80,13 @@ app.post("/route", async (req: Request, res: Response) => {
     const err = error as Error;
     res.status(500).json({ message: err.message });
   }
+});
+
+app.get("/geocode/:postcode", async (req: Request, res: Response) => {
+  const r =
+    req.params as paths["/geocode/{postcode}"]["get"]["parameters"]["path"];
+  const location = await routing_service.geolookup(r.postcode);
+  res.json(location);
 });
 
 // catchall error handler with json response

@@ -70,6 +70,7 @@ Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 [*CongestionApi*](doc/CongestionApi.md) | [**congestedCameraIdGroupbyGet**](doc/CongestionApi.md#congestedcameraidgroupbyget) | **GET** /congested/{camera_id}/{groupby} | Retrieve congestion duration for a specific camera for a given time range.
 [*CongestionApi*](doc/CongestionApi.md) | [**congestionsGet**](doc/CongestionApi.md#congestionsget) | **GET** /congestions | Retrieve congestion data
+[*GeocodingApi*](doc/GeocodingApi.md) | [**geocodePostcodeGet**](doc/GeocodingApi.md#geocodepostcodeget) | **GET** /geocode/{postcode} | Retrieve location coordinates by postal code
 [*RoutingApi*](doc/RoutingApi.md) | [**routePost**](doc/RoutingApi.md#routepost) | **POST** /route | Retrieve recommended routes between source and destination
 
 
