@@ -25,4 +25,6 @@ FROM base as production
 # Set NODE_ENV to production by default
 ENV NODE_ENV=production
 COPY --from=build /app/dist /app/
+# copy geocoding data
+COPY --from=build /app/data /app/data
 CMD ["node", "index.js", "flowmotion_api.yaml", "3000"]

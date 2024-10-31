@@ -4,13 +4,20 @@
  * Routing Service
  */
 
+import * as fs from "fs";
+import * as path from "path";
+import csv from "csv-parser";
 import { components, paths } from "../api";
 import { CongestionSvc } from "./congestion";
-// osrm-text-instructions
+import { ValidationError } from "../error";
+
+// OSRMText instructions
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const OSRMText = require("osrm-text-instructions")("v5");
 
-type Location = components["schemas"]["Location"];
+// Define GeoLocation to avoid conflict with DOM Location
+type GeoLocation = components["schemas"]["Location"];
+
 type Routes = NonNullable<
   paths["/route"]["post"]["responses"]["200"]["content"]["application/json"]["routes"]
 >;
@@ -19,25 +26,72 @@ export const ROUTING_API =
   "https://osrm-congestion-210524342027.asia-southeast1.run.app";
 
 /**
- * RoutingSvc performs routing by making an API call to the OSRM API.
- *
- * @param apiBase - The base URL of the OSRM API.
- *                           This URL is used to construct
- *                           requests to the OSRM service.
- *
- * @param fetchFn - A custom fetch function used
- *                          to perform network requests.
- *                          This implementation should
- *                          conform to the Fetch API,
- *                          potentially incorporating caching
- *                          strategies to enhance performance.
+ * RoutingSvc performs routing by making API calls to the OSRM API.
  */
 export class RoutingSvc {
+  private postcodeLookup: Map<string, GeoLocation> | null = null;
+
   constructor(
     public apiBase: string,
     private fetchFn: typeof fetch,
     private congestion: CongestionSvc,
-  ) {}
+  ) {
+    // No need to load the CSV data here
+  }
+
+  /*
+   * Geocodes a postcode to obtain latitude and longitude.
+   */
+  public async geolookup(postcode: string): Promise<GeoLocation> {
+    // Load postcode data if not already loaded
+    console.log("routing.geolookup");
+    await this.loadPostcodeData();
+
+    const normalizedPostcode = postcode.trim();
+    if (!this.postcodeLookup) {
+      throw new Error("Postcode data failed to load.");
+    }
+    const location = this.postcodeLookup.get(normalizedPostcode);
+
+    if (!location) {
+      throw new ValidationError(`No location found for postcode: ${postcode}`);
+    }
+
+    return location;
+  }
+
+  /**
+   * Loads the postcode data from the CSV file into a Map for quick lookup.
+   */
+  private async loadPostcodeData() {
+    if (!this.postcodeLookup) {
+      await new Promise<void>((resolve, reject) => {
+        const csvFilePath = path.resolve(__dirname, "../data/SG_postal.csv");
+        this.postcodeLookup = new Map<string, GeoLocation>();
+
+        fs.createReadStream(csvFilePath)
+          .pipe(csv()) // Default comma delimiter
+          .on("data", (row) => {
+            const postcode = row["postal_code"]?.trim();
+            const latitude = parseFloat(row["lat"]);
+            const longitude = parseFloat(row["lon"]);
+
+            if (postcode && !isNaN(latitude) && !isNaN(longitude)) {
+              this.postcodeLookup!.set(postcode, { latitude, longitude });
+            }
+          })
+          .on("end", () => {
+            console.log("Postcode data loaded successfully.");
+            resolve();
+          })
+          .on("error", (error) => {
+            console.error("Error loading postcode data:", error);
+            this.postcodeLookup = null;
+            reject(error);
+          });
+      });
+    }
+  }
 
   /**
    * Calculates a route from the given source (src) to the destination (dest) location
@@ -57,8 +111,8 @@ export class RoutingSvc {
    * @throws Throws an error if the OSRM API request fails, including the error code and message from the response.
    *
    */
-  route = async (src: Location, dest: Location): Promise<Routes> => {
-    // make api call to OSRM to perform routing
+  route = async (src: GeoLocation, dest: GeoLocation): Promise<Routes> => {
+    // Construct the URL for the OSRM API call
     const url = new URL(
       `/route/v1/driving/${src.longitude},${src.latitude};${dest.longitude},${dest.latitude}`,
       this.apiBase,
@@ -68,7 +122,7 @@ export class RoutingSvc {
     const response = await this.fetchFn(url);
     const r = await response.json();
 
-    // handle response failure
+    // Handle response failure
     if (!response.ok) {
       throw new Error(
         `OSRM ${url.pathname} request failed with error: ${r["code"]}: ${r["message"]}`,
@@ -82,7 +136,6 @@ export class RoutingSvc {
         geometry: route.geometry, // Polyline for the entire route
         duration: route.duration,
         distance: route.distance,
-
         steps: await Promise.all(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           route.legs.flatMap((leg: any) =>
