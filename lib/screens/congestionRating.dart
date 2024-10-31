@@ -3,10 +3,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import 'package:latlong2/latlong.dart';
 import '../models/congestion_rating.dart';
-import '../utilities/firebase_calls.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
+import 'package:fl_chart/fl_chart.dart';
 
-final FirebaseCalls firebaseCalls = FirebaseCalls();
 final api = FlowmotionApi().getCongestionApi();
 
 class CongestionRatingScreen extends StatefulWidget {
@@ -35,7 +34,6 @@ class CongestionRatingScreen extends StatefulWidget {
 }
 
 class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
-  final FirebaseCalls firebaseCalls = FirebaseCalls();
   late final MapController _mapController;
   List<CongestionRating> congestionRatings = [];
   List<Congestion> allCongestionRatings = [];
@@ -53,11 +51,9 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   void initState() {
     super.initState();
     _mapController = MapController();
-    fetchCongestionRatings();
     fetchAllRatings();
     _processRouteResponse(widget.route);
     print(widget.route);
-
   }
 
   void _processRouteResponse(RoutePost200Response? response) {
@@ -89,20 +85,35 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     }
   }
 
-  Future<void> fetchCongestionRatings() async {
+  /*Future<void> fetchCongestionData(String cameraID, String agg, String groupby) async {
     try {
-      List<CongestionRating> ratings = await firebaseCalls.getCongestionRatingsForPlace(widget.savedPlaceLabel);
+      final response = await api.congestionsGet(
+        cameraID,
+        agg,
+        groupby,
+        widget.begin,
+        widget.end,
+      );
+
+      List<double> ratings = [];
+      List<String> cameras = [];
+      response.data!.forEach((congestion) {
+        ratings.add(congestion.rating);  // Assuming rating is a double
+        cameras.add(congestion.cameraID); // Adjust if 'cameraID' differs
+      });
+
       setState(() {
-        congestionRatings = ratings;
-        isLoading = false;
+        widget.hourlyCongestionData = ratings; // Assuming response has a `rating` field
+        widget.congestionHistoryData = ratings;
+        widget.congestionImageUrls = cameras;
       });
     } catch (e) {
-      print('Error fetching congestion ratings: $e');
-      setState(() {
-        isLoading = false;
-      });
+      print('Error fetching congestion data: $e');
     }
-  }
+  }*/
+
+  List<double> testData = [1.0, 0.3, 0.5, 0.4, 0.2];
+
 
   Future<void> fetchAllRatings() async {
     final api = FlowmotionApi().getCongestionApi();
@@ -220,7 +231,6 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
               ),
             ),
             SizedBox(height: 20),
-
             _buildCongestionAndRecommendedBoxes(widget.congestionPoints, widget.allInstructions, context),
             // Row 1: Congestion Points and Recommended Route
             /*Padding(
@@ -238,7 +248,23 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
               ),
             ),*/
             SizedBox(height: 20),
-
+            if (selectedIndex != null) ...[
+              // Expanded Graphs Section
+              Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Text(
+                      widget.congestionPoints[selectedIndex!],
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    _buildHourlyCongestionRatingGraph(testData),
+                    _buildCongestionHistoryGraph(testData)
+                  ],
+                ),
+              ),
+            ],
             // Additional rows for congestion ratings and history...
           ],
         ),
@@ -427,11 +453,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
               ),
             ),
           ),
-          if (selectedIndex != null)
-            _buildHourlyCongestionRatingGraph(congestionPoints[selectedIndex!]),
-            _buildCongestionHistoryGraph(congestionPoints[selectedIndex!]),
-            _buildImageViewer(congestionPoints[selectedIndex!])],
-      ),
+      ]),
     );
   }
 
@@ -489,44 +511,66 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   }
 
   // Placeholder methods for graphs and image viewer
-  Widget _buildHourlyCongestionRatingGraph(String congestionPoint) {
-    return Column(
-      children: [
-        Text(
-          congestionPoint,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 8),
-        Container(
-          height: 200,
-          color: Colors.redAccent[100],
-          child: Center(
-            child: Text('Hourly Congestion Rating'),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCongestionHistoryGraph(String congestionPoint) {
+  Widget _buildHourlyCongestionRatingGraph(List<double> hourlyData) {
     return Container(
-      height: 150,
-      color: Colors.blueAccent[100],
-      child: Center(
-        child: Text('Congestion Rating History'),
+      height: 200,
+      color: Colors.redAccent[100],
+      child: LineChart(
+        LineChartData(
+          gridData: FlGridData(show: false),
+          titlesData: FlTitlesData(show: true),
+          borderData: FlBorderData(show: true),
+          lineBarsData: [
+            LineChartBarData(
+              spots: hourlyData
+                  .asMap()
+                  .entries
+                  .map((e) => FlSpot(e.key.toDouble(), e.value))
+                  .toList(),
+              isCurved: true,
+              color: Colors.red,
+              belowBarData: BarAreaData(show: false),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildImageViewer(String congestionPoint) {
+  Widget _buildCongestionHistoryGraph(List<double> historyData) {
+    return Container(
+      height: 150,
+      color: Colors.blueAccent[100],
+      child: BarChart(
+        BarChartData(
+          barGroups: historyData
+              .asMap()
+              .entries
+              .map((e) => BarChartGroupData(
+            x: e.key,
+            barRods: [
+              BarChartRodData(toY: e.value, color: Colors.blue),
+            ],
+          ))
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageViewer(List<String> imageUrls) {
     return Container(
       height: 200,
-      color: Colors.redAccent[100],
-      child: Center(
-        child: Text('Congestion History Captures'),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: imageUrls.length,
+        itemBuilder: (context, index) {
+          return Container(
+            width: 200,
+            margin: EdgeInsets.all(5),
+            child: Image.network(imageUrls[index]),
+          );
+        },
       ),
     );
   }
