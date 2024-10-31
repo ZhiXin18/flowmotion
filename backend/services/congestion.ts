@@ -93,9 +93,10 @@ export class CongestionSvc {
     if (agg && groupby) {
       const grouped = _.groupBy(data, (d: Congestion) => {
         const date = new Date(d.updated_on);
+        // standardise timezone used in group by key to utc
         return groupby === "hour"
-          ? `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}`
-          : `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+          ? `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${date.getUTCHours()}`
+          : `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
       });
 
       return Object.values(grouped).map((group: Congestion[]) => {

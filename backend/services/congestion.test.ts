@@ -52,15 +52,15 @@ describe("CongestionSvc", () => {
     const grouped = await congestion.getCongestions({
       groupby: "hour",
       agg: "max",
-      begin: "2024-10-29T20:00:00+08:00",
-      end: "2024-10-30T20:00:00+08:00",
+      begin: "2024-10-29T20:00:00+00:00",
+      end: "2024-10-30T20:00:00+00:00",
     });
     expect(grouped.length).toEqual(24);
     expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
     // check first group is aggregated correctly
     const firstHour = await congestion.getCongestions({
-      begin: "2024-10-29T20:00:00+08:00",
-      end: "2024-10-29T21:00:00+08:00",
+      begin: "2024-10-29T20:00:00+00:00",
+      end: "2024-10-29T21:00:00+00:00",
     });
     expect(grouped[0].rating.value).toStrictEqual(
       firstHour
@@ -73,15 +73,15 @@ describe("CongestionSvc", () => {
     const grouped = await congestion.getCongestions({
       groupby: "day",
       agg: "avg",
-      begin: "2024-10-28T00:00:00+08:00",
-      end: "2024-10-30T00:00:00+08:00",
+      begin: "2024-10-28T00:00:00+00:00",
+      end: "2024-10-30T00:00:00+00:00",
     });
     expect(grouped.length).toStrictEqual(2);
     expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
     // check first group is aggregated correctly
     const firstDay = await congestion.getCongestions({
-      begin: "2024-10-28T00:00:00+08:00",
-      end: "2024-10-29T00:00:00+08:00",
+      begin: "2024-10-28T00:00:00+00:00",
+      end: "2024-10-29T00:00:00+00:00",
     });
     expect(grouped[0].rating.value).toStrictEqual(
       firstDay.map((c) => c.rating.value).reduce((acc, v) => acc + v, 0) /
