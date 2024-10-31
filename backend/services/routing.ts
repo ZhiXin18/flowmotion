@@ -29,7 +29,6 @@ export const ROUTING_API =
  */
 export class RoutingSvc {
   private postcodeLookup: Map<string, GeoLocation> | null = null;
-  private postcodeDataLoading: Promise<void> | null = null;
 
   constructor(
     public apiBase: string,
@@ -45,12 +44,7 @@ export class RoutingSvc {
   public async geolookup(postcode: string): Promise<GeoLocation> {
     // Load postcode data if not already loaded
     console.log("routing.geolookup");
-    if (!this.postcodeLookup) {
-      if (!this.postcodeDataLoading) {
-        this.postcodeDataLoading = this.loadPostcodeData();
-      }
-      await this.postcodeDataLoading;
-    }
+    await this.loadPostcodeData();
 
     const normalizedPostcode = postcode.trim();
     if (!this.postcodeLookup) {
@@ -68,32 +62,34 @@ export class RoutingSvc {
   /**
    * Loads the postcode data from the CSV file into a Map for quick lookup.
    */
-  private loadPostcodeData(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const csvFilePath = path.resolve(__dirname, "../data/SG_postal.csv");
-      this.postcodeLookup = new Map<string, GeoLocation>();
+  private async loadPostcodeData() {
+    if (!this.postcodeLookup) {
+      await new Promise<void>((resolve, reject) => {
+        const csvFilePath = path.resolve(__dirname, "../data/SG_postal.csv");
+        this.postcodeLookup = new Map<string, GeoLocation>();
 
-      fs.createReadStream(csvFilePath)
-        .pipe(csv()) // Default comma delimiter
-        .on("data", (row) => {
-          const postcode = row["postal_code"]?.trim();
-          const latitude = parseFloat(row["lat"]);
-          const longitude = parseFloat(row["lon"]);
+        fs.createReadStream(csvFilePath)
+          .pipe(csv()) // Default comma delimiter
+          .on("data", (row) => {
+            const postcode = row["postal_code"]?.trim();
+            const latitude = parseFloat(row["lat"]);
+            const longitude = parseFloat(row["lon"]);
 
-          if (postcode && !isNaN(latitude) && !isNaN(longitude)) {
-            this.postcodeLookup!.set(postcode, { latitude, longitude });
-          }
-        })
-        .on("end", () => {
-          console.log("Postcode data loaded successfully.");
-          resolve();
-        })
-        .on("error", (error) => {
-          console.error("Error loading postcode data:", error);
-          this.postcodeLookup = null;
-          reject(error);
-        });
-    });
+            if (postcode && !isNaN(latitude) && !isNaN(longitude)) {
+              this.postcodeLookup!.set(postcode, { latitude, longitude });
+            }
+          })
+          .on("end", () => {
+            console.log("Postcode data loaded successfully.");
+            resolve();
+          })
+          .on("error", (error) => {
+            console.error("Error loading postcode data:", error);
+            this.postcodeLookup = null;
+            reject(error);
+          });
+      });
+    }
   }
 
   /**
