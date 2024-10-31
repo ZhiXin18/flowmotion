@@ -3,7 +3,7 @@ import '../widgets/navigationBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utilities/firebase_calls.dart';
-import 'homeScreen_graph.dart';
+import 'homeScreen.dart';
 
 
 FirebaseCalls firebaseCalls = FirebaseCalls();

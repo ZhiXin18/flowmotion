@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart'; // Import Firebase core.
 import '../firebase_options.dart'; // Ensure you have this file.
 import 'package:flowmotion/screens/loginScreen.dart';
 import 'package:flowmotion/screens/registerScreen.dart';
-import 'package:flowmotion/screens/homeScreen_graph.dart';
+import 'package:flowmotion/screens/homeScreen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
