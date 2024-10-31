@@ -8,6 +8,7 @@ import { describe, expect, test } from "@jest/globals";
 import { CongestionSvc } from "./congestion";
 import { initDB } from "../clients/db";
 import { add as addDate } from "date-fns";
+import { ValidationError } from "../error";
 
 describe("CongestionSvc", () => {
   const congestion = new CongestionSvc(initDB());
@@ -47,24 +48,44 @@ describe("CongestionSvc", () => {
   });
 
   test("getCongestions() performs aggregation by hour with max", async () => {
-    const congestions = await congestion.getCongestions({
+    // hourly group by over a day
+    const grouped = await congestion.getCongestions({
       groupby: "hour",
       agg: "max",
+      begin: "2024-10-29T20:00:00+08:00",
+      end: "2024-10-30T20:00:00+08:00",
     });
-    expect(congestions.length).toBeGreaterThan(0);
-    expect(congestions.every((c) => typeof c.rating.value === "number")).toBe(
-      true,
+    expect(grouped.length).toEqual(24);
+    expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
+    // check first group is aggregated correctly
+    const firstHour = await congestion.getCongestions({
+      begin: "2024-10-29T20:00:00+08:00",
+      end: "2024-10-29T21:00:00+08:00",
+    });
+    expect(grouped[0].rating.value).toStrictEqual(
+      firstHour
+        .map((c) => c.rating.value)
+        .reduce((acc, v) => Math.max(acc, v), 0),
     );
   });
 
   test("getCongestions() performs aggregation by day with avg", async () => {
-    const congestions = await congestion.getCongestions({
+    const grouped = await congestion.getCongestions({
       groupby: "day",
       agg: "avg",
+      begin: "2024-10-28T00:00:00+08:00",
+      end: "2024-10-30T00:00:00+08:00",
     });
-    expect(congestions.length).toBeGreaterThan(0);
-    expect(congestions.every((c) => typeof c.rating.value === "number")).toBe(
-      true,
+    expect(grouped.length).toStrictEqual(2);
+    expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
+    // check first group is aggregated correctly
+    const firstDay = await congestion.getCongestions({
+      begin: "2024-10-28T00:00:00+08:00",
+      end: "2024-10-29T00:00:00+08:00",
+    });
+    expect(grouped[0].rating.value).toStrictEqual(
+      firstDay.map((c) => c.rating.value).reduce((acc, v) => acc + v, 0) /
+        firstDay.length,
     );
   });
 
@@ -79,29 +100,13 @@ describe("CongestionSvc", () => {
     );
   });
 
-  // Edge case test for invalid agg parameter
-  test("getCongestions() throws error for invalid agg parameter", async () => {
-    try {
-      await congestion.getCongestions({
-        groupby: "day",
-        agg: "invalid_agg" as unknown as "min" | "max" | "avg", // Cast to a valid agg type
-      });
-    } catch (e) {
-      expect((e as Error).message).toMatch(/Invalid aggregation method/);
-    }
-  });
-
   // Edge case test for missing groupby when agg is provided
   test("getCongestions() throws error when agg is provided without groupby", async () => {
-    try {
-      await congestion.getCongestions({
-        agg: "max",
-      });
-    } catch (e) {
-      expect((e as Error).message).toMatch(
-        /groupby must be provided if agg is specified/,
-      );
-    }
+    await expect(congestion.getCongestions({ agg: "max" })).rejects.toThrow(
+      new ValidationError(
+        "Both groupby & agg params must be specified if either is specified.",
+      ),
+    );
   });
 
   // New test for filtering by min_rating
@@ -109,6 +114,7 @@ describe("CongestionSvc", () => {
     const congestions = await congestion.getCongestions({
       min_rating: 0.7,
     });
+    expect(congestions.length).toBeGreaterThan(0);
     expect(congestions.every((c) => c.rating.value >= 0.7)).toBe(true);
   });
 });

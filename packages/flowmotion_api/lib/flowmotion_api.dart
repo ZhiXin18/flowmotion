@@ -15,6 +15,7 @@ export 'package:flowmotion_api/src/api/routing_api.dart';
 export 'package:flowmotion_api/src/model/address.dart';
 export 'package:flowmotion_api/src/model/camera.dart';
 export 'package:flowmotion_api/src/model/congestion.dart';
+export 'package:flowmotion_api/src/model/error.dart';
 export 'package:flowmotion_api/src/model/location.dart';
 export 'package:flowmotion_api/src/model/rating.dart';
 export 'package:flowmotion_api/src/model/route_post200_response.dart';

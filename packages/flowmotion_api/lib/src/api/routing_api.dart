@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
+import 'package:flowmotion_api/src/model/error.dart';
 import 'package:flowmotion_api/src/model/route_post200_response.dart';
 import 'package:flowmotion_api/src/model/route_post_request.dart';
 

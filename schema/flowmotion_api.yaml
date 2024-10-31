@@ -28,7 +28,7 @@ paths:
       parameters:
         - name: camera_id
           in: query
-          description: Filter by congestion points by specific camera id.
+          description: Filter congestion points by specific camera id.
           schema:
             type: string
         - name: agg
@@ -39,7 +39,7 @@ paths:
             enum: [min, max, avg]
         - name: groupby
           in: query
-          description: Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method.
+          description: Group congestion rating by hour or day. `agg` must also be specified to supply an aggregation method.
           schema:
             type: string
             enum: [hour, day]
@@ -55,6 +55,14 @@ paths:
           schema:
             type: string
             format: date-time
+        - name: min_rating
+          in: query
+          description: Filter congestion points by with congestion rating >= `min_rating`.
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 1
       responses:
         "200":
           description: A list of congestion data
@@ -66,8 +74,16 @@ paths:
                   $ref: "#/components/schemas/Congestion"
         "400":
           description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "500":
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /congested/{camera_id}/{groupby}:
     get:
@@ -128,8 +144,16 @@ paths:
                   value: [3600.5, 1800.0, 2400.25]
         "400":
           description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "500":
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /route:
     post:
@@ -275,7 +299,18 @@ paths:
                         - duration
                         - distance
                         - steps
-
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     Congestion:
@@ -360,3 +395,12 @@ components:
       required:
         - latitude
         - longitude
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+      required:
+        - message

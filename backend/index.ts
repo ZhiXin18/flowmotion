@@ -3,7 +3,7 @@
  * Backend
  * Entrypoint
  */
-import express from "express";
+import express, { NextFunction } from "express";
 import { CongestionSvc } from "./services/congestion";
 import { initDB } from "./clients/db";
 import { Request, Response } from "express";
@@ -55,8 +55,8 @@ app.post("/route", async (req: Request, res: Response) => {
 });
 
 // catchall error handler with json response
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-app.use((err: any, _req: Request, res: Response) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
   // format error
   res.status(err.status || 500).json({

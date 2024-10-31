@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:flowmotion_api/src/api_util.dart';
 import 'package:flowmotion_api/src/model/congestion.dart';
+import 'package:flowmotion_api/src/model/error.dart';
 
 class CongestionApi {
   final Dio _dio;
@@ -124,11 +125,12 @@ class CongestionApi {
   /// Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. By default, if no time range is specified in &#x60;begin&#x60;, &#x60;end&#x60; return only congestions ingested from the latest &#x60;updated_on&#x60; timestamp.
   ///
   /// Parameters:
-  /// * [cameraId] - Filter by congestion points by specific camera id.
+  /// * [cameraId] - Filter congestion points by specific camera id.
   /// * [agg] - Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified.
-  /// * [groupby] - Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method.
+  /// * [groupby] - Group congestion rating by hour or day. `agg` must also be specified to supply an aggregation method.
   /// * [begin] - Inclusive start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp.
   /// * [end] - Exclusive end of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp.
+  /// * [minRating] - Filter congestion points by with congestion rating >= `min_rating`.
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -144,6 +146,7 @@ class CongestionApi {
     String? groupby,
     DateTime? begin,
     DateTime? end,
+    double? minRating,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -179,6 +182,9 @@ class CongestionApi {
       if (end != null)
         r'end':
             encodeQueryParameter(_serializers, end, const FullType(DateTime)),
+      if (minRating != null)
+        r'min_rating': encodeQueryParameter(
+            _serializers, minRating, const FullType(double)),
     };
 
     final _response = await _dio.request<Object>(

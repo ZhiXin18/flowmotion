@@ -5,6 +5,7 @@ doc/Address.md
 doc/Camera.md
 doc/Congestion.md
 doc/CongestionApi.md
+doc/Error.md
 doc/Location.md
 doc/Rating.md
 doc/RoutePost200Response.md
@@ -29,6 +30,7 @@ lib/src/model/address.dart
 lib/src/model/camera.dart
 lib/src/model/congestion.dart
 lib/src/model/date.dart
+lib/src/model/error.dart
 lib/src/model/location.dart
 lib/src/model/rating.dart
 lib/src/model/route_post200_response.dart
@@ -39,3 +41,4 @@ lib/src/model/route_post_request_dest.dart
 lib/src/model/route_post_request_src.dart
 lib/src/serializers.dart
 pubspec.yaml
+test/error_test.dart

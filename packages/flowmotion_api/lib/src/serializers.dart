@@ -17,6 +17,7 @@ import 'package:flowmotion_api/src/model/date.dart';
 import 'package:flowmotion_api/src/model/address.dart';
 import 'package:flowmotion_api/src/model/camera.dart';
 import 'package:flowmotion_api/src/model/congestion.dart';
+import 'package:flowmotion_api/src/model/error.dart';
 import 'package:flowmotion_api/src/model/location.dart';
 import 'package:flowmotion_api/src/model/rating.dart';
 import 'package:flowmotion_api/src/model/route_post200_response.dart';
@@ -32,6 +33,7 @@ part 'serializers.g.dart';
   Address,
   Camera,
   Congestion,
+  Error,
   Location,
   Rating,
   RoutePost200Response,

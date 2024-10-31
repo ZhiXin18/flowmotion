@@ -18,16 +18,18 @@ export interface paths {
     get: {
       parameters: {
         query?: {
-          /** @description Filter by congestion points by specific camera id. */
+          /** @description Filter congestion points by specific camera id. */
           camera_id?: string;
           /** @description Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified. */
           agg?: "min" | "max" | "avg";
-          /** @description Group congestion data by hour or day. `agg` must also be specified to supply an aggregation method. */
+          /** @description Group congestion rating by hour or day. `agg` must also be specified to supply an aggregation method. */
           groupby?: "hour" | "day";
           /** @description Inclusive start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. */
           begin?: string;
           /** @description Exclusive end of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp. */
           end?: string;
+          /** @description Filter congestion points by with congestion rating >= `min_rating`. */
+          min_rating?: number;
         };
         header?: never;
         path?: never;
@@ -49,14 +51,18 @@ export interface paths {
           headers: {
             [name: string]: unknown;
           };
-          content?: never;
+          content: {
+            "application/json": components["schemas"]["Error"];
+          };
         };
         /** @description Internal server error */
         500: {
           headers: {
             [name: string]: unknown;
           };
-          content?: never;
+          content: {
+            "application/json": components["schemas"]["Error"];
+          };
         };
       };
     };
@@ -114,14 +120,18 @@ export interface paths {
           headers: {
             [name: string]: unknown;
           };
-          content?: never;
+          content: {
+            "application/json": components["schemas"]["Error"];
+          };
         };
         /** @description Internal server error */
         500: {
           headers: {
             [name: string]: unknown;
           };
-          content?: never;
+          content: {
+            "application/json": components["schemas"]["Error"];
+          };
         };
       };
     };
@@ -255,6 +265,24 @@ export interface paths {
             };
           };
         };
+        /** @description Invalid request parameters */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["Error"];
+          };
+        };
+        /** @description Internal server error */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["Error"];
+          };
+        };
       };
     };
     delete?: never;
@@ -316,6 +344,10 @@ export interface components {
        * @description Longitude of the location
        */
       longitude: number;
+    };
+    Error: {
+      /** @description Error message */
+      message: string;
     };
   };
   responses: never;
