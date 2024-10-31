@@ -39,23 +39,8 @@ export class RoutingSvc {
     // No need to load the CSV data here
   }
 
-  /**
-   * Calculates a route from the given source (src) to the destination (dest) location
-   * using the Open Source Routing Machine (OSRM) API.
-   *
-   * This method constructs a request to the OSRM API to retrieve routing information,
-   * including the route geometry, estimated travel duration, distance, and detailed
-   * steps for navigation. The response is processed to extract relevant route details
-   * and return them in a structured format.
-   *
-   * @param src The starting location for the route. Should contain properties `latitude` and `longitude`.
-   *
-   * @param dest The destination location for the route. Should also contain properties `latitude` and `longitude`.
-   *
-   * @returns A promise that resolves to an array of routes.
-   *
-   * @throws Throws an error if the OSRM API request fails, including the error code and message from the response.
-   *
+  /*
+   * Geocodes a postcode to obtain latitude and longitude.
    */
   public async geolookup(postcode: string): Promise<GeoLocation> {
     // Load postcode data if not already loaded
@@ -112,7 +97,22 @@ export class RoutingSvc {
   }
 
   /**
-   * Calculates routes between two locations using the OSRM API.
+   * Calculates a route from the given source (src) to the destination (dest) location
+   * using the Open Source Routing Machine (OSRM) API.
+   *
+   * This method constructs a request to the OSRM API to retrieve routing information,
+   * including the route geometry, estimated travel duration, distance, and detailed
+   * steps for navigation. The response is processed to extract relevant route details
+   * and return them in a structured format.
+   *
+   * @param src The starting location for the route. Should contain properties `latitude` and `longitude`.
+   *
+   * @param dest The destination location for the route. Should also contain properties `latitude` and `longitude`.
+   *
+   * @returns A promise that resolves to an array of routes.
+   *
+   * @throws Throws an error if the OSRM API request fails, including the error code and message from the response.
+   *
    */
   route = async (src: GeoLocation, dest: GeoLocation): Promise<Routes> => {
     // Construct the URL for the OSRM API call
