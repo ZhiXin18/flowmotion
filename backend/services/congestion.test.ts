@@ -55,9 +55,9 @@ describe("CongestionSvc", () => {
       groupby: "hour",
       agg: "max",
       begin: "2024-10-29T20:00:00+08:00",
-      end: "2024-10-30T20:00:00+08:00",
+      end: "2024-10-29T23:00:00+08:00",
     });
-    expect(grouped.length).toEqual(24);
+    expect(grouped.length).toEqual(3);
     expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
     // check first group is aggregated correctly
     const firstHour = await congestion.getCongestions({

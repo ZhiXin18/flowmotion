@@ -67,7 +67,9 @@ export class CongestionSvc {
       // performance: only query last updated_on if 'begin' or 'end' timestamp is omitted.
       const lastUpdated = await this.lastUpdatedOn();
       beginDate = await this.lastUpdatedOn();
-      endDate = addDate<TZDate, TZDate>(lastUpdated, { days: 1 });
+      endDate = new TZDate(addDate(lastUpdated, { days: 1 })).withTimeZone(
+        "Asia/Singapore",
+      );
     }
 
     // filter by camera_id if specified
@@ -160,7 +162,7 @@ export class CongestionSvc {
         // first congestion of each rating value sorted group is min.
         grouped.push(await getFirst());
       } else {
-        // first congestion of each rating value sorted in descending order group is max
+        // agg is max: first congestion of each rating value sorted in descending order group is max
         grouped.push(
           (
             await group.orderBy("rating.value", "desc").limit(1).get()
