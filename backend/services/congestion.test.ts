@@ -13,6 +13,8 @@ import { TZDate } from "@date-fns/tz";
 
 describe("CongestionSvc", () => {
   const congestion = new CongestionSvc(initDB());
+  // fix timezone for test
+  process.env.TZ = "Asia/Singapore";
 
   test("lastUpdatedOn() gets last updated_on date", async () => {
     await congestion.lastUpdatedOn();

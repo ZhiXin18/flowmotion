@@ -67,9 +67,7 @@ export class CongestionSvc {
       // performance: only query last updated_on if 'begin' or 'end' timestamp is omitted.
       const lastUpdated = await this.lastUpdatedOn();
       beginDate = await this.lastUpdatedOn();
-      endDate = new TZDate(addDate(lastUpdated, { days: 1 })).withTimeZone(
-        "Asia/Singapore",
-      );
+      endDate = addDate<TZDate, TZDate>(lastUpdated, { days: 1 });
     }
 
     // filter by camera_id if specified
