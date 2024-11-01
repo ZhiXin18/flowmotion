@@ -4,15 +4,16 @@
  * Congestion Service
  */
 
-import { Firestore, Query } from "firebase-admin/firestore";
+import { AggregateField, Firestore, Query } from "firebase-admin/firestore";
 import { components, paths } from "../api";
-import { formatSGT } from "../date";
+import { DateInterval, dateRange, formatSGT } from "../date";
 import { add as addDate } from "date-fns";
-import * as _ from "lodash"; // lodash for aggregation
 import { ValidationError } from "../error";
+import { TZDate } from "@date-fns/tz";
 
 type Params = paths["/congestions"]["get"]["parameters"]["query"];
 type Congestion = components["schemas"]["Congestion"];
+type AggregateFn = "min" | "max" | "avg";
 
 export class CongestionSvc {
   constructor(
@@ -29,7 +30,7 @@ export class CongestionSvc {
    * @returns A promise that resolves to a date of the last update to traffic congestion data.
    * @throws Throws an error if the query fails or if no documents are found in the collection.
    */
-  lastUpdatedOn = async (): Promise<Date> => {
+  lastUpdatedOn = async (): Promise<TZDate> => {
     const latest = await this.db
       .collection(this.collection)
       .orderBy("updated_on", "desc")
@@ -38,7 +39,7 @@ export class CongestionSvc {
     if (latest.size < 1) {
       throw new Error("Expected at least 1 Congestion document in Firestore.");
     }
-    return new Date(latest.docs[0].data().updated_on);
+    return new TZDate(latest.docs[0].data().updated_on);
   };
 
   /**
@@ -59,22 +60,14 @@ export class CongestionSvc {
     min_rating,
   }: Params = {}): Promise<Congestion[]> => {
     let query = this.db.collection(this.collection) as Query;
-    // filter congestions by time range, or default to returning last updated
-    // performance: only query last updated_on if 'begin' or 'end' timestamp is omitted.
-    const beginDate = begin != null ? new Date(begin) : null;
-    const endDate = end != null ? new Date(end) : null;
+    // determine date range of query
+    let beginDate = begin != null ? new TZDate(begin) : null;
+    let endDate = end != null ? new TZDate(end) : null;
     if (beginDate == null || endDate == null) {
+      // performance: only query last updated_on if 'begin' or 'end' timestamp is omitted.
       const lastUpdated = await this.lastUpdatedOn();
-      const lastUpdatedEnd = new Date(
-        addDate(lastUpdated, { days: 1 }).getTime() - 1,
-      );
-      query = query
-        .where("updated_on", ">=", formatSGT(beginDate ?? lastUpdated))
-        .where("updated_on", "<", formatSGT(endDate ?? lastUpdatedEnd));
-    } else {
-      query = query
-        .where("updated_on", ">=", formatSGT(beginDate))
-        .where("updated_on", "<", formatSGT(endDate));
+      beginDate = await this.lastUpdatedOn();
+      endDate = addDate<TZDate, TZDate>(lastUpdated, { days: 1 });
     }
 
     // filter by camera_id if specified
@@ -85,41 +78,98 @@ export class CongestionSvc {
     if (min_rating != null) {
       query = query.where("rating.value", ">=", min_rating);
     }
+    // filter congestions by date range
+    query = query
+      .where("updated_on", ">=", formatSGT(beginDate))
+      .where("updated_on", "<", formatSGT(endDate));
 
-    const congestions = await query.get();
-    const data = congestions.docs.map((d) => d.data() as Congestion);
-
-    // Perform aggregation if agg and groupby are provided
+    // perform aggregation if agg and groupby are provided
     if (agg && groupby) {
-      const grouped = _.groupBy(data, (d: Congestion) => {
-        const date = new Date(d.updated_on);
-        // standardise timezone used in group by key to utc
-        return groupby === "hour"
-          ? `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()} ${date.getUTCHours()}`
-          : `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
-      });
-
-      return Object.values(grouped).map((group: Congestion[]) => {
-        const ratings = group.map((d) => d.rating.value ?? 0); // Default to 0 if value is undefined
-        const aggregatedValue =
-          agg === "min"
-            ? _.min(ratings)
-            : agg === "max"
-              ? _.max(ratings)
-              : _.mean(ratings); // Default to 'avg'
-
-        return {
-          ...group[0], // Take the first element's structure for consistency
-          rating: { ...group[0].rating, value: aggregatedValue as number },
-          updated_on: group[0].updated_on, // Maintain the first timestamp in group
-        };
-      });
+      return this.aggregate(query, agg, groupby, beginDate, endDate);
     } else if (agg || groupby) {
       throw new ValidationError(
         "Both groupby & agg params must be specified if either is specified.",
       );
     }
+
+    // obtain congestion points for query
+    const congestions = await query.get();
+    const data = congestions.docs.map((d) => d.data() as Congestion);
+
     return data;
+  };
+
+  /**
+   * Aggregates congestion data over a specified time range and grouping interval.
+   *
+   * This method computes congestion metrics—such as average, minimum, or latest congestion ratings—
+   * across date intervals within a specified time range. It uses the provided `query` to filter
+   * congestion records as inputs for aggregation, grouping them by the specified interval.
+   *
+   * @param query - The query to supply input congestion records for aggregation.
+   * @param agg - The aggregation function to apply ("avg" for average, "min" for minimum, or any other value for the latest).
+   * @param groupby - The interval by which to group data (e.g., daily, weekly).
+   * @param beginDate - The start date of the aggregation period, inclusive.
+   * @param endDate - The end date of the aggregation period, exclusive.
+   * @returns A Promise that resolves to an array of `Congestion` objects, representing aggregated results for each date group.
+   *
+   * @throws Error if date range creation fails.
+   */
+  private aggregate = async (
+    query: Query,
+    agg: AggregateFn,
+    groupby: DateInterval,
+    beginDate: TZDate,
+    endDate: TZDate,
+  ): Promise<Congestion[]> => {
+    // compute date groups based on specified groupby
+    const dateGroups = dateRange(beginDate, endDate, groupby);
+    if (dateGroups == null) {
+      throw Error(
+        `Failed to create date range: ${beginDate} to ${endDate} every ${groupby}`,
+      );
+    }
+
+    const grouped: Congestion[] = [];
+    for (let i = 0; i < dateGroups.length - 1; i++) {
+      // filter for congestions that belong to date interval group
+      const group = query
+        .where("updated_on", ">=", formatSGT(dateGroups[i]))
+        .where("updated_on", "<", formatSGT(dateGroups[i + 1]));
+      // sorted results by congestion rating
+      const groupLen = (await group.count().get()).data().count;
+      if (groupLen <= 0) {
+        // skip groups with no items
+        continue;
+      }
+
+      // compute aggregation for each group
+      const getFirst = async () =>
+        (
+          await group.orderBy("rating.value", "asc").limit(1).get()
+        ).docs[0].data() as Congestion;
+      if (agg === "avg") {
+        // query first congestion for each group as the representative of the group
+        const congestion = await getFirst();
+        const result = await group
+          .aggregate({ value: AggregateField.average("rating.value") })
+          .get();
+        congestion.rating.value = result.data().value!;
+        grouped.push(congestion);
+      } else if (agg === "min") {
+        // first congestion of each rating value sorted group is min.
+        grouped.push(await getFirst());
+      } else {
+        // first congestion of each rating value sorted in descending order group is max
+        grouped.push(
+          (
+            await group.orderBy("rating.value", "desc").limit(1).get()
+          ).docs[0].data() as Congestion,
+        );
+      }
+    }
+
+    return grouped;
   };
 
   /**

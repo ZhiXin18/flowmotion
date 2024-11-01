@@ -9,6 +9,7 @@ import { CongestionSvc } from "./congestion";
 import { initDB } from "../clients/db";
 import { add as addDate } from "date-fns";
 import { ValidationError } from "../error";
+import { TZDate } from "@date-fns/tz";
 
 describe("CongestionSvc", () => {
   const congestion = new CongestionSvc(initDB());
@@ -24,14 +25,15 @@ describe("CongestionSvc", () => {
     expect(
       congestions.reduce(
         (actual, c) =>
-          actual && new Date(c.updated_on).getTime() === lastUpdated.getTime(),
+          actual &&
+          new TZDate(c.updated_on).getTime() === lastUpdated.getTime(),
         true,
       ),
     ).toStrictEqual(true);
   });
 
   test("getCongestions() filters by begin & end", async () => {
-    const minDate = new Date(0);
+    const minDate = new TZDate(0);
     const congestions = await congestion.getCongestions({
       begin: minDate.toISOString(),
       end: addDate(minDate, { days: 1 }).toISOString(),
@@ -52,20 +54,21 @@ describe("CongestionSvc", () => {
     const grouped = await congestion.getCongestions({
       groupby: "hour",
       agg: "max",
-      begin: "2024-10-29T20:00:00+00:00",
-      end: "2024-10-30T20:00:00+00:00",
+      begin: "2024-10-29T20:00:00+08:00",
+      end: "2024-10-30T20:00:00+08:00",
     });
     expect(grouped.length).toEqual(24);
     expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
     // check first group is aggregated correctly
     const firstHour = await congestion.getCongestions({
-      begin: "2024-10-29T20:00:00+00:00",
-      end: "2024-10-29T21:00:00+00:00",
+      begin: "2024-10-29T20:00:00+08:00",
+      end: "2024-10-29T21:00:00+08:00",
     });
-    expect(grouped[0].rating.value).toStrictEqual(
+    expect(grouped[0].rating.value).toBeCloseTo(
       firstHour
         .map((c) => c.rating.value)
         .reduce((acc, v) => Math.max(acc, v), 0),
+      8,
     );
   });
 
@@ -73,19 +76,20 @@ describe("CongestionSvc", () => {
     const grouped = await congestion.getCongestions({
       groupby: "day",
       agg: "avg",
-      begin: "2024-10-28T00:00:00+00:00",
-      end: "2024-10-30T00:00:00+00:00",
+      begin: "2024-10-28T00:00:00+08:00",
+      end: "2024-10-30T00:00:00+08:00",
     });
     expect(grouped.length).toStrictEqual(2);
     expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
     // check first group is aggregated correctly
     const firstDay = await congestion.getCongestions({
-      begin: "2024-10-28T00:00:00+00:00",
-      end: "2024-10-29T00:00:00+00:00",
+      begin: "2024-10-28T00:00:00+08:00",
+      end: "2024-10-29T00:00:00+08:00",
     });
-    expect(grouped[0].rating.value).toStrictEqual(
+    expect(grouped[0].rating.value).toBeCloseTo(
       firstDay.map((c) => c.rating.value).reduce((acc, v) => acc + v, 0) /
         firstDay.length,
+      8,
     );
   });
 
@@ -97,6 +101,18 @@ describe("CongestionSvc", () => {
     expect(congestions.length).toBeGreaterThan(0);
     expect(congestions.every((c) => typeof c.rating.value === "number")).toBe(
       true,
+    );
+
+    // check first group is aggregated correctly
+    const firstHour = await congestion.getCongestions({
+      begin: "2024-10-29T20:00:00+08:00",
+      end: "2024-10-29T21:00:00+08:00",
+    });
+    expect(congestions[0].rating.value).toBeCloseTo(
+      firstHour
+        .map((c) => c.rating.value)
+        .reduce((acc, v) => Math.min(acc, v), 0),
+      8,
     );
   });
 

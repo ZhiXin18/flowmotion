@@ -28,7 +28,6 @@
     "express": "^5.0.1",
     "express-openapi-validator": "^6.0.0-alpha.4",
     "firebase-admin": "^12.7.0",
-    "lodash": "^4.17.21",
     "osrm-text-instructions": "^0.15.0"
   },
   "devDependencies": {
