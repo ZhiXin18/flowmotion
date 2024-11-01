@@ -43,6 +43,9 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   List<LatLng> _stepPoints = [];
   List<LatLng> allStepPoints = [];
 
+  String time = ""; // Time as a new parameter
+  String distance = ""; // Distance as a new parameter
+
   // Counters for marker categories
   int greenMarkersCount = 0;
   int orangeMarkersCount = 0;
@@ -274,6 +277,61 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                           color: Colors.red,
                         ),
                       ),
+                      Marker(
+                        point: _stepPoints[0],
+                        width: 60,
+                        height: 60,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Location pin icon
+                            const Icon(
+                              Icons.location_pin,
+                              size: 30,
+                              color: Colors.red,
+                            ),
+                            // Custom time-distance marker positioned above the pin
+                            Positioned(
+                              top: 0, // Position it above the pin
+                              child: Container(
+                                padding: const EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4,
+                                      offset: Offset(2, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.directions_car, size: 14, color: Colors.black),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          time,
+                                          style: TextStyle(color: Colors.orange, fontSize: 12, fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      distance,
+                                      style: TextStyle(color: Colors.black54, fontSize: 10),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
                       Marker(
                         point: widget.initialDestination,
                         width: 60,

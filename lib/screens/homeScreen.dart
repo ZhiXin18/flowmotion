@@ -109,7 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
       RouteData routeData = RouteData(); // Create a new instance of RouteData
       routeData.routeResponse = response.data; // Store the entire response data
       routeDataList.add(routeData); // Assuming routeDataList is a List<RouteData>
-
       _processRouteResponse(routeData.routeResponse, index); // Pass the index to process the response
 
     } catch (e) {

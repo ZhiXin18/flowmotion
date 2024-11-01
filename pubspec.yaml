@@ -55,7 +55,7 @@ dependencies:
   fl_chart: ^0.69.0
 
   flowmotion_api:
-    path: ./flowmotion_api
+    path: ./packages/flowmotion_api
   flutter_charts: ^0.5.2
 
 dev_dependencies:
