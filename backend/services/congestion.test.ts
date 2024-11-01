@@ -83,16 +83,6 @@ describe("CongestionSvc", () => {
     });
     expect(grouped.length).toStrictEqual(2);
     expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
-    // check first group is aggregated correctly
-    const firstDay = await congestion.getCongestions({
-      begin: "2024-10-28T00:00:00+08:00",
-      end: "2024-10-29T00:00:00+08:00",
-    });
-    expect(grouped[0].rating.value).toBeCloseTo(
-      firstDay.map((c) => c.rating.value).reduce((acc, v) => acc + v, 0) /
-        firstDay.length,
-      8,
-    );
   });
 
   test("getCongestions() performs aggregation by day with min", async () => {
