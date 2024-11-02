@@ -24,6 +24,9 @@ if (process.argv.length < 4) {
 const apiYaml = process.argv[2];
 const port = parseInt(process.argv[3]);
 
+// fix timezone
+process.env.TZ = "Asia/Singapore";
+
 // setup services
 const db = initDB();
 const congestion = new CongestionSvc(db);

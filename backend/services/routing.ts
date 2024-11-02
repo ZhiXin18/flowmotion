@@ -72,7 +72,8 @@ export class RoutingSvc {
         fs.createReadStream(csvFilePath)
           .pipe(csv()) // Default comma delimiter
           .on("data", (row) => {
-            const postcode = row["postal_code"]?.trim();
+            // postcode shorter than 6 characters should be padded with '0'
+            const postcode = row["postal_code"]?.trim().padStart(6, "0");
             const latitude = parseFloat(row["lat"]);
             const longitude = parseFloat(row["lon"]);
 
