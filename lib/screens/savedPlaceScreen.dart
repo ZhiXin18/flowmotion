@@ -1,13 +1,11 @@
 import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flowmotion/screens/homeScreen.dart';
+import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import '../utilities/firebase_calls.dart'; // Import the FirebaseCalls class
-//import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
-
 import '../utilities/location_service.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -115,6 +113,22 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
       return;
     }
 
+    // Validate postal codes and fetch coordinates for each address
+    for (var address in savedAddresses) {
+      final postalCode = address['postalCode']!;
+      Map<String, double?> coordinates = await _validateAndFetchCoordinates(postalCode);
+
+      // Check if coordinates were retrieved; if not, stop the process
+      if (coordinates['latitude'] == null || coordinates['longitude'] == null) {
+        if (mounted) _showErrorDialog('Invalid postal code: $postalCode. Please check and try again.');
+        return;
+      }
+
+      // Save the coordinates in the address map
+      address['latitude'] = coordinates['latitude'];
+      address['longitude'] = coordinates['longitude'];
+    }
+
     // Combine address data with labels
     List<Map<String, dynamic>> addressesWithLabels = List.generate(savedAddresses.length, (index) {
       return {
@@ -123,11 +137,11 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
       };
     });
 
+    // Save data to Firebase
     try {
       FirebaseCalls firebaseCalls = FirebaseCalls();
       await firebaseCalls.updateUser(widget.username, addressesWithLabels); // Use the new list with labels
       if (mounted) {
-        //await sendEmailVerification();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -136,6 +150,26 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
     } catch (e) {
       if (mounted) _showErrorDialog(e.toString());
     }
+  }
+
+  Future<Map<String, double?>> _validateAndFetchCoordinates(String postalCode) async {
+    if (postalCode.isNotEmpty) {
+      try {
+        final geocodeApi = FlowmotionApi().getGeocodingApi();
+        final response = await geocodeApi.geocodePostcodeGet(postcode: postalCode);
+
+        if (response.statusCode == 200 && response.data != null) {
+          return {
+            'latitude': response.data?.latitude,
+            'longitude': response.data?.longitude,
+          };
+        }
+      } catch (e) {
+        print('Error calling Geocoding API: $e');
+      }
+    }
+
+    return {'latitude': null, 'longitude': null};
   }
 
   void _showErrorDialog(String message) {
@@ -181,7 +215,7 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
             Expanded(
               child: TextField(
                 key: WidgetKeys.addressPostalCodeField(index),
-                onChanged: (value) {
+                onSubmitted: (value) {
                   if (index < savedAddresses.length) {
                     setState(() {
                       savedAddresses[index]['postalCode'] = value;
@@ -200,7 +234,7 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
             Expanded(
               child: TextField(
                 key: WidgetKeys.addressField(index),
-                onChanged: (value) {
+                onSubmitted: (value) {
                   if (index < savedAddresses.length) {
                     setState(() {
                       savedAddresses[index]['address'] = value;

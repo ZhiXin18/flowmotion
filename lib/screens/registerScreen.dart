@@ -22,6 +22,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _userEmail = '';
   String _username = '';
 
+  final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
+
+
   // Validation method
   bool _validateInputs() {
     if (_usernameController.text.isEmpty) {
@@ -126,17 +130,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _showVerificationModal(String userId, String username, String userEmail) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isDismissible: false,  // User cannot dismiss it by tapping outside
-      enableDrag: false,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-      ),
+      barrierDismissible: false,  // User cannot dismiss it by tapping outside
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25.0),
+          ),
+          contentPadding: EdgeInsets.all(16.0),
+          content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
@@ -180,11 +183,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: TextField(
         key: Key('otp_$index'),
         controller: _otpControllers[index],
+        focusNode: _focusNodes[index], // Assign focus node
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         maxLength: 1,
         decoration: InputDecoration(
-          counterText: "",  // Hide character counter
+          counterText: "",
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.grey),
           ),
@@ -194,16 +198,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         onChanged: (value) {
           if (value.length == 1 && index < 5) {
-            FocusScope.of(context).nextFocus(); // Move to the next field
+            _focusNodes[index + 1].requestFocus(); // Move to the next field
           } else if (value.isEmpty && index > 0) {
-            FocusScope.of(context).previousFocus(); // Move to the previous field
+            _focusNodes[index - 1].requestFocus(); // Move to the previous field
+          }
+
+          if (index == 5) {
+            FocusScope.of(context).unfocus();
           }
         },
       ),
     );
   }
-  // OTP Controllers
-  final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
 
   Future<void> _verifyOTP() async {
     final otpCode = _otpControllers.map((controller) => controller.text).join();
@@ -219,7 +225,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       print('OTP verification result: $isVerified');  // Log the verification result
 
       if (isVerified) {
-        Navigator.pop(context); // Close modal on success
+        Navigator.of(context).pop(); // Close modal on success
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -232,11 +238,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       } else {
         _showErrorDialog('OTP verification failed. Please try again.');
-        Navigator.pop(context); // Close modal on success
-        _auth.currentUser?.delete();
+        Navigator.of(context).pop(); // Close the modal after the error dialog is dismissed
+        _clearOTPFields(); // Clear the input fields
+        _auth.currentUser?.delete(); // Optionally delete user if verification fails
       }
     } else {
       _showErrorDialog('Please enter the complete 6-digit OTP.');
+      _clearOTPFields(); // Clear the input fields
+
     }
   }
 
@@ -260,12 +269,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+  // Method to clear all OTP input fields
+  void _clearOTPFields() {
+    for (var controller in _otpControllers) {
+      controller.clear(); // Clear each controller
+    }
+
+    // Optionally, focus the first field again
+    _focusNodes[0].requestFocus();
+  }
 
   @override
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
+    for (var controller in _otpControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 

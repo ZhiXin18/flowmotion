@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import '../utilities/location_service.dart';
 import '../widgets/navigationBar.dart';
 import 'package:latlong2/latlong.dart';
-  import 'package:flowmotion_api/flowmotion_api.dart';
+import 'package:flowmotion_api/flowmotion_api.dart';
 
 class FullMapScreen extends StatefulWidget {
   const FullMapScreen(Position? currentPosition, {super.key});
@@ -72,7 +72,6 @@ class _FullMapScreenState extends State<FullMapScreen> {
     final api = FlowmotionApi().getCongestionApi();
     try {
       final response = await api.congestionsGet();
-      print(response.data);
 
       setState(() {
         congestionRatings = response.data!.toList(); // Convert Iterable to List
@@ -249,13 +248,6 @@ class _FullMapScreenState extends State<FullMapScreen> {
         .where((marker) => marker != null)
         .cast<Marker>()
         .toList(); // Filter out null markers and cast to List<Marker>
-
-    // Print the counts for each category
-    print("Number of green markers: $greenMarkersCount");
-    print("Number of orange markers: $orangeMarkersCount");
-    print("Number of red markers: $redMarkersCount");
-    print("Number of question mark markers: $questionMarkCount");
-    print("Number of unique markers: ${markers.length}");
 
     return markers;
   }

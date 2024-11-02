@@ -36,42 +36,29 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late LocationService locationService;
   Position? _currentPosition;
-  LatLng _initialCenter = LatLng(1.2878, 103.8666);
+  LatLng _initialCenter = LatLng(1.342874, 103.67941);
   LatLng _initialDestination = LatLng(1.3656412, 103.8726954);
   LatLng? _currentLocationMarker;
   List<Map<String, dynamic>> savedAddresses = [];
   List<Congestion> allCongestionRatings = [];
+
   late RoutePost200Response? routeData;
   List<LatLng> destinations = [LatLng(1.3521, 103.8198), LatLng(1.3656412, 103.8726954), LatLng(1.3521, 103.8198)];
 
   late final MapController _mainMapController;
-  late final MapController _homeMapController;
-  late final MapController _workMapController;
 
   List<RouteData> routeDataList = []; // List to store route data for each destination
   List<MapController> mapControllers = [];
 
+  bool _isFetchingData = false; // Track if data is being fetched
+
   @override
   void initState() {
     super.initState();
-    locationService = LocationService(context);
     _mainMapController = MapController();
-    _homeMapController = MapController();
-    _workMapController = MapController();
-    _getCurrentLocation();
-    _fetchSavedAddresses();
+    _initializeAddressesAndRoutes();
     fetchAllRatings();
 
-    // Create map controllers for each saved address
-    for (var address in savedAddresses) {
-      mapControllers.add(MapController());
-    }
-
-    // Initialize route data for each destination
-    for (int i = 0; i < destinations.length; i++) {
-      routeDataList.add(RouteData()); // Add a new RouteData instance for each destination
-      _fetchRoute(_initialCenter, destinations[i], i);
-    }
   }
 
   // Create map controllers for each saved address
@@ -80,9 +67,47 @@ class _HomeScreenState extends State<HomeScreen> {
     mapControllers.clear();
 
     for (var address in savedAddresses) {
-      mapControllers.add(MapController());
+      setState(() {
+        mapControllers.add(MapController());
+      });
     }
   }
+
+  Future<void> _initializeAddressesAndRoutes() async {
+    // Attempt to get current location first
+    await _getCurrentLocation();
+
+    // Use _initialCenter if _currentPosition is still null
+    if (_currentPosition == null) {
+      print('Current position not available, using initial center: $_initialCenter');
+      _currentLocationMarker = _initialCenter; // Update the marker to the initial center
+    } else {
+      print('Current position obtained: $_currentPosition');
+    }
+
+    // Proceed to fetch saved addresses
+    await _fetchSavedAddresses();
+  }
+
+  Future<Position?> _getCurrentLocation() async {
+    locationService = LocationService(context);
+    Position? position = await locationService.getCurrentPosition();
+
+    if (position != null) {
+      setState(() {
+        _currentPosition = position; // Set the current position if available
+        _currentLocationMarker = LatLng(position.latitude, position.longitude); // Set the marker
+      });
+
+      _mainMapController.move(LatLng(position.latitude, position.longitude), 13.0);
+    } else {
+      print('Failed to get location, marker will be set to initial center.');
+      _currentLocationMarker = _initialCenter; // Ensure the marker reflects the initial center
+    }
+
+    return _currentPosition;
+  }
+
 
   Future<void> _fetchRoute(LatLng src, LatLng dest, int index) async {
     final routeApi = FlowmotionApi().getRoutingApi();
@@ -108,7 +133,10 @@ class _HomeScreenState extends State<HomeScreen> {
       // Assuming routeDataList is defined and is an instance of a class that holds multiple RouteData
       RouteData routeData = RouteData(); // Create a new instance of RouteData
       routeData.routeResponse = response.data; // Store the entire response data
-      routeDataList.add(routeData); // Assuming routeDataList is a List<RouteData>
+      setState(() {
+        routeDataList.add(routeData); // Assuming routeDataList is a List<RouteData>
+      });
+
       _processRouteResponse(routeData.routeResponse, index); // Pass the index to process the response
 
     } catch (e) {
@@ -132,18 +160,24 @@ class _HomeScreenState extends State<HomeScreen> {
           if (point.length >= 2) { // Ensure that we have enough data
             // Convert point to LatLng
             LatLng latLngPoint = LatLng(point[0].toDouble(), point[1].toDouble());
-            currentRouteData.stepPoints.add(latLngPoint); // Add to the List<LatLng>
+            setState(() {
+              currentRouteData.stepPoints.add(latLngPoint); // Add to the List<LatLng>
+
+            });
 
             // Check for overlapping congestion points
-            if (_isPointNearCongestion(latLngPoint)) {
-              // Mark this point as a congestion point or add logic to handle congestion
-              currentRouteData.congestionPoints.add(step.name); // Add the step name if it overlaps
+            if (_isPointNearCongestion(latLngPoint) == true && step.name != '') {
+               setState(() {
+                  currentRouteData.congestionPoints.add(step.name); // Add the step name if it overlaps
+                });
             }
           }
 
           // Add unique instructions
           if (!currentRouteData.instructions.contains(step.instruction)) {
-            currentRouteData.instructions.add(step.instruction);
+            setState(() {
+              currentRouteData.instructions.add(step.instruction);
+            });
           }
         }
       }
@@ -155,30 +189,6 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       print("No routes found in the response.");
     }
-  }
-
-  Future<Position?> _getCurrentLocation() async {
-    Position? position = await locationService.getCurrentPosition();
-    if (position != null) {
-      setState(() {
-        _currentPosition = position;
-        _currentLocationMarker = LatLng(position.latitude, position.longitude);
-      });
-
-      _mainMapController.move(LatLng(position.latitude, position.longitude), 13.0);
-
-      LatLng midpoint = LatLng(
-        (_currentPosition!.latitude + _initialDestination.latitude) / 2,
-        (_currentPosition!.longitude + _initialDestination.longitude) / 2,
-      );
-
-      _homeMapController.move(midpoint, 11.0);
-      _workMapController.move(midpoint, 11.0);
-
-    } else {
-      print('Failed to get location.');
-    }
-    return _currentPosition;
   }
 
   Future<void> _fetchSavedAddresses() async {
@@ -193,23 +203,45 @@ class _HomeScreenState extends State<HomeScreen> {
         if (querySnapshot.docs.isNotEmpty) {
           DocumentSnapshot userDoc = querySnapshot.docs.first;
 
-          // Fetch addresses as a list of maps
           List<dynamic> addresses = userDoc.get('addresses') ?? [];
+          List<Map<String, dynamic>> updatedAddresses = [];
 
-          setState(() {
-            savedAddresses = addresses.map((address) {
-              return {
+          for (var address in addresses) {
+            double? latitude = address['latitude'];
+            double? longitude = address['longitude'];
+
+            if (latitude != null && longitude != null) {
+
+              updatedAddresses.add({
                 'label': address['label'],
                 'address': address['address'],
                 'postalCode': address['postalCode'],
-              };
-            }).toList();
+                'coordinates': {'latitude': latitude, 'longitude': longitude},
+              });
+            } else {
+              print('No coordinates found for postal code: ${address['postalCode']}');
+            }
+          }
 
-            // Initialize map controllers based on saved addresses
-            initializeMapControllers(); // Call the method to initialize
+          setState(() {
+            savedAddresses = updatedAddresses;
+            initializeMapControllers();
           });
 
-          print('Saved Addresses: $savedAddresses');
+          // Initialize route data list and fetch routes for each address
+          for (int i = 0; i < savedAddresses.length; i++) {
+            routeDataList.add(RouteData()); // Initialize route data list
+
+            // Use _currentLocationMarker if available, else fallback to _initialCenter
+            final src = _currentLocationMarker ?? _initialCenter;
+            final dest = LatLng(
+              savedAddresses[i]["coordinates"]["latitude"],
+              savedAddresses[i]["coordinates"]["longitude"],
+            );
+
+            _fetchRoute(src, dest, i); // Call _fetchRoute
+          }
+
         } else {
           print('User document does not exist.');
         }
@@ -221,15 +253,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  LatLng _calculateMidpoint(LatLng point1, LatLng point2) {
-    double midLatitude = (point1.latitude + point2.latitude) / 2;
-    double midLongitude = (point1.longitude + point2.longitude) / 2;
-    return LatLng(midLatitude, midLongitude);
-  }
 
   // Helper function to check if a point is near any congestion marker
   bool _isPointNearCongestion(LatLng stepPoint) {
-    const double proximityThreshold = 0.001; // Define a threshold for proximity (adjust this value based on your needs)
+    const double proximityThreshold = 40; // Define a threshold for proximity (adjust this value based on your needs)
 
     for (var congestionRating in allCongestionRatings) {
       LatLng markerLocation = LatLng(
@@ -252,16 +279,29 @@ class _HomeScreenState extends State<HomeScreen> {
     return false; // Return false if no congestion marker is close enough
   }
 
+
   Future<void> fetchAllRatings() async {
+    setState(() {
+      _isFetchingData = true; // Start fetching data
+    });
+
     final api = FlowmotionApi().getCongestionApi();
     try {
       final response = await api.congestionsGet();
 
-      setState(() {
-        allCongestionRatings = response.data!.toList(); // Convert Iterable to List
-      });
+      if (mounted) { // Check if the widget is still mounted before calling setState
+        setState(() {
+          allCongestionRatings = response.data!.toList(); // Convert Iterable to List
+        });
+      }
     } catch (e) {
       print('Exception when calling CongestionApi->congestionsGet: $e\n');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isFetchingData = false; // Stop fetching data
+        });
+      }
     }
   }
 
@@ -280,8 +320,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _mainMapController.dispose();
-    _homeMapController.dispose();
-    _workMapController.dispose();
     super.dispose();
   }
 
@@ -315,6 +353,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 10),
             _buildSavedPlacesSection(),
+            if (_isFetchingData) // Show a loading indicator while fetching data
+              Center(child: CircularProgressIndicator()),
           ],
         ),
       ),
@@ -335,9 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: FlutterMap(
               mapController: _mainMapController,
               options: MapOptions(
-                initialCenter: _currentPosition != null
-                    ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
-                    : _initialCenter,
+                initialCenter: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
                 initialZoom: 10,
               ),
               children: [
@@ -390,7 +428,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: _buildSavedPlaceCard(
                     savedAddresses[i]['label'] ?? 'Saved Place',
                     mapControllers[i], // Use the corresponding map controller
-                    i == 0 ? destinations[0] : destinations[1],
+                    LatLng(
+                      savedAddresses[i]['coordinates']?['latitude'] ?? _initialDestination.latitude,
+                      savedAddresses[i]['coordinates']?['longitude'] ?? _initialDestination.longitude,
+                    ),
                     i,
                   ),
                 ),
@@ -406,6 +447,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSavedPlaceCard(String title, MapController controller, LatLng destination, int index) {
     return GestureDetector(
       onTap: () {
+        print('Congestion Points for index $index: ${routeDataList[index].congestionPoints}');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -420,9 +462,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   (_initialCenter.latitude + _initialDestination.latitude) / 2,
                   (_initialCenter.longitude + _initialDestination.longitude) / 2,
                 ),
-                initialZoom: 10, // Pass the initial zoom level
+                initialZoom: 9, // Pass the initial zoom level
                 currentLocationMarker: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
-                initialDestination: destination,
+                initialDestination: destination ?? _initialDestination,
                 congestionPoints: routeDataList[index].congestionPoints,
                 allInstructions: routeDataList[index].instructions
             ),

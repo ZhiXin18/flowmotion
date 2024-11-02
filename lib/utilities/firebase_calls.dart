@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../models/congestion_rating.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
@@ -23,20 +22,15 @@ class FirebaseCalls {
     // Get the current date and time for created_on and updated_on
     String currentTime = DateTime.now().toUtc().toIso8601String();
 
-    // Check if there is an existing record of user
+    // Check if there is an existing record of the user
     QuerySnapshot querySnap = await usersCollection.where('userid', isEqualTo: currentUser.uid).get();
 
     if (querySnap.docs.isNotEmpty) {
       // Existing user, update the data including updated_on
       QueryDocumentSnapshot doc = querySnap.docs[0];
+
+      // Update addresses with coordinates
       await doc.reference.update({
-        'addresses': addresses,
-        'updated_on': currentTime,
-      });
-    } else {
-      // New user, set created_on and updated_on, and add an empty routes array
-      await usersCollection.add({
-        //'addresses': addresses,
         'addresses': addresses.map((address) {
           return {
             'address': address['address'], // Actual address string
@@ -46,7 +40,28 @@ class FirebaseCalls {
             'label': address['label'], // Label for the address
             'postalCode': address['postalCode'], // Postal code
             'state': address['state'] ?? '', // State
-            // Add any additional fields if necessary
+            // Include coordinates if available
+            'latitude': address['latitude'] ?? 0.0, // Default to 0.0 if not provided
+            'longitude': address['longitude'] ?? 0.0, // Default to 0.0 if not provided
+          };
+        }).toList(),
+        'updated_on': currentTime,
+      });
+    } else {
+      // New user, set created_on and updated_on, and add an empty routes array
+      await usersCollection.add({
+        'addresses': addresses.map((address) {
+          return {
+            'address': address['address'], // Actual address string
+            'city': address['city'] ?? '', // City
+            'countryCode': address['countryCode'] ?? '', // Country code
+            'deleted': address['deleted'] ?? false, // Deleted flag
+            'label': address['label'], // Label for the address
+            'postalCode': address['postalCode'], // Postal code
+            'state': address['state'] ?? '', // State
+            // Include coordinates if available
+            'latitude': address['latitude'] ?? 0.0, // Default to 0.0 if not provided
+            'longitude': address['longitude'] ?? 0.0, // Default to 0.0 if not provided
           };
         }).toList(),
         'created_on': currentTime,
@@ -57,6 +72,7 @@ class FirebaseCalls {
       });
     }
   }
+
 
   Future<Map<String, dynamic>?> getUserData() async {
     User? currentUser = FirebaseAuth.instance.currentUser;

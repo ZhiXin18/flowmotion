@@ -1,10 +1,8 @@
+import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
+import '../core/widget_keys.dart';
 import '../widgets/navigationBar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utilities/firebase_calls.dart';
-import 'homeScreen.dart';
-
 
 FirebaseCalls firebaseCalls = FirebaseCalls();
 
@@ -58,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center, // Center align the items in the Row
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
                       height: 80, // Set the desired height for the icon
@@ -69,33 +67,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     SizedBox(width: 10), // Add spacing between the icon and the text
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center, // Center align text within the Column
-                      crossAxisAlignment: CrossAxisAlignment.start, // Align text to the start
-                      children: [
-                        // Username section
-                        Text(
-                          '$username',
-                          style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5), // Adjust spacing between username and manual link
+                    Flexible(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center, // Center align text within the Column
+                        crossAxisAlignment: CrossAxisAlignment.start, // Align text to the start
+                        children: [
+                          // Username section with overflow handling
+                          Text(
+                            '$username',
+                            style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis, // Truncate if username is too long
+                            maxLines: 1, // Limit to a single line
+                          ),
+                          SizedBox(height: 5), // Adjust spacing between username and manual link
 
-                        // Link to user manual
-                        GestureDetector(
-                          child: Text(
-                            'Open User Manual',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.blue,
-                              decoration: TextDecoration.underline,
+                          // Link to user manual
+                          GestureDetector(
+                            onTap: () {
+                              // Open the user manual (implement this as per your app's requirements)
+                            },
+                            child: Text(
+                              'Open User Manual',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
-                )
+                ),
               ),
+
 
               // Bottom Section (2/3 of screen height)
               Container(
@@ -155,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       borderSide: BorderSide.none,
                                     ),
                                   ),
-                                  onChanged: (value) {
+                                  onSubmitted: (value) {
                                     setState(() {
                                       addresses[index]["label"] = value;
                                     });
@@ -184,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             borderSide: BorderSide.none,
                                           ),
                                         ),
-                                        onChanged: (value) {
+                                        onSubmitted: (value) {
                                           setState(() {
                                             addresses[index]["postalCode"] = value;
                                           });
@@ -211,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             borderSide: BorderSide.none,
                                           ),
                                         ),
-                                        onChanged: (value) {
+                                        onSubmitted: (value) {
                                           setState(() {
                                             addresses[index]["address"] = value;
                                           });
@@ -255,15 +261,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // Save changes button
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           // Remove empty addresses
                           _removeEmptyAddresses();
-                          setState(() async {
-                            await _saveChanges();
-                          });
+
+                          bool allValid = true; // Track if all postal codes are valid
+
+                          // Loop through addresses to validate postal codes and fetch coordinates
+                          for (var address in addresses) {
+                            if (address["postalCode"]?.isNotEmpty == true) {
+                              // Fetch coordinates for valid postal code
+                              Map<String, double?> coordinates = await _validateAndFetchCoordinates(address["postalCode"]);
+
+                              // Check if coordinates are null, indicating an invalid postal code
+                              if (coordinates['latitude'] == null || coordinates['longitude'] == null) {
+                                allValid = false;
+                                break; // Stop further processing if an invalid postal code is found
+                              } else {
+                                // Add coordinates if they were successfully retrieved
+                                address["latitude"] = coordinates['latitude'];
+                                address["longitude"] = coordinates['longitude'];
+                              }
+                            }
+                          }
+
+                          if (allValid) {
+                            // Save changes if all postal codes and coordinates are valid
+                            try {
+                              await _saveChanges(); // Call save changes method
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Addresses saved successfully!')),
+                              );
+                            } catch (error) {
+                              // Handle any errors here
+                              print('Failed to save addresses: $error');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Failed to save addresses. Please try again.')),
+                              );
+                            }
+                          }
                         },
-                        child: Text('Save Changes',
-                        style: TextStyle(color: Colors.white, fontSize: 15),
+                        child: Text(
+                          'Save Changes',
+                          style: TextStyle(color: Colors.white, fontSize: 15),
                         ),
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
@@ -273,7 +313,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    )
+
                   ],
                 ),
               ),
@@ -289,6 +330,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
     (address["label"]?.isEmpty ?? true) ||
         (address["postalCode"]?.isEmpty ?? true) ||
         (address["address"]?.isEmpty ?? true));
+  }
+
+  Future<Map<String, double?>> _validateAndFetchCoordinates(String postalCode) async {
+    if (postalCode.isNotEmpty) {
+      try {
+        final geocodeApi = FlowmotionApi().getGeocodingApi();
+        final response = await geocodeApi.geocodePostcodeGet(postcode: postalCode);
+
+        if (response.statusCode == 200 && response.data != null) {
+          return {
+            'latitude': response.data?.latitude,
+            'longitude': response.data?.longitude,
+          };
+        } else if (response.statusCode == 404) {
+          _showErrorDialog("The postal code entered is invalid. Please try again.");
+        }
+      } catch (e) {
+        print('Error calling Geocoding API: $e');
+        _showErrorDialog("The postal code entered is invalid. Please try again.");
+      }
+    }
+
+    return {'latitude': null, 'longitude': null};
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        key: WidgetKeys.registerErrorDialog,
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            key: WidgetKeys.registerErrorOK,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   // Define _saveChanges method
