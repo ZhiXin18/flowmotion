@@ -15,6 +15,7 @@ import '../widgets/navigationBar.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'congestionRating.dart';
+import 'package:flowmotion/globals.dart' as globals;
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -90,16 +91,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<Position?> _getCurrentLocation() async {
-    locationService = LocationService(context);
-    Position? position = await locationService.getCurrentPosition();
+    print(globals.testingActive);
+    if (globals.testingActive == false) {
+      locationService = LocationService(context);
+      Position? position = await locationService.getCurrentPosition();
 
-    if (position != null) {
-      setState(() {
-        _currentPosition = position; // Set the current position if available
-        _currentLocationMarker = LatLng(position.latitude, position.longitude); // Set the marker
-      });
+      if (position != null) {
+        setState(() {
+          _currentPosition = position; // Set the current position if available
+          _currentLocationMarker =
+              LatLng(position.latitude, position.longitude); // Set the marker
+        });
 
-      _mainMapController.move(LatLng(position.latitude, position.longitude), 13.0);
+        _mainMapController.move(
+            LatLng(position.latitude, position.longitude), 13.0);
+      }
     } else {
       print('Failed to get location, marker will be set to initial center.');
       _currentLocationMarker = _initialCenter; // Ensure the marker reflects the initial center
