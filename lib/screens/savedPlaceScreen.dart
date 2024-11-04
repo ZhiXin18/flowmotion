@@ -96,7 +96,7 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
 
       // Check if coordinates were retrieved; if not, stop the process
       if (coordinates['latitude'] == null || coordinates['longitude'] == null) {
-        if (mounted) _showErrorDialog('Invalid postal code: $postalCode. Please check and try again.');
+        if (mounted) _showErrorDialog('Invalid address. Please check and try again.');
         return;
       }
 
@@ -126,7 +126,8 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
           (address) => address['postalCode']!.isNotEmpty && address['address']!.isNotEmpty,
     );
 
-    if (!allFieldsFilled) {
+    print(!allFieldsFilled);
+    if (allFieldsFilled == false) {
       if (mounted) _showErrorDialog('Please fill in all address fields.');
       return;
     }
@@ -211,13 +212,6 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
               child: TextField(
                 key: WidgetKeys.addressPostalCodeField(index),
                 onSubmitted: (value) {
-                  if (index < savedAddresses.length) {
-                    setState(() {
-                      savedAddresses[index]['postalCode'] = value;
-                    });
-                  }
-                },
-                onTapOutside: (value) {
                   if (index < savedAddresses.length) {
                     setState(() {
                       savedAddresses[index]['postalCode'] = value;

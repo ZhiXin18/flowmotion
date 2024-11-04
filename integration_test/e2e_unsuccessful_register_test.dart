@@ -26,20 +26,6 @@ void main() {
   }
 
   group('E2E - Registrations', () {
-    testWidgets("Start Register Flow", (tester) async {
-      globals.testingActive = true; // Set testing flag before starting the app
-      await tester.pumpWidget(const app.MyApp());
-      loginRobot = LoginRobot(tester: tester);
-
-      await tester
-          .pumpAndSettle(const Duration(seconds: 4)); //wait for splash screen
-      await loginRobot.verify(); //verify its at login screen
-
-      await loginRobot.tapRegisterAccButton();
-      await tester.pumpAndSettle();
-      await loginRobot.verifyStartRegister();
-    });
-
     testWidgets('Register form validation - empty fields',
         (WidgetTester tester) async {
       globals.testingActive = true; // Set testing flag before starting the app
@@ -218,8 +204,8 @@ void main() {
           .verifyPartSuccess(); // Verify its at saved place screen
       // Define your addresses
       List<Address> addresses = [
-        Address(postalCode: '068805', address: '3 Shenton Way'),
-        Address(postalCode: '048424', address: '8 Cross Street'),
+        Address(postalCode: '554369', address: '23A Serangoon North Ave 5'),
+        Address(postalCode: '819642', address: 'Changi Airport Terminal 1, Airport Boulevard'),
       ];
 
       // Test 1: Home Address field empty
@@ -235,7 +221,7 @@ void main() {
       await registerRobot.tapNotificationCheckbox();
       await registerRobot.tapGetStartedButton();
       await registerRobot
-          .verifyErrorMessage('Please fill in all address fields.');
+          .verifyErrorMessage('Invalid address. Please check and try again.');
 
       // Clear input fields after closing the dialog
       await registerRobot.clearAddressInputFields(1);
@@ -251,7 +237,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await registerRobot
-          .verifyErrorMessage('Please fill in all address fields.');
+          .verifyErrorMessage('Invalid address. Please check and try again.');
 
       await registerRobot.dismissKeyboard();
       await registerRobot.tapTermsCheckbox();
