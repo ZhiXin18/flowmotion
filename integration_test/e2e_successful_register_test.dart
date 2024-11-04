@@ -61,8 +61,8 @@ void main() {
 
       // Define your addresses
       List<Address> addresses = [
-        Address(postalCode: '068805', address: '3 Shenton Way'),
-        Address(postalCode: '048424', address: '8 Cross Street'),
+        Address(postalCode: '554369', address: '23A Serangoon North Ave 5'),
+        Address(postalCode: '819642', address: 'Changi Airport Terminal 1, Airport Boulevard'),
       ];
 
       // Call enterAddress to fill in the addresses
@@ -115,9 +115,9 @@ void main() {
 
       // Define your addresses
       List<Address> addresses = [
-        Address(postalCode: '068805', address: '3 Shenton Way'),
-        Address(postalCode: '048424', address: '8 Cross Street'),
-        Address(postalCode: '079903', address: '10 Anson Road'),
+        Address(postalCode: '554369', address: '23A Serangoon North Ave 5'),
+        Address(postalCode: '819642', address: 'Changi Airport Terminal 1, Airport Boulevard'),
+        Address(postalCode: '758966', address: '22 Jln Tampang'),
       ];
 
       // Call enterAddress to fill in the addresses

@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import '../firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import '../utilities/firebase_calls.dart'; // Import the FirebaseCalls class
-import '../utilities/location_service.dart';
+import 'package:flowmotion/globals.dart' as globals;
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -88,22 +88,7 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
   }
 
   void _saveUserData() async {
-    // Check if terms and conditions are accepted and notifications allowed
-    if (!_termsAccepted || !_notificationsAllowed) {
-      if (mounted) _showErrorDialog('Please accept the terms and conditions and allow notifications.');
-      return;
-    }
-
-    // Check if all address fields are filled
-    bool allFieldsFilled = savedAddresses.every(
-          (address) => address['postalCode']!.isNotEmpty && address['address']!.isNotEmpty,
-    );
-
-    if (!allFieldsFilled) {
-      if (mounted) _showErrorDialog('Please fill in all address fields.');
-      return;
-    }
-
+    print(savedAddresses);
     // Validate postal codes and fetch coordinates for each address
     for (var address in savedAddresses) {
       final postalCode = address['postalCode']!;
@@ -128,6 +113,24 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
       };
     });
 
+    print('_termsAccepted: $_termsAccepted, _notificationsAllowed: $_notificationsAllowed');
+    // Check if terms and conditions are accepted and notifications allowed
+    if (!_termsAccepted || !_notificationsAllowed) {
+      if (mounted) _showErrorDialog('Please accept the terms and conditions and allow notifications.');
+      return;
+    }
+
+    print("Saved Addresses: $savedAddresses");
+    // Check if all address fields are filled
+    bool allFieldsFilled = savedAddresses.every(
+          (address) => address['postalCode']!.isNotEmpty && address['address']!.isNotEmpty,
+    );
+
+    if (!allFieldsFilled) {
+      if (mounted) _showErrorDialog('Please fill in all address fields.');
+      return;
+    }
+
     // Save data to Firebase
     try {
       FirebaseCalls firebaseCalls = FirebaseCalls();
@@ -147,7 +150,8 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
     if (postalCode.isNotEmpty) {
       try {
         final geocodeApi = FlowmotionApi().getGeocodingApi();
-        final response = await geocodeApi.geocodePostcodeGet(postcode: postalCode);
+        final response = await geocodeApi.geocodePostcodeGet(postcode: postalCode.toString());
+        print("Latitude: ${response.data?.latitude}, Longitude: ${response.data?.longitude}");
 
         if (response.statusCode == 200 && response.data != null) {
           return {
@@ -213,6 +217,24 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
                     });
                   }
                 },
+                onTapOutside: (value) {
+                  if (index < savedAddresses.length) {
+                    setState(() {
+                      savedAddresses[index]['postalCode'] = value;
+                    });
+                  }
+                },
+                onChanged: globals.testingActive
+                    ? (value) {
+                  if (index < savedAddresses.length) {
+                    setState(() {
+                      savedAddresses[index]['postalCode'] = value;
+                    });
+                  }
+                }
+                    : null,
+
+
                 decoration: InputDecoration(
                   hintText: 'Postal Code',
                   filled: true,
@@ -232,6 +254,15 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
                     });
                   }
                 },
+                onChanged: globals.testingActive
+                    ? (value) {
+                  if (index < savedAddresses.length) {
+                    setState(() {
+                      savedAddresses[index]['address'] = value;
+                    });
+                  }
+                }
+                    : null,
                 decoration: InputDecoration(
                   hintText: 'Building/Street/etc',
                   filled: true,
@@ -246,7 +277,6 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
       ],
     );
   }
-  late LocationService locationService;
 
   @override
   void initState() {
