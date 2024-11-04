@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../screens/savedPlaceScreen.dart';
 import '../core/widget_keys.dart';
+import 'package:flowmotion/globals.dart' as globals;
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -103,10 +104,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         });
 
         //actual mode
-        await EmailOTP.sendOTP(email: _emailController.text); //send otp to input email
-        _showVerificationModal(user.uid, _username, _userEmail); //show the modal to enter otp
-        //test mode
-        /*Navigator.push(
+        if (globals.testingActive == false){
+          await EmailOTP.sendOTP(email: _emailController.text); //send otp to input email
+          _showVerificationModal(user.uid, _username, _userEmail); //show the modal to enter otp
+        } else {
+          //test mode
+          Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => SavedPlaceScreen(
@@ -115,7 +118,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 userEmail: _userEmail,
               ),
             ),
-        );*/
+        );
+        }
       } else {
         _showErrorDialog('Failed to register. Please try again.');
       }

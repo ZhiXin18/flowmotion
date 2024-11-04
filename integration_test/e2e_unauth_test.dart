@@ -3,15 +3,18 @@ import 'package:integration_test/integration_test.dart';
 import 'package:flowmotion/main.dart' as app;
 import '../test_auth_info.dart';
 import 'robots/login_robot.dart';
+import 'package:flowmotion/globals.dart' as globals;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  globals.testingActive = true; // Set testing flag before starting the app
 
   late LoginRobot loginRobot;
 
   group('E2E - ', () {
     testWidgets('Login form validation - empty fields',
         (WidgetTester tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
@@ -41,6 +44,7 @@ void main() {
     });
 
     testWidgets("Unauthorized Login Flow", (WidgetTester tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 

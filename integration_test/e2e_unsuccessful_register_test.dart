@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:flowmotion/globals.dart' as globals;
 import 'package:flowmotion/models/address.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +11,7 @@ import 'robots/register_robot.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  globals.testingActive = true; // Set testing flag before starting the app
 
   late LoginRobot loginRobot;
   late RegisterRobot registerRobot;
@@ -26,6 +27,7 @@ void main() {
 
   group('E2E - Registrations', () {
     testWidgets("Start Register Flow", (tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
 
@@ -40,6 +42,7 @@ void main() {
 
     testWidgets('Register form validation - empty fields',
         (WidgetTester tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
@@ -102,6 +105,7 @@ void main() {
     });
 
     testWidgets("Unsuccessful Register Flow", (WidgetTester tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
@@ -181,6 +185,7 @@ void main() {
 
     testWidgets("Unsuccessful Address Register Flow",
         (WidgetTester tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
@@ -211,20 +216,29 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
       await registerRobot
           .verifyPartSuccess(); // Verify its at saved place screen
-
-      // Test 1: All fields empty
-      await tester.fling(
-          scrollableFinder, Offset(0, -300), 1500); // Fling upwards
-      await tester.pumpAndSettle(); // Allow time for scrolling to finish
-      await registerRobot.tapGetStartedButton();
-      await registerRobot
-          .verifyErrorMessage('Please fill in the Home address.');
-
       // Define your addresses
       List<Address> addresses = [
         Address(postalCode: '068805', address: '3 Shenton Way'),
         Address(postalCode: '048424', address: '8 Cross Street'),
       ];
+
+      // Test 1: Home Address field empty
+      await registerRobot.enterSpecifiedAddress(addresses, 1);
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
+      await tester.fling(
+          scrollableFinder, Offset(0, -300), 1500); // Fling upwards
+      await tester.pumpAndSettle(); // Allow time for scrolling to finish
+      await registerRobot.dismissKeyboard();
+      await tester.pumpAndSettle(const Duration(seconds: 4));
+      await registerRobot.tapTermsCheckbox();
+      await registerRobot.tapNotificationCheckbox();
+      await registerRobot.tapGetStartedButton();
+      await registerRobot
+          .verifyErrorMessage('Please fill in all address fields.');
+
+      // Clear input fields after closing the dialog
+      await registerRobot.clearAddressInputFields(1);
 
       // Test 2: Work Address field empty
       await registerRobot.enterSpecifiedAddress(addresses, 0);
@@ -237,26 +251,13 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 4));
       await registerRobot.tapGetStartedButton();
       await registerRobot
-          .verifyErrorMessage('Please fill in the Work address.');
+          .verifyErrorMessage('Please fill in all address fields.');
 
+      await registerRobot.dismissKeyboard();
+      await registerRobot.tapTermsCheckbox();
+      await registerRobot.tapNotificationCheckbox();
       // Clear input fields after closing the dialog
       await registerRobot.clearAddressInputFields(0);
-
-      // Test 3: Home Address field empty
-      await registerRobot.enterSpecifiedAddress(addresses, 1);
-      await registerRobot.dismissKeyboard();
-      await tester.pumpAndSettle(const Duration(seconds: 4));
-      await tester.fling(
-          scrollableFinder, Offset(0, -300), 1500); // Fling upwards
-      await tester.pumpAndSettle(); // Allow time for scrolling to finish
-      await registerRobot.dismissKeyboard();
-      await tester.pumpAndSettle(const Duration(seconds: 4));
-      await registerRobot.tapGetStartedButton();
-      await registerRobot
-          .verifyErrorMessage('Please fill in the Home address.');
-
-      // Clear input fields after closing the dialog
-      await registerRobot.clearAddressInputFields(1);
 
       // Test 4: Checkboxes not checked
       await registerRobot.enterAddress(addresses);
@@ -315,6 +316,7 @@ void main() {
 
     testWidgets("Click back before saving address",
         (WidgetTester tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);

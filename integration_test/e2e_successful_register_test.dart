@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:flowmotion/main.dart' as app;
+import 'package:flowmotion/globals.dart' as globals;
 
 import '../test_auth_info.dart';
 import 'robots/login_robot.dart';
@@ -12,6 +13,8 @@ import 'robots/register_robot.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  globals.testingActive = true; // Set testing flag before starting the app
+
 
   late LoginRobot loginRobot;
   late RegisterRobot registerRobot;
@@ -28,6 +31,7 @@ void main() {
   group('E2E - Registrations', () {
     testWidgets("Successful Register Flow(2 addresses)",
         (WidgetTester tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);
@@ -77,6 +81,7 @@ void main() {
 
     testWidgets("Successful Register Flow(3 addresses)",
         (WidgetTester tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       await tester.pumpWidget(const app.MyApp());
       loginRobot = LoginRobot(tester: tester);
       registerRobot = RegisterRobot(tester: tester);

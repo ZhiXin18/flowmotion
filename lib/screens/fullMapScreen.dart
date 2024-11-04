@@ -50,24 +50,6 @@ class _FullMapScreenState extends State<FullMapScreen> {
     });
   }
 
-  Future<Position?> _getCurrentLocation() async {
-    Position? position = await locationService.getCurrentPosition();
-    if (position != null) {
-      setState(() {
-        _currentPosition = position;
-        _currentLocationMarker = LatLng(
-            position.latitude, position.longitude); // Update marker position
-      });
-
-      // Programmatically update the map's center using the MapController
-      _mapController.move(LatLng(position.latitude, position.longitude),
-          14.0); // Adjust the zoom level as needed
-    } else {
-      print('Failed to get location.');
-    }
-    return _currentPosition;
-  }
-
   Future<void> _fetchCongestionRatings() async {
     final api = FlowmotionApi().getCongestionApi();
     try {

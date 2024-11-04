@@ -88,22 +88,13 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
   }
 
   void _saveUserData() async {
-    // Check that both Home and Work addresses are filled
-    if (savedAddresses[0]['postalCode']!.isEmpty || savedAddresses[0]['address']!.isEmpty) {
-      if (mounted) _showErrorDialog('Please fill in the Home address.');
-      return;
-    }
-
-    if (savedAddresses[1]['postalCode']!.isEmpty || savedAddresses[1]['address']!.isEmpty) {
-      if (mounted) _showErrorDialog('Please fill in the Work address.');
-      return;
-    }
-
+    // Check if terms and conditions are accepted and notifications allowed
     if (!_termsAccepted || !_notificationsAllowed) {
       if (mounted) _showErrorDialog('Please accept the terms and conditions and allow notifications.');
       return;
     }
 
+    // Check if all address fields are filled
     bool allFieldsFilled = savedAddresses.every(
           (address) => address['postalCode']!.isNotEmpty && address['address']!.isNotEmpty,
     );
@@ -260,16 +251,8 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
   @override
   void initState() {
     super.initState();
-    locationService = LocationService(context); // Initialize with context
   }
 
-  void _getCurrentLocation() async {
-    await locationService.getCurrentPosition();
-    if (locationService.currentPosition != null) {
-      print('Location obtained: Latitude - ${locationService.currentPosition!.latitude}, '
-          'Longitude - ${locationService.currentPosition!.longitude}');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -360,10 +343,6 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
                             (bool? value) {
                           setState(() {
                             _termsAccepted = value ?? false;
-                            // Call _getCurrentPosition if the checkbox is enabled
-                            if (_termsAccepted) {
-                              _getCurrentLocation();
-                            }
                           });
                         },
                         key: WidgetKeys.termsCheckbox,
