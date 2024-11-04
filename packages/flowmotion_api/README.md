@@ -47,17 +47,18 @@ import 'package:flowmotion_api/flowmotion_api.dart';
 
 
 final api = FlowmotionApi().getCongestionApi();
-final String cameraId = cameraId_example; // String | ID of the camera to retrieve congestion duration for
-final String groupby = groupby_example; // String | Group congestion duration by hour or day
-final DateTime begin = 2013-10-20T19:20:30+01:00; // DateTime | Inclusive start of the time range (timestamp) to retrieve congestion duration.
-final DateTime end = 2013-10-20T19:20:30+01:00; // DateTime | Exclusive end of the time range (timestamp) to retrieve congestion duration.
-final double threshold = 3.4; // double | Congestion rating level (between 0 and 1) that is considered \"congested\"
+final String cameraId = cameraId_example; // String | Filter congestion points by specific camera id.
+final String agg = agg_example; // String | Aggregation method applied to congestion rating. By default, no aggregation is performed. Has no effect if `groupby` is not specified.
+final String groupby = groupby_example; // String | Group congestion rating by hour or day. `agg` must also be specified to supply an aggregation method.
+final DateTime begin = 2013-10-20T19:20:30+01:00; // DateTime | Inclusive start of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp.
+final DateTime end = 2013-10-20T19:20:30+01:00; // DateTime | Exclusive end of the time range (timestamp) to filter congestion data. If unspecified, defaults to the latest `updated_on` timestamp.
+final double minRating = 3.4; // double | Filter congestion points by with congestion rating >= `min_rating`.
 
 try {
-    final response = await api.congestedCameraIdGroupbyGet(cameraId, groupby, begin, end, threshold);
+    final response = await api.congestionsGet(cameraId, agg, groupby, begin, end, minRating);
     print(response);
 } catch on DioException (e) {
-    print("Exception when calling CongestionApi->congestedCameraIdGroupbyGet: $e\n");
+    print("Exception when calling CongestionApi->congestionsGet: $e\n");
 }
 
 ```
@@ -68,7 +69,6 @@ All URIs are relative to *https://flowmotion-backend-210524342027.asia-southeast
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-[*CongestionApi*](doc/CongestionApi.md) | [**congestedCameraIdGroupbyGet**](doc/CongestionApi.md#congestedcameraidgroupbyget) | **GET** /congested/{camera_id}/{groupby} | Retrieve congestion duration for a specific camera for a given time range.
 [*CongestionApi*](doc/CongestionApi.md) | [**congestionsGet**](doc/CongestionApi.md#congestionsget) | **GET** /congestions | Retrieve congestion data
 [*GeocodingApi*](doc/GeocodingApi.md) | [**geocodePostcodeGet**](doc/GeocodingApi.md#geocodepostcodeget) | **GET** /geocode/{postcode} | Retrieve location coordinates by postal code
 [*RoutingApi*](doc/RoutingApi.md) | [**routePost**](doc/RoutingApi.md#routepost) | **POST** /route | Retrieve recommended routes between source and destination

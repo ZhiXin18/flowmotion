@@ -48,10 +48,6 @@ Serializers serializers = (_$serializers.toBuilder()
         const FullType(BuiltList, [FullType(Congestion)]),
         () => ListBuilder<Congestion>(),
       )
-      ..addBuilderFactory(
-        const FullType(BuiltList, [FullType(double)]),
-        () => ListBuilder<double>(),
-      )
       ..add(const OneOfSerializer())
       ..add(const AnyOfSerializer())
       ..add(const DateSerializer())
