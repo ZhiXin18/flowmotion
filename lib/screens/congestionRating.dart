@@ -108,7 +108,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   void _processRouteResponse(RoutePost200Response? response) {
     List<String> congestedSteps = [];
     List<Map<String, String>> stepInfo = []; // Store time and distance for each step
-    List<Marker> crossMarkers = []; // List to hold cross markers
+    List<String> congestedCamera = []; // List to hold cross markers
 
     if (response != null && response.routes!.isNotEmpty) {
       final route = response.routes!.first;
@@ -116,32 +116,23 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
       for (var step in route.steps) {
         List<List<num>> stepPoints = decodePolyline(step.geometry);
 
+        if(step.congestion != null) {
+          //print(step.congestion);
+          setState(() {
+            congestedSteps.add(step.name);
+            congestedCamera.add(step.congestion!.camera.id);
+          });
+        }
+
+
         // Check for congestion and capture step info
         for (var point in stepPoints) {
           if (point.length >= 2) {
-            LatLng latLngPoint = LatLng(point[0].toDouble(), point[1].toDouble());
+            LatLng latLngPoint = LatLng(
+                point[0].toDouble(), point[1].toDouble());
             setState(() {
               allStepPoints.add(latLngPoint);
             });
-
-            // Check for proximity to congestion rating markers
-            if (_isPointNearCongestion(latLngPoint) && step.name != '') {
-              setState(() {
-                congestedSteps.add(step.name);
-              });
-
-              // Add a cross marker at the overlapping location
-              crossMarkers.add(Marker(
-                point: latLngPoint,
-                width: 60,
-                height: 60,
-                child: Icon(
-                  Icons.close,
-                  size: 40, // Adjust size for visibility
-                  color: Colors.red, // Set color for the cross marker
-                ),
-              ));
-            }
           }
         }
         // Collect the distance and time for each step
@@ -153,40 +144,12 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         setState(() {
           _stepPoints = allStepPoints;
           _stepInfo = stepInfo; // Store the step info for dynamic data in marker
-          _crossMarkers = crossMarkers; // Store the cross markers
         });
       }
+      print(congestedCamera);
     } else {
       print("No routes found in the response.");
     }
-  }
-
-// Make sure to add _crossMarkers in your state variables
-  List<Marker> _crossMarkers = []; // List to hold cross markers
-
-  // Helper function to check if a point is near any congestion marker
-  bool _isPointNearCongestion(LatLng stepPoint) {
-    const double proximityThreshold = 40; // Define a threshold for proximity (adjust this value based on your needs)
-
-    for (var congestionRating in allCongestionRatings) {
-      LatLng markerLocation = LatLng(
-        congestionRating.camera.location.latitude,
-        congestionRating.camera.location.longitude,
-      );
-
-      // Calculate the distance between the step point and the congestion marker
-      double distance = Distance().as(
-        LengthUnit.Meter,
-        stepPoint,
-        markerLocation,
-      );
-
-      if (distance <= proximityThreshold) {
-        return true; // Return true if the step point is near a congestion marker
-      }
-    }
-
-    return false; // Return false if no congestion marker is close enough
   }
 
   @override
@@ -267,7 +230,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                 mapController: _mapController, // Use the passed controller
                 options: MapOptions(
                   initialCenter: widget.initialCenter, // Use the passed initial center
-                  initialZoom: 14, // Use the passed initial zoom
+                  initialZoom: 10, // Use the passed initial zoom
                 ),
                 children: [
                   TileLayer(
@@ -277,7 +240,6 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                   MarkerLayer(
                     markers: [
                       ..._buildMarkers(), // Existing markers
-                      ..._crossMarkers,   // Add cross markers here
                     ],
                   ),
                   if (widget.currentLocationMarker != null)

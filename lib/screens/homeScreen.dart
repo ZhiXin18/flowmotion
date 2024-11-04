@@ -139,6 +139,16 @@ class _HomeScreenState extends State<HomeScreen> {
       // Assuming routeDataList is defined and is an instance of a class that holds multiple RouteData
       RouteData routeData = RouteData(); // Create a new instance of RouteData
       routeData.routeResponse = response.data; // Store the entire response data
+
+      for(final route in routeData.routeResponse!.routes!) {
+        for(final step in route.steps) {
+          if(step.congestion != null) {
+            //print(step.congestion);
+          }
+        }
+
+      }
+      // print(routeData.routeResponse);
       setState(() {
         routeDataList.add(routeData); // Assuming routeDataList is a List<RouteData>
       });
@@ -161,6 +171,13 @@ class _HomeScreenState extends State<HomeScreen> {
         // Decode the step points to List<List<num>>
         List<List<num>> stepPoints = decodePolyline(step.geometry);
 
+        if(step.congestion != null) {
+          //print(step.congestion);
+          setState(() {
+            currentRouteData.congestionPoints.add(step.name);
+          });
+        }
+
         // Convert each step point (List<num>) to LatLng
         for (var point in stepPoints) {
           if (point.length >= 2) { // Ensure that we have enough data
@@ -170,13 +187,6 @@ class _HomeScreenState extends State<HomeScreen> {
               currentRouteData.stepPoints.add(latLngPoint); // Add to the List<LatLng>
 
             });
-
-            // Check for overlapping congestion points
-            if (_isPointNearCongestion(latLngPoint) == true && step.name != '') {
-               setState(() {
-                  currentRouteData.congestionPoints.add(step.name); // Add the step name if it overlaps
-                });
-            }
           }
 
           // Add unique instructions
