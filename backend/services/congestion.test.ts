@@ -85,6 +85,22 @@ describe("CongestionSvc", () => {
     expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
   });
 
+  test("getCongestions() performs aggregation by day with avg with camera_id filter", async () => {
+    const grouped = await congestion.getCongestions({
+      camera_id: "1703",
+      groupby: "day",
+      agg: "avg",
+      begin: "2024-10-28T00:00:00+08:00",
+      end: "2024-10-30T00:00:00+08:00",
+    });
+    expect(grouped.length).toStrictEqual(2);
+    expect(
+      grouped.every(
+        (c) => typeof c.rating.value === "number" && c.camera.id === "1703",
+      ),
+    ).toBe(true);
+  });
+
   test("getCongestions() performs aggregation by day with min", async () => {
     const congestions = await congestion.getCongestions({
       groupby: "day",

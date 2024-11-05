@@ -74,22 +74,31 @@ export class CongestionSvc {
     if (camera_id != null) {
       query = query.where("camera.id", "==", camera_id);
     }
-    // Filter by rating if min_rating is provided
-    if (min_rating != null) {
-      query = query.where("rating.value", ">=", min_rating);
+
+    // perform aggregation if agg and groupby are provided
+    if (agg && groupby) {
+      return this.aggregate(
+        query,
+        agg,
+        groupby,
+        beginDate,
+        endDate,
+        min_rating,
+      );
+    } else if (agg || groupby) {
+      throw new ValidationError(
+        "Both groupby & agg params must be specified if either is specified.",
+      );
     }
+
     // filter congestions by date range
     query = query
       .where("updated_on", ">=", formatSGT(beginDate))
       .where("updated_on", "<", formatSGT(endDate));
 
-    // perform aggregation if agg and groupby are provided
-    if (agg && groupby) {
-      return this.aggregate(query, agg, groupby, beginDate, endDate);
-    } else if (agg || groupby) {
-      throw new ValidationError(
-        "Both groupby & agg params must be specified if either is specified.",
-      );
+    // Filter by rating if min_rating is provided
+    if (min_rating != null) {
+      query = query.where("rating.value", ">=", min_rating);
     }
 
     // obtain congestion points for query
@@ -111,6 +120,7 @@ export class CongestionSvc {
    * @param groupby - The interval by which to group data (e.g., daily, weekly).
    * @param beginDate - The start date of the aggregation period, inclusive.
    * @param endDate - The end date of the aggregation period, exclusive.
+   * @param min_rating - The minimum congestion rating threshold; records below this rating are excluded from aggregation.
    * @returns A Promise that resolves to an array of `Congestion` objects, representing aggregated results for each date group.
    *
    * @throws Error if date range creation fails.
@@ -121,6 +131,7 @@ export class CongestionSvc {
     groupby: DateInterval,
     beginDate: TZDate,
     endDate: TZDate,
+    min_rating?: number,
   ): Promise<Congestion[]> => {
     // compute date groups based on specified groupby
     const dateGroups = dateRange(beginDate, endDate, groupby);
@@ -133,9 +144,15 @@ export class CongestionSvc {
     const grouped: Congestion[] = [];
     for (let i = 0; i < dateGroups.length - 1; i++) {
       // filter for congestions that belong to date interval group
-      const group = query
+      let group = query
         .where("updated_on", ">=", formatSGT(dateGroups[i]))
         .where("updated_on", "<", formatSGT(dateGroups[i + 1]));
+
+      // Filter by rating if min_rating is provided
+      if (min_rating != null) {
+        group = group.where("rating.value", ">=", min_rating);
+      }
+
       // sorted results by congestion rating
       const groupLen = (await group.count().get()).data().count;
       if (groupLen <= 0) {
