@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import 'package:latlong2/latlong.dart';
+import '../models/RouteData.dart';
 import '../models/congestion_rating.dart';
 import '../utilities/firebase_calls.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
@@ -41,7 +42,9 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   List<Congestion> allCongestionRatings = [];
   bool isLoading = true;
   List<LatLng> _stepPoints = [];
+  List<LatLng> _stepPointsNotOpt = [];
   List<LatLng> allStepPoints = [];
+  List<LatLng> allStepPointsNotOpt = [];
   List<Map<String, String>> _stepInfo = []; // Store time and distance for each step
 
   String time = ""; // Time as a new parameter
@@ -77,7 +80,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
       print('Exception when calling CongestionApi->congestionsGet: $e\n');
     }
   }
-
+/* working
   Future<void> _fetchRoute(LatLng src, LatLng dest) async {
     final routeApi = FlowmotionApi().getRoutingApi();
     final routePostRequest = RoutePostRequest((b) => b
@@ -149,6 +152,140 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
       print(congestedCamera);
     } else {
       print("No routes found in the response.");
+    }
+  }
+*/
+  //testing
+  Future<void> _fetchRoute(LatLng src, LatLng dest) async {
+    final routeApi = FlowmotionApi().getRoutingApi();
+    final routePostRequest = RoutePostRequest((b) => b
+      ..src.update((srcBuilder) => srcBuilder
+        ..kind = RoutePostRequestSrcKindEnum.location
+        ..location.update((locationBuilder) => locationBuilder
+          ..latitude = src.latitude
+          ..longitude = src.longitude
+        )
+      )
+      ..dest.update((destBuilder) => destBuilder
+        ..kind = RoutePostRequestDestKindEnum.location
+        ..location.update((locationBuilder) => locationBuilder
+          ..latitude = dest.latitude
+          ..longitude = dest.longitude
+        )
+      )
+    );
+
+    try {
+      // First API call with the default parameters
+      final response = await routeApi.routePost(routePostRequest: routePostRequest);
+      _processRouteResponse(response.data, false);
+
+      final secondaryRoutePostRequest = RoutePostRequest((b) => b
+        ..src.update((srcBuilder) => srcBuilder
+          ..kind = RoutePostRequestSrcKindEnum.location
+          ..location.update((locationBuilder) => locationBuilder
+            ..latitude = src.latitude
+            ..longitude = src.longitude
+          )
+        )
+        ..dest.update((destBuilder) => destBuilder
+          ..kind = RoutePostRequestDestKindEnum.location
+          ..location.update((locationBuilder) => locationBuilder
+            ..latitude = dest.latitude
+            ..longitude = dest.longitude
+          )
+        )
+        ..congestion = false
+      );
+      // Second API call with `false` as a parameter to get step points for another polyline
+      final responseWithFalse = await routeApi.routePost(routePostRequest: secondaryRoutePostRequest); // Adjust as necessary based on your API
+      _processRouteResponse(responseWithFalse.data, true); // Process response for the second route
+
+    } catch (e) {
+      print('Exception when calling RoutingApi->routePost: $e\n');
+    }
+  }
+
+  void _processRouteResponse(RoutePost200Response? response, bool isSecondary) {
+    List<String> congestedSteps = [];
+    List<String> congestedStepsNotOpt = [];
+    List<Map<String, String>> stepInfo = [
+    ]; // Store time and distance for each step
+    List<String> congestedCamera = []; // List to hold cross markers
+    if (!isSecondary){
+      if (response != null && response.routes!.isNotEmpty) {
+        final route = response.routes!.first;
+
+        for (var step in route.steps) {
+          List<List<num>> stepPoints = decodePolyline(step.geometry);
+
+          if (step.congestion != null) {
+            //print(step.congestion);
+            setState(() {
+              congestedSteps.add(step.name);
+              congestedCamera.add(step.congestion!.camera.id);
+            });
+          }
+
+
+          // Check for congestion and capture step info
+          for (var point in stepPoints) {
+            if (point.length >= 2) {
+              LatLng latLngPoint = LatLng(
+                  point[0].toDouble(), point[1].toDouble());
+              setState(() {
+                allStepPoints.add(latLngPoint);
+              });
+            }
+          }
+          // Collect the distance and time for each step
+          stepInfo.add({
+            'time': route.duration.toString(), // Or use formatted time
+            'distance': route.distance.toString(), // Or use formatted distance
+          });
+
+          setState(() {
+            _stepPoints = allStepPoints;
+            _stepInfo =
+                stepInfo; // Store the step info for dynamic data in marker
+          });
+        }
+      } else {
+        print("No routes found in the response.");
+      }
+    } else {
+      if (response != null && response.routes!.isNotEmpty) {
+        final routeNotOpt = response.routes!.first;
+
+        for (var step in routeNotOpt.steps) {
+          List<List<num>> stepPointsNotOpt = decodePolyline(step.geometry);
+
+          if (step.congestion != null) {
+            //print(step.congestion);
+            setState(() {
+              congestedStepsNotOpt.add(step.name);
+            });
+          }
+
+
+          // Check for congestion and capture step info
+          for (var point in stepPointsNotOpt) {
+            if (point.length >= 2) {
+              LatLng latLngPoint = LatLng(
+                  point[0].toDouble(), point[1].toDouble());
+              setState(() {
+                allStepPointsNotOpt.add(latLngPoint);
+              });
+            }
+          }
+
+          setState(() {
+            _stepPointsNotOpt = allStepPointsNotOpt;
+          });
+        }
+      } else {
+        print("No routes found in the response.");
+      }
     }
   }
 
@@ -330,6 +467,11 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                     ]),
                   PolylineLayer(
                     polylines: [
+                      Polyline(
+                        points: _stepPointsNotOpt, // This is now correctly a List<LatLng>
+                        strokeWidth: 4.0,
+                        color: Colors.blue,
+                      ),
                       Polyline(
                         points: _stepPoints, // This is now correctly a List<LatLng>
                         strokeWidth: 4.0,
