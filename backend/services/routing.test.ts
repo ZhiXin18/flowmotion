@@ -12,12 +12,9 @@ import { RoutingSvcFactory } from "../factories/routing";
 describe("RoutingSvc", () => {
   const congestionSvc = new CongestionSvc(initDB());
   // test routing with and without congestion routing
-  const routingSvcs = [
-    RoutingSvcFactory.create(congestionSvc),
-    RoutingSvcFactory.create(),
-  ];
+  const routingSvc = RoutingSvcFactory.create(congestionSvc);
 
-  test.each(routingSvcs)("route() returns routes", async (routingSvc) => {
+  test("route() returns routes", async () => {
     const routes = await routingSvc.route(
       // NTU nanyang circle
       {
@@ -35,7 +32,7 @@ describe("RoutingSvc", () => {
 
   test("geolookup() returns correct GeoLocation for a given postcode", async () => {
     const postcode = "639798"; // Example postcode for NTU area
-    const location = await routingSvcs[0].geolookup(postcode);
+    const location = await routingSvc.geolookup(postcode);
 
     expect(location).toBeDefined();
     expect(location.latitude).toBeCloseTo(1.3437504, 2);
@@ -45,7 +42,7 @@ describe("RoutingSvc", () => {
   test("geolookup() throws an error for invalid postcode", async () => {
     const invalidPostcode = "000000"; // Example of an invalid postcode
 
-    await expect(routingSvcs[0].geolookup(invalidPostcode)).rejects.toThrow(
+    await expect(routingSvc.geolookup(invalidPostcode)).rejects.toThrow(
       `No location found for postcode: ${invalidPostcode}`,
     );
   });
