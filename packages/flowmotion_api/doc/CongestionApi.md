@@ -9,60 +9,8 @@ All URIs are relative to *https://flowmotion-backend-210524342027.asia-southeast
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**congestedCameraIdGroupbyGet**](CongestionApi.md#congestedcameraidgroupbyget) | **GET** /congested/{camera_id}/{groupby} | Retrieve congestion duration for a specific camera for a given time range.
 [**congestionsGet**](CongestionApi.md#congestionsget) | **GET** /congestions | Retrieve congestion data
 
-
-# **congestedCameraIdGroupbyGet**
-> BuiltList<double> congestedCameraIdGroupbyGet(cameraId, groupby, begin, end, threshold)
-
-Retrieve congestion duration for a specific camera for a given time range.
-
-Returns the total time in seconds (as a float) when the camera was \"congested\" according to a threshold, grouped by hour or day.
-
-### Example
-```dart
-import 'package:flowmotion_api/api.dart';
-
-final api = FlowmotionApi().getCongestionApi();
-final String cameraId = cameraId_example; // String | ID of the camera to retrieve congestion duration for
-final String groupby = groupby_example; // String | Group congestion duration by hour or day
-final DateTime begin = 2013-10-20T19:20:30+01:00; // DateTime | Inclusive start of the time range (timestamp) to retrieve congestion duration.
-final DateTime end = 2013-10-20T19:20:30+01:00; // DateTime | Exclusive end of the time range (timestamp) to retrieve congestion duration.
-final double threshold = 3.4; // double | Congestion rating level (between 0 and 1) that is considered \"congested\"
-
-try {
-    final response = api.congestedCameraIdGroupbyGet(cameraId, groupby, begin, end, threshold);
-    print(response);
-} catch on DioException (e) {
-    print('Exception when calling CongestionApi->congestedCameraIdGroupbyGet: $e\n');
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **cameraId** | **String**| ID of the camera to retrieve congestion duration for | 
- **groupby** | **String**| Group congestion duration by hour or day | 
- **begin** | **DateTime**| Inclusive start of the time range (timestamp) to retrieve congestion duration. | 
- **end** | **DateTime**| Exclusive end of the time range (timestamp) to retrieve congestion duration. | 
- **threshold** | **double**| Congestion rating level (between 0 and 1) that is considered \"congested\" | [optional] [default to 0.6]
-
-### Return type
-
-**BuiltList&lt;double&gt;**
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **congestionsGet**
 > BuiltList<Congestion> congestionsGet(cameraId, agg, groupby, begin, end, minRating)
