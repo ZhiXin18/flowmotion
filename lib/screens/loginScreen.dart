@@ -103,142 +103,144 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       key: WidgetKeys.loginScreen,
       body: Background(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                "LOGIN",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2661FA),
-                  fontSize: 36,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-
-            SizedBox(height: size.height * 0.03),
-
-            // Email TextField with opacity
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8), // Set opacity here
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: TextField(
-                key: WidgetKeys.loginEmailController,
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                ),
-              ),
-            ),
-
-            SizedBox(height: size.height * 0.03),
-
-            // Password TextField with opacity
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8), // Set opacity here
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: TextField(
-                key: WidgetKeys.loginPasswordController,
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                ),
-              ),
-            ),
-
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ForgetPasswordScreen();
-                }));
-              },
-              child: Container(
-                alignment: Alignment.centerRight,
-                margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: 40),
                 child: Text(
-                  "Forgot your password?",
+                  "LOGIN",
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-
-            SizedBox(height: size.height * 0.05),
-
-            Container(
-              alignment: Alignment.centerRight,
-              margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-              child: ElevatedButton(
-                key: WidgetKeys.loginButton,
-                onPressed: _signIn,
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
-                  padding: EdgeInsets.all(0),
-                ),
-                child: Container(
-                  alignment: Alignment.center,
-                  height: 50.0,
-                  width: size.width * 0.5,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(80.0),
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromARGB(255, 255, 136, 34),
-                        Color.fromARGB(255, 255, 177, 41),
-                      ],
-                    ),
-                  ),
-                  padding: EdgeInsets.all(0),
-                  child: Text(
-                    "LOGIN",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            Container(
-              alignment: Alignment.centerRight,
-              margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-              child: GestureDetector(
-                key: WidgetKeys.goRegisterButton,
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()));
-                },
-                child: Text(
-                  "Don't Have an Account? Sign up",
-                  style: TextStyle(
-                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF2661FA),
+                    fontSize: 36,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+          
+              SizedBox(height: size.height * 0.03),
+          
+              // Email TextField with opacity
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(horizontal: 40),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8), // Set opacity here
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: TextField(
+                  key: WidgetKeys.loginEmailController,
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   ),
                 ),
               ),
-            ),
-          ],
+          
+              SizedBox(height: size.height * 0.03),
+          
+              // Password TextField with opacity
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(horizontal: 40),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8), // Set opacity here
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: TextField(
+                  key: WidgetKeys.loginPasswordController,
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  ),
+                ),
+              ),
+          
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return ForgetPasswordScreen();
+                  }));
+                },
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                  child: Text(
+                    "Forgot your password?",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+          
+              SizedBox(height: size.height * 0.05),
+          
+              Container(
+                alignment: Alignment.centerRight,
+                margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                child: ElevatedButton(
+                  key: WidgetKeys.loginButton,
+                  onPressed: _signIn,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
+                    padding: EdgeInsets.all(0),
+                  ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: 50.0,
+                    width: size.width * 0.5,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(80.0),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color.fromARGB(255, 255, 136, 34),
+                          Color.fromARGB(255, 255, 177, 41),
+                        ],
+                      ),
+                    ),
+                    padding: EdgeInsets.all(0),
+                    child: Text(
+                      "LOGIN",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          
+              Container(
+                alignment: Alignment.centerRight,
+                margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                child: GestureDetector(
+                  key: WidgetKeys.goRegisterButton,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()));
+                  },
+                  child: Text(
+                    "Don't Have an Account? Sign up",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2661FA),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
