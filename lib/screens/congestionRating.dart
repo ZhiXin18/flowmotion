@@ -5,6 +5,8 @@ import 'package:latlong2/latlong.dart';
 import '../models/congestion_rating.dart';
 import '../utilities/firebase_calls.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 
 import '../widgets/navigationBar.dart';
 
@@ -43,6 +45,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   List<LatLng> _stepPoints = [];
   List<LatLng> allStepPoints = [];
   List<Map<String, String>> _stepInfo = []; // Store time and distance for each step
+  List<String> _congestedCamera = [];
 
   String time = ""; // Time as a new parameter
   String distance = ""; // Distance as a new parameter
@@ -62,6 +65,28 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         widget.currentLocationMarker ?? LatLng(1.342874, 103.67941), // Provide a default LatLng if null
         widget.initialDestination
     );
+  }
+
+  Future<List<double>> fetchGraphRatings(String cameraId, String groupby, DateTime begin, DateTime end) async {
+    final api = FlowmotionApi().getCongestionApi();
+    print("Fetching for camera ID: $cameraId");
+    print("End time: $end");
+    print("Start time: $begin");
+    try {
+      final response = await api.congestionsGet(
+        cameraId: cameraId,
+        agg: 'avg',
+        groupby: groupby,
+        begin: begin,
+        end: end,
+      );
+      final ratings = response.data?.map((item) => item.rating as double).toList() ?? [];
+      print("Ratings fetched: $ratings");
+      return ratings;
+    } catch (e) {
+      print('Exception when calling CongestionApi->congestionsGet with parameters: $e\n');
+      return []; // Return empty list on error
+    }
   }
 
   Future<void> fetchAllRatings() async {
@@ -144,6 +169,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         setState(() {
           _stepPoints = allStepPoints;
           _stepInfo = stepInfo; // Store the step info for dynamic data in marker
+          _congestedCamera = congestedCamera;
         });
       }
       print(congestedCamera);
@@ -344,7 +370,50 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
 
             _buildCongestionAndRecommendedBoxes(widget.congestionPoints, widget.allInstructions, context),
             SizedBox(height: 20),
-
+            if (selectedIndex != null) ...[
+              FutureBuilder<List<double>>(
+                future: fetchGraphRatings(
+                    _congestedCamera[selectedIndex!], // cameraID
+                    'hour', // groupby
+                    formatToSingaporeTime(DateTime.now().subtract(Duration(hours: 10))), // start time
+                    formatToSingaporeTime(DateTime.now()) // end time
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.hasData) {
+                    List<double> hourlyData = snapshot.data!;
+                    // Display your graphs or other UI here
+                    return _buildHourlyCongestionRatingGraph(hourlyData);
+                  } else {
+                    return Text("No data available");
+                  }
+                },
+              ),
+              SizedBox(height: 20),
+              FutureBuilder<List<double>>(
+                future: fetchGraphRatings(
+                    _congestedCamera[selectedIndex!], // cameraId
+                    'day', // groupby for daily data
+                    formatToSingaporeTime(DateTime.now().subtract(Duration(days: 10))), // start time
+                    formatToSingaporeTime(DateTime.now())   // end time
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.hasData) {
+                    List<double> dailyData = snapshot.data!;
+                    return _buildCongestionHistoryGraph(dailyData);
+                  } else {
+                    return Text("No data available");
+                  }
+                },
+              ),
+            ],
             // Additional rows for congestion ratings and history...
           ],
         ),
@@ -426,6 +495,10 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     }
   }
 
+  DateTime formatToSingaporeTime(DateTime date) {
+    return date.toUtc().add(Duration(hours: 8));
+  }
+
   Widget _buildCongestionAndRecommendedBoxes(List<String> congestionPoints, List<String> allInstructions, BuildContext context) {
     // Get screen width
     double screenWidth = MediaQuery.of(context).size.width;
@@ -451,6 +524,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     );
   }
 
+  int? selectedIndex;
   Widget _buildCongestionPointsBox(List<String>? congestionPoints) {
     return Container(
       padding: EdgeInsets.all(10),
@@ -494,29 +568,37 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
               child: Column(
                 children: congestionPoints != null && congestionPoints.isNotEmpty
                     ? List.generate(congestionPoints.length, (index) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          congestionPoints[index],
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 9,
+                      return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex =
+                                  index; // Update selected congestion point
+                            });
+                          },
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              congestionPoints[index],
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 9,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      if (index < congestionPoints.length - 1)
-                        const Divider(
-                          color: Colors.grey,
-                          thickness: 1,
-                          height: 10,
-                          indent: 25,
-                          endIndent: 25,
-                        ),
-                    ],
-                  );
+                          if (index < congestionPoints.length - 1)
+                            const Divider(
+                              color: Colors.grey,
+                              thickness: 1,
+                              height: 10,
+                              indent: 25,
+                              endIndent: 25,
+                            ),
+                        ],
+                      )
+                      );
                 })
                     : [ // Fallback message if list is empty
                   Center(child: Text("No congestion points available.")),
@@ -583,32 +665,64 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
 
 
   // Placeholder methods for graphs
-  Widget _buildHourlyCongestionRatingGraph() {
+  Widget _buildHourlyCongestionRatingGraph(List<double> data) {
     return Container(
       height: 200,
-      color: Colors.redAccent[100],
-      child: Center(
-        child: Text('Hourly Congestion Rating Graph'),
+      child: LineChart(
+        LineChartData(
+          gridData: FlGridData(show: false),
+          titlesData: FlTitlesData(show: true),
+          borderData: FlBorderData(show: true),
+          lineBarsData: [
+            LineChartBarData(
+              spots: data
+                  .asMap()
+                  .entries
+                  .map((e) => FlSpot(e.key.toDouble(), e.value))
+                  .toList(),
+              isCurved: true,
+              color: Colors.red,
+              belowBarData: BarAreaData(show: false),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCongestionHistoryGraph() {
+  Widget _buildCongestionHistoryGraph(List<double> data) {
     return Container(
       height: 150,
-      color: Colors.blueAccent[100],
-      child: Center(
-        child: Text('Congestion Rating History Graph'),
+      child: BarChart(
+        BarChartData(
+          barGroups: data
+              .asMap()
+              .entries
+              .map((e) => BarChartGroupData(
+            x: e.key,
+            barRods: [
+              BarChartRodData(toY: e.value, color: Colors.blue),
+            ],
+          ))
+              .toList(),
+        ),
       ),
     );
   }
 
-  Widget _buildTotalCongestionTimeGraph() {
+  Widget _buildTotalCongestionTimeGraph(List<String> imageUrls) {
     return Container(
-      height: 150,
-      color: Colors.greenAccent[100],
-      child: Center(
-        child: Text('Total Congestion Time Graph'),
+      height: 200,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: imageUrls.length,
+        itemBuilder: (context, index) {
+          return Container(
+            width: 200,
+            margin: EdgeInsets.all(5),
+            child: Image.network(imageUrls[index]),
+          );
+        },
       ),
     );
   }
