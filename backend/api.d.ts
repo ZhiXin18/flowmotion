@@ -115,6 +115,11 @@ export interface paths {
               address?: components["schemas"]["Address"] | null;
               location?: components["schemas"]["Location"] | null;
             };
+            /**
+             * @description Optional. Whether to incorporate traffic congestion ratings into route planning. By default, this is enabled.
+             * @default true
+             */
+            congestion?: boolean;
           };
         };
       };

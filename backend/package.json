@@ -22,6 +22,7 @@
   "homepage": "https://github.com/ZhiXin18/flowmotion#readme",
   "dependencies": {
     "@date-fns/tz": "^1.1.2",
+    "@isaacs/ttlcache": "^1.4.1",
     "@types/lodash": "^4.17.13",
     "csv-parser": "^3.0.0",
     "date-fns": "^4.1.0",

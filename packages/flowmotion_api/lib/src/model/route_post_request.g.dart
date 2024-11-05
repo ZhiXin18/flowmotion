@@ -11,12 +11,15 @@ class _$RoutePostRequest extends RoutePostRequest {
   final RoutePostRequestSrc src;
   @override
   final RoutePostRequestDest dest;
+  @override
+  final bool? congestion;
 
   factory _$RoutePostRequest(
           [void Function(RoutePostRequestBuilder)? updates]) =>
       (new RoutePostRequestBuilder()..update(updates))._build();
 
-  _$RoutePostRequest._({required this.src, required this.dest}) : super._() {
+  _$RoutePostRequest._({required this.src, required this.dest, this.congestion})
+      : super._() {
     BuiltValueNullFieldError.checkNotNull(src, r'RoutePostRequest', 'src');
     BuiltValueNullFieldError.checkNotNull(dest, r'RoutePostRequest', 'dest');
   }
@@ -32,7 +35,10 @@ class _$RoutePostRequest extends RoutePostRequest {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is RoutePostRequest && src == other.src && dest == other.dest;
+    return other is RoutePostRequest &&
+        src == other.src &&
+        dest == other.dest &&
+        congestion == other.congestion;
   }
 
   @override
@@ -40,6 +46,7 @@ class _$RoutePostRequest extends RoutePostRequest {
     var _$hash = 0;
     _$hash = $jc(_$hash, src.hashCode);
     _$hash = $jc(_$hash, dest.hashCode);
+    _$hash = $jc(_$hash, congestion.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -48,7 +55,8 @@ class _$RoutePostRequest extends RoutePostRequest {
   String toString() {
     return (newBuiltValueToStringHelper(r'RoutePostRequest')
           ..add('src', src)
-          ..add('dest', dest))
+          ..add('dest', dest)
+          ..add('congestion', congestion))
         .toString();
   }
 }
@@ -67,6 +75,10 @@ class RoutePostRequestBuilder
       _$this._dest ??= new RoutePostRequestDestBuilder();
   set dest(RoutePostRequestDestBuilder? dest) => _$this._dest = dest;
 
+  bool? _congestion;
+  bool? get congestion => _$this._congestion;
+  set congestion(bool? congestion) => _$this._congestion = congestion;
+
   RoutePostRequestBuilder() {
     RoutePostRequest._defaults(this);
   }
@@ -76,6 +88,7 @@ class RoutePostRequestBuilder
     if ($v != null) {
       _src = $v.src.toBuilder();
       _dest = $v.dest.toBuilder();
+      _congestion = $v.congestion;
       _$v = null;
     }
     return this;
@@ -98,8 +111,9 @@ class RoutePostRequestBuilder
   _$RoutePostRequest _build() {
     _$RoutePostRequest _$result;
     try {
-      _$result =
-          _$v ?? new _$RoutePostRequest._(src: src.build(), dest: dest.build());
+      _$result = _$v ??
+          new _$RoutePostRequest._(
+              src: src.build(), dest: dest.build(), congestion: congestion);
     } catch (_) {
       late String _$failedField;
       try {

@@ -15,6 +15,7 @@ part 'route_post_request.g.dart';
 /// Properties:
 /// * [src]
 /// * [dest]
+/// * [congestion] - Optional. Whether to incorporate traffic congestion ratings into route planning. By default, this is enabled.
 @BuiltValue()
 abstract class RoutePostRequest
     implements Built<RoutePostRequest, RoutePostRequestBuilder> {
@@ -24,13 +25,17 @@ abstract class RoutePostRequest
   @BuiltValueField(wireName: r'dest')
   RoutePostRequestDest get dest;
 
+  /// Optional. Whether to incorporate traffic congestion ratings into route planning. By default, this is enabled.
+  @BuiltValueField(wireName: r'congestion')
+  bool? get congestion;
+
   RoutePostRequest._();
 
   factory RoutePostRequest([void updates(RoutePostRequestBuilder b)]) =
       _$RoutePostRequest;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(RoutePostRequestBuilder b) => b;
+  static void _defaults(RoutePostRequestBuilder b) => b..congestion = true;
 
   @BuiltValueSerializer(custom: true)
   static Serializer<RoutePostRequest> get serializer =>
@@ -60,6 +65,13 @@ class _$RoutePostRequestSerializer
       object.dest,
       specifiedType: const FullType(RoutePostRequestDest),
     );
+    if (object.congestion != null) {
+      yield r'congestion';
+      yield serializers.serialize(
+        object.congestion,
+        specifiedType: const FullType(bool),
+      );
+    }
   }
 
   @override
@@ -98,6 +110,13 @@ class _$RoutePostRequestSerializer
             specifiedType: const FullType(RoutePostRequestDest),
           ) as RoutePostRequestDest;
           result.dest.replace(valueDes);
+          break;
+        case r'congestion':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool;
+          result.congestion = valueDes;
           break;
         default:
           unhandled.add(key);
