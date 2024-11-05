@@ -11,6 +11,11 @@ import { components, paths } from "../api";
 import { CongestionSvc } from "./congestion";
 import { NotFoundError } from "../error";
 
+// routing endpoint url constants
+export const CONGEST_ROUTING_API =
+  "https://osrm-congestion-210524342027.asia-southeast1.run.app";
+export const ROUTING_API = "https://router.project-osrm.org";
+
 // OSRMText instructions
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const OSRMText = require("osrm-text-instructions")("v5");
@@ -22,9 +27,6 @@ type Routes = NonNullable<
   paths["/route"]["post"]["responses"]["200"]["content"]["application/json"]["routes"]
 >;
 
-export const ROUTING_API =
-  "https://osrm-congestion-210524342027.asia-southeast1.run.app";
-
 /**
  * RoutingSvc performs routing by making API calls to the OSRM API.
  */
@@ -34,7 +36,7 @@ export class RoutingSvc {
   constructor(
     public apiBase: string,
     private fetchFn: typeof fetch,
-    private congestion: CongestionSvc,
+    private congestion: CongestionSvc | null = null,
   ) {
     // No need to load the CSV data here
   }
@@ -152,7 +154,7 @@ export class RoutingSvc {
               // congestion doc id is passed via step 's pronunciation field
               // resolve contents of congestion if present
               congestion:
-                step.pronunciation != null
+                step.pronunciation != null && this.congestion != null
                   ? await this.congestion.getCongestion(step.pronunciation)
                   : null,
             })),

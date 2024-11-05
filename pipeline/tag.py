@@ -36,7 +36,7 @@ if __name__ == "__main__":
         help="Proximity threshold for tagging in meters."
         "If a OSM way contains a node within the Threshold to a congestion point, "
         "it will be tagged with the congestion point",
-        default=50,
+        default=160,
     )
     args = parser.parse_args()
 

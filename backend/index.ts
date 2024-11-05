@@ -8,9 +8,9 @@ import { CongestionSvc } from "./services/congestion";
 import { initDB } from "./clients/db";
 import { Request, Response } from "express";
 import * as OpenApiValidator from "express-openapi-validator";
-import { ROUTING_API, RoutingSvc } from "./services/routing";
 import { paths } from "./api";
 import { ValidationError } from "./error";
+import { RoutingSvcFactory } from "./factories/routing";
 
 type GeoLocation = {
   latitude: number;
@@ -30,7 +30,6 @@ process.env.TZ = "Asia/Singapore";
 // setup services
 const db = initDB();
 const congestion = new CongestionSvc(db);
-const routing_service = new RoutingSvc(ROUTING_API, fetch, congestion);
 
 // setup express server
 const app = express();
@@ -56,12 +55,17 @@ app.post("/route", async (req: Request, res: Response) => {
   let srcLocation: GeoLocation;
   let destLocation: GeoLocation;
 
+  // construct routing service based on whether congestion aware routing is enabled.
+  const routingSvc = RoutingSvcFactory.create(
+    (r.congestion ?? true) ? congestion : null,
+  );
+
   if (r.src.kind === "address") {
     const postcode = r.src.address?.postcode?.trim();
     if (!postcode) {
       throw new ValidationError("Source address must include a postcode.");
     }
-    srcLocation = await routing_service.geolookup(postcode);
+    srcLocation = await routingSvc.geolookup(postcode);
   } else {
     srcLocation = r.src.location!;
   }
@@ -71,19 +75,19 @@ app.post("/route", async (req: Request, res: Response) => {
     if (!postcode) {
       throw new ValidationError("Destination address must include a postcode.");
     }
-    destLocation = await routing_service.geolookup(postcode);
+    destLocation = await routingSvc.geolookup(postcode);
   } else {
     destLocation = r.dest.location!;
   }
 
-  const routes = await routing_service.route(srcLocation, destLocation);
+  const routes = await routingSvc.route(srcLocation, destLocation);
   res.json({ routes });
 });
 
 app.get("/geocode/:postcode", async (req: Request, res: Response) => {
   const r =
     req.params as paths["/geocode/{postcode}"]["get"]["parameters"]["path"];
-  const location = await routing_service.geolookup(r.postcode);
+  const location = await RoutingSvcFactory.create().geolookup(r.postcode);
   res.json(location);
 });
 

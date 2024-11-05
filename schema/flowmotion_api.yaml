@@ -127,6 +127,10 @@ paths:
                         - type: "null"
                   required:
                     - kind
+                congestion:
+                  type: boolean
+                  default: true
+                  description: Optional. Whether to incorporate traffic congestion ratings into route planning. By default, this is enabled.
               required:
                 - src
                 - dest
