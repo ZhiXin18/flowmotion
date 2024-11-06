@@ -165,25 +165,29 @@ export class CongestionSvc {
         (
           await group.orderBy("rating.value", "asc").limit(1).get()
         ).docs[0].data() as Congestion;
+      let congestion = null;
       if (agg === "avg") {
         // query first congestion for each group as the representative of the group
-        const congestion = await getFirst();
+        congestion = await getFirst();
         const result = await group
           .aggregate({ value: AggregateField.average("rating.value") })
           .get();
         congestion.rating.value = result.data().value!;
-        grouped.push(congestion);
       } else if (agg === "min") {
         // first congestion of each rating value sorted group is min.
-        grouped.push(await getFirst());
+        congestion = await getFirst();
       } else {
         // agg is max: first congestion of each rating value sorted in descending order group is max
-        grouped.push(
-          (
-            await group.orderBy("rating.value", "desc").limit(1).get()
-          ).docs[0].data() as Congestion,
-        );
+        congestion = (
+          await group.orderBy("rating.value", "desc").limit(1).get()
+        ).docs[0].data() as Congestion;
       }
+      // update timestamps
+      congestion.updated_on = formatSGT(new TZDate());
+      // rated_on will be used as date interval group label
+      congestion.rating.rated_on = formatSGT(dateGroups[i]);
+
+      grouped.push(congestion);
     }
 
     return grouped;

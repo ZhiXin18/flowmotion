@@ -13,7 +13,7 @@ export interface paths {
     };
     /**
      * Retrieve congestion data
-     * @description Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
+     * @description Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. Aggregation will perform requested aggregation on `rating.value` and set `rating.rated_on` timestamp to align with groups. By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
      */
     get: {
       parameters: {
@@ -210,7 +210,7 @@ export interface paths {
             "application/json": components["schemas"]["Error"];
           };
         };
-        /** @description No location found for one or more addresses. */
+        /** @description No location found for one or more addresses or no route was found between the two given locations.a */
         404: {
           headers: {
             [name: string]: unknown;

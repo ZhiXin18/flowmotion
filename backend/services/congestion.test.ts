@@ -61,6 +61,13 @@ describe("CongestionSvc", () => {
     });
     expect(grouped.length).toEqual(3);
     expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
+    // check groups should be labeled on rated_on timestamp
+    expect(grouped.map((c) => c.rating.rated_on)).toStrictEqual([
+      "2024-10-29T20:00:00.000+0800",
+      "2024-10-29T21:00:00.000+0800",
+      "2024-10-29T22:00:00.000+0800",
+    ]);
+
     // check first group is aggregated correctly
     const firstHour = await congestion.getCongestions({
       begin: "2024-10-29T20:00:00+08:00",
@@ -83,6 +90,11 @@ describe("CongestionSvc", () => {
     });
     expect(grouped.length).toStrictEqual(2);
     expect(grouped.every((c) => typeof c.rating.value === "number")).toBe(true);
+    // check groups should be labeled on rated_on timestamp
+    expect(grouped.map((c) => c.rating.rated_on)).toStrictEqual([
+      "2024-10-28T00:00:00.000+0800",
+      "2024-10-29T00:00:00.000+0800",
+    ]);
   });
 
   test("getCongestions() performs aggregation by day with avg with camera_id filter", async () => {
@@ -99,6 +111,11 @@ describe("CongestionSvc", () => {
         (c) => typeof c.rating.value === "number" && c.camera.id === "1703",
       ),
     ).toBe(true);
+    // check groups should be labeled on rated_on timestamp
+    expect(grouped.map((c) => c.rating.rated_on)).toStrictEqual([
+      "2024-10-28T00:00:00.000+0800",
+      "2024-10-29T00:00:00.000+0800",
+    ]);
   });
 
   test("getCongestions() performs aggregation by day with min", async () => {

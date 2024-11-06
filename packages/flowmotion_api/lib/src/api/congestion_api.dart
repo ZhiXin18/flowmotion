@@ -20,7 +20,7 @@ class CongestionApi {
   const CongestionApi(this._dio, this._serializers);
 
   /// Retrieve congestion data
-  /// Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. By default, if no time range is specified in &#x60;begin&#x60;, &#x60;end&#x60; return only congestions ingested from the latest &#x60;updated_on&#x60; timestamp.
+  /// Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. Aggregation will perform requested aggregation on &#x60;rating.value&#x60; and set &#x60;rating.rated_on&#x60; timestamp to align with groups. By default, if no time range is specified in &#x60;begin&#x60;, &#x60;end&#x60; return only congestions ingested from the latest &#x60;updated_on&#x60; timestamp.
   ///
   /// Parameters:
   /// * [cameraId] - Filter congestion points by specific camera id.
