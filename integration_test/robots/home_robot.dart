@@ -2,6 +2,7 @@ import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../utils/common_finder.dart';
 import '../utils/polling_finder.dart';
 
 class HomeRobot {
@@ -14,6 +15,11 @@ class HomeRobot {
     expect(goMapButton, findsOneWidget);
     await tester.tap(goMapButton);
     await tester.pumpAndSettle();
+  }
+
+  Future<int> countSavedPlaces() async {
+    final cards = find.byKeyPrefix(WidgetKeys.savedPlaceCardPrefix);
+    return cards.evaluate().length;
   }
 
   Future<void> tapSavedPlace(int index) async {
