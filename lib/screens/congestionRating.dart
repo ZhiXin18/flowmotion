@@ -37,6 +37,68 @@ class CongestionRatingScreen extends StatefulWidget {
   _CongestionRatingScreenState createState() => _CongestionRatingScreenState();
 }
 
+class ImageViewerWithSlider extends StatefulWidget {
+  final List<RatingPoint> data;
+  ImageViewerWithSlider({required this.data});
+
+  @override
+  _ImageViewerWithSliderState createState() => _ImageViewerWithSliderState();
+}
+
+class _ImageViewerWithSliderState extends State<ImageViewerWithSlider> {
+  double _currentSliderValue = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.data.isEmpty) {
+      return Text("No images available");
+    }
+
+    // Get the current RatingPoint based on the slider value
+    int currentIndex = _currentSliderValue.toInt();
+    RatingPoint currentRatingPoint = widget.data[currentIndex];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Display the image
+        Container(
+          height: 200,
+          width: 200,
+          margin: EdgeInsets.all(5),
+          child: Image.network(currentRatingPoint.imageUrls, fit: BoxFit.cover),
+        ),
+
+        // Display the time
+        Text(
+          "Time: ${currentRatingPoint.ratedOn.hour}:${currentRatingPoint.ratedOn.minute}",
+          style: TextStyle(fontSize: 16),
+        ),
+
+        // Slider to change the image based on the time
+        Slider(
+          value: _currentSliderValue,
+          min: 0,
+          max: (widget.data.length - 1).toDouble(),
+          divisions: widget.data.length - 1,
+          label: "Time: ${currentRatingPoint.ratedOn.hour}:${currentRatingPoint.ratedOn.minute}",
+          onChanged: (double value) {
+            setState(() {
+              _currentSliderValue = value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class RatingPoint {
+  final DateTime ratedOn;
+  final num value;
+  final String imageUrls;
+  RatingPoint({required this.ratedOn, required this.value, required this.imageUrls});
+}
+
 class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   final FirebaseCalls firebaseCalls = FirebaseCalls();
   late final MapController _mapController;
@@ -48,7 +110,8 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   List<LatLng> allStepPoints = [];
   List<LatLng> allStepPointsNotOpt = [];
   List<Map<String, String>> _stepInfo = []; // Store time and distance for each step
-  List<String> congestedCamera = []; // List to hold cross markers
+  List<String> congestedCamera = [];
+  List<RatingPoint> historyRatings = [];
 
   String time = ""; // Time as a new parameter
   String distance = ""; // Distance as a new parameter
@@ -70,7 +133,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     );
   }
 
-  Future<List<double>> fetchGraphRatings(String cameraId, String groupby, DateTime begin, DateTime end) async {
+  Future<void> fetchGraphRatings(String cameraId, String groupby, DateTime begin, DateTime end) async {
     final api = FlowmotionApi().getCongestionApi();
     print("Fetching for camera ID: $cameraId");
     print("End time: $end");
@@ -83,13 +146,45 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         begin: begin,
         end: end,
       );
-      print(response.data);
-      final ratings = response.data?.map((item) => item.rating as double).toList() ?? [];
-      print("Ratings fetched: $ratings");
-      return ratings;
+      print("Raw response data: ${response.data}");
+
+      List<RatingPoint> ratingPoints = [];
+      if (response.data != null && response.data!.isNotEmpty) {
+        // Group the data by hour
+        Map<int, List<Map<String, dynamic>>> hourlyData = {};
+        for (var item in response.data!) {
+          DateTime ratedOn = item.rating.ratedOn;
+          num value = item.rating.value;
+          String imageUrl = item.camera.imageUrl;
+          int hour = ratedOn.hour;
+
+          // Initialize an empty list for hour that don't exist
+          if (!hourlyData.containsKey(hour)) {
+            hourlyData[hour] = [];
+          }
+          hourlyData[hour]!.add({'value': value, 'imageUrl': imageUrl});
+        }
+
+        // Average for each hour + image URL
+        hourlyData.forEach((hour, entries) {
+          num totalValue = 0;
+          String firstImageUrl = entries[0]['imageUrl']; // First image URL of the hour
+          entries.forEach((entry) {
+            totalValue += entry['value'];
+          });
+          num averageValue = totalValue / entries.length; // Average value for the hour
+          ratingPoints.add(RatingPoint(
+            ratedOn: DateTime(begin.year, begin.month, begin.day, hour),
+            value: averageValue,
+            imageUrls: firstImageUrl,
+          ));
+        });
+        ratingPoints.sort((a, b) => a.ratedOn.compareTo(b.ratedOn));
+        historyRatings = ratingPoints;
+        print("Ratings fetched: $historyRatings");
+      }
     } catch (e) {
       print('Exception when calling CongestionApi->congestionsGet with parameters: $e\n');
-      return []; // Return empty list on error
     }
   }
 
@@ -106,7 +201,83 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
       print('Exception when calling CongestionApi->congestionsGet: $e\n');
     }
   }
+/* working
+  Future<void> _fetchRoute(LatLng src, LatLng dest) async {
+    final routeApi = FlowmotionApi().getRoutingApi();
+    final routePostRequest = RoutePostRequest((b) => b
+      ..src.update((srcBuilder) => srcBuilder
+        ..kind = RoutePostRequestSrcKindEnum.location // Indicate that location lat long is provided
+        ..location.update((locationBuilder) => locationBuilder
+          ..latitude = src.latitude // Set the latitude
+          ..longitude = src.longitude // Set the longitude
+        )
+      )
+      ..dest.update((destBuilder) => destBuilder
+        ..kind = RoutePostRequestDestKindEnum.location // Indicate that location lat long is provided
+        ..location.update((locationBuilder) => locationBuilder
+          ..latitude = dest.latitude // Set the destination latitude
+          ..longitude = dest.longitude // Set the destination longitude
+        )
+      )
+    );
 
+    try {
+      final response = await routeApi.routePost(routePostRequest: routePostRequest);
+      _processRouteResponse(response.data); // Pass the index to process the response
+
+    } catch (e) {
+      print('Exception when calling RoutingApi->routePost: $e\n');
+    }
+  }
+  void _processRouteResponse(RoutePost200Response? response) {
+    List<String> congestedSteps = [];
+    List<Map<String, String>> stepInfo = []; // Store time and distance for each step
+    List<String> congestedCamera = []; // List to hold cross markers
+
+    if (response != null && response.routes!.isNotEmpty) {
+      final route = response.routes!.first;
+
+      for (var step in route.steps) {
+        List<List<num>> stepPoints = decodePolyline(step.geometry);
+
+        if(step.congestion != null) {
+          //print(step.congestion);
+          setState(() {
+            congestedSteps.add(step.name);
+            congestedCamera.add(step.congestion!.camera.id);
+          });
+        }
+
+
+        // Check for congestion and capture step info
+        for (var point in stepPoints) {
+          if (point.length >= 2) {
+            LatLng latLngPoint = LatLng(
+                point[0].toDouble(), point[1].toDouble());
+            setState(() {
+              allStepPoints.add(latLngPoint);
+            });
+          }
+        }
+        // Collect the distance and time for each step
+        stepInfo.add({
+          'time': route.duration.toString(), // Or use formatted time
+          'distance': route.distance.toString(), // Or use formatted distance
+        });
+
+        setState(() {
+          _stepPoints = allStepPoints;
+          _stepInfo = stepInfo; // Store the step info for dynamic data in marker
+          _congestedCamera = congestedCamera;
+        });
+      }
+      print(congestedCamera);
+    } else {
+      print("No routes found in the response.");
+    }
+  }
+*/
+  //testing
   Future<void> _fetchRoute(LatLng src, LatLng dest) async {
     final routeApi = FlowmotionApi().getRoutingApi();
     final routePostRequest = RoutePostRequest((b) => b
@@ -454,11 +625,40 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
             _buildCongestionAndRecommendedBoxes(widget.congestionPoints, widget.allInstructions, context),
             SizedBox(height: 20),
             if (selectedIndex != null) ...[
-              FutureBuilder<List<double>>(
+              FutureBuilder<void>(
+                future: fetchGraphRatings(
+                    congestedCamera[selectedIndex!],
+                    'hour', // groupby
+                    formatToSingaporeTime(DateTime.now().subtract(Duration(hours: 10))),
+                    formatToSingaporeTime(DateTime.now())
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else {
+                    if (historyRatings.isNotEmpty) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildHourlyCongestionRatingGraph(historyRatings),
+                          SizedBox(height: 20), // spacing between graph and images
+                          ImageViewerWithSlider(data: historyRatings),
+                        ],
+                      );
+                    } else {
+                      return Text("No data available");
+                    }
+                  }
+                },
+              ),
+              SizedBox(height: 20),
+              FutureBuilder<void>(
                 future: fetchGraphRatings(
                     congestedCamera[selectedIndex!], // cameraID
-                    'hour', // groupby
-                    formatToSingaporeTime(DateTime.now().subtract(Duration(hours: 10))), // start time
+                    'day', // groupby
+                    formatToSingaporeTime(DateTime.now().subtract(Duration(days: 5))), // start time
                     formatToSingaporeTime(DateTime.now()) // end time
                 ),
                 builder: (context, snapshot) {
@@ -466,37 +666,17 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                     return CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
-                  } else if (snapshot.hasData) {
-                    List<double> hourlyData = snapshot.data!;
-                    // Display your graphs or other UI here
-                    return _buildHourlyCongestionRatingGraph(hourlyData);
                   } else {
-                    return Text("No data available");
+                    // Use historyRatings, which should contain the updated List<RatingPoint> after fetchGraphRatings completes
+                    if (historyRatings.isNotEmpty) {
+                      return _buildCongestionHistoryGraph(historyRatings);
+                    } else {
+                      return Text("No data available");
+                    }
                   }
                 },
               ),
-              SizedBox(height: 20),
-              FutureBuilder<List<double>>(
-                future: fetchGraphRatings(
-                    congestedCamera[selectedIndex!], // cameraId
-                    'day', // groupby for daily data
-                    formatToSingaporeTime(DateTime.now().subtract(Duration(days: 10))), // start time
-                    formatToSingaporeTime(DateTime.now())   // end time
-                ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else if (snapshot.hasData) {
-                    List<double> dailyData = snapshot.data!;
-                    return _buildCongestionHistoryGraph(dailyData);
-                  } else {
-                    return Text("No data available");
-                  }
-                },
-              ),
-            ],
+            ]
             // Additional rows for congestion ratings and history...
           ],
         ),
@@ -747,67 +927,128 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     );
   }
 
-
   // Placeholder methods for graphs
-  Widget _buildHourlyCongestionRatingGraph(List<double> data) {
-    return Container(
-      height: 200,
-      child: LineChart(
-        LineChartData(
-          gridData: FlGridData(show: false),
-          titlesData: FlTitlesData(show: true),
-          borderData: FlBorderData(show: true),
-          lineBarsData: [
-            LineChartBarData(
-              spots: data
-                  .asMap()
-                  .entries
-                  .map((e) => FlSpot(e.key.toDouble(), e.value))
-                  .toList(),
-              isCurved: true,
-              color: Colors.red,
-              belowBarData: BarAreaData(show: false),
+  Widget _buildHourlyCongestionRatingGraph(List<RatingPoint> data) {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                'Today\'s Hourly Congestion Graph',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                textAlign: TextAlign.center,
+              ),
             ),
-          ],
-        ),
-      ),
+          ),
+          Container(
+            height: 200,
+            child: LineChart(
+              LineChartData(
+                minY: 0,
+                maxY: 1,
+                gridData: FlGridData(show: false),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index >= 0 && index < data.length) {
+                          final formattedTime = _formatToHour(data[index].ratedOn);
+                          return Text(formattedTime);
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                ),
+                borderData: FlBorderData(show: true),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: data
+                        .asMap()
+                        .entries
+                        .map((entry) => FlSpot(entry.key.toDouble(), entry.value.value.toDouble()))
+                        .toList(),
+                    isCurved: true,
+                    color: Colors.red,
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ]
     );
   }
 
-  Widget _buildCongestionHistoryGraph(List<double> data) {
-    return Container(
-      height: 150,
-      child: BarChart(
-        BarChartData(
-          barGroups: data
-              .asMap()
-              .entries
-              .map((e) => BarChartGroupData(
-            x: e.key,
-            barRods: [
-              BarChartRodData(toY: e.value, color: Colors.blue),
-            ],
-          ))
-              .toList(),
-        ),
-      ),
+  // format DateTime to Xpm/Xam for hourly graphs
+  String _formatToHour(DateTime dateTime) {
+    return DateFormat.j().format(dateTime); // e.g., "1 PM"
+  }
+
+  Widget _buildCongestionHistoryGraph(List<RatingPoint> data) {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                'Historical Congestion Graph - Past 5 days',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          Container(
+            height: 150,
+            child: BarChart(
+              BarChartData(
+                minY: 0,
+                maxY: 1,
+                barGroups: data
+                    .asMap()
+                    .entries
+                    .map((entry) => BarChartGroupData(
+                  x: entry.key,
+                  barRods: [
+                    BarChartRodData(toY: entry.value.value.toDouble(), color: Colors.blue),
+                  ],
+                ))
+                    .toList(),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index >= 0 && index < data.length) {
+                          final formattedDate = _formatToDayMonth(data[index].ratedOn);
+                          return Text(formattedDate);
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        ]
     );
   }
 
-  Widget _buildTotalCongestionTimeGraph(List<String> imageUrls) {
-    return Container(
-      height: 200,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: imageUrls.length,
-        itemBuilder: (context, index) {
-          return Container(
-            width: 200,
-            margin: EdgeInsets.all(5),
-            child: Image.network(imageUrls[index]),
-          );
-        },
-      ),
-    );
+  // format DateTime to X month for history graph
+  String _formatToDayMonth(DateTime dateTime) {
+    return DateFormat('d MMM').format(dateTime); // e.g., "1 Nov"
   }
 }
