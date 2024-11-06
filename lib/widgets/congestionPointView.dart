@@ -5,6 +5,7 @@ import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
+import '../utilities/flowmotion_api_sgt.dart';
 
 /// Visualize Congestion Point identified by the given cameraId
 class CongestionPointView extends StatelessWidget {
@@ -13,7 +14,7 @@ class CongestionPointView extends StatelessWidget {
 
   Future<List<RatingPoint>> fetchGraphRatings(
       String cameraId, String groupby, DateTime begin, DateTime end) async {
-    final api = FlowmotionApi().getCongestionApi();
+    final api = FlowmotionApi().getCongestionApiSgt();
     print("Fetching for camera ID: $cameraId");
     print("End time: $end");
     print("Start time: $begin");
@@ -178,19 +179,14 @@ class CongestionPointView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime formatToSingaporeTime(DateTime date) {
-      return date.toUtc().add(Duration(hours: 8));
-    }
-
     return Container(
       child: Column(children: [
         FutureBuilder<List<RatingPoint>>(
           future: fetchGraphRatings(
               cameraId,
               'hour', // groupby
-              formatToSingaporeTime(
-                  DateTime.now().subtract(Duration(hours: 10))),
-              formatToSingaporeTime(DateTime.now())),
+              DateTime.now().subtract(Duration(hours: 10)),
+              DateTime.now()),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
@@ -218,9 +214,8 @@ class CongestionPointView extends StatelessWidget {
           future: fetchGraphRatings(
               cameraId,
               'day', // groupby
-              formatToSingaporeTime(
-                  DateTime.now().subtract(Duration(days: 5))), // start time
-              formatToSingaporeTime(DateTime.now()) // end time
+              DateTime.now().subtract(Duration(days: 5)), // start time
+              DateTime.now() // end time
               ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {

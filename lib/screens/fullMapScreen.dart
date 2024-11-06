@@ -1,5 +1,7 @@
 import 'dart:async'; // Import Timer
 import 'package:flowmotion/core/widget_keys.dart';
+import 'package:flowmotion/screens/congestionRating.dart';
+import 'package:flowmotion/utilities/flowmotion_api_sgt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -51,7 +53,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
   }
 
   Future<void> _fetchCongestionRatings() async {
-    final api = FlowmotionApi().getCongestionApi();
+    final api = FlowmotionApi().getCongestionApiSgt();
     try {
       final response = await api.congestionsGet();
 
