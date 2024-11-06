@@ -1,4 +1,5 @@
 import 'package:flowmotion/models/rating_point.dart';
+import 'package:flowmotion/utilities/flowmotion_api_sgt.dart';
 import 'package:flowmotion/widgets/congestionPointView.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import '../utilities/firebase_calls.dart';
 import '../widgets/navigationBar.dart';
 
 final FirebaseCalls firebaseCalls = FirebaseCalls();
-final api = FlowmotionApi().getCongestionApi();
 
 class CongestionRatingScreen extends StatefulWidget {
   final String savedPlaceLabel;
@@ -74,7 +74,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   }
 
   Future<void> fetchGraphRatings(String cameraId, String groupby, DateTime begin, DateTime end) async {
-    final api = FlowmotionApi().getCongestionApi();
+    final api = FlowmotionApi().getCongestionApiSgt();
     print("Fetching for camera ID: $cameraId");
     print("End time: $end");
     print("Start time: $begin");
@@ -112,7 +112,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   }
 
   Future<void> fetchAllRatings() async {
-    final api = FlowmotionApi().getCongestionApi();
+    final api = FlowmotionApi().getCongestionApiSgt();
     try {
       final response = await api.congestionsGet();
       print(response.data!.length);
