@@ -2,13 +2,12 @@ import 'dart:async'; // Import Timer
 import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flowmotion/screens/congestionRating.dart';
 import 'package:flowmotion/utilities/flowmotion_api_sgt.dart';
+import 'package:flowmotion/widgets/congestionPointView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import '../models/rating_point.dart';
 import '../utilities/location_service.dart';
-import '../widgets/congestionGraph.dart';
-import '../widgets/imageViewer.dart';
 import '../widgets/navigationBar.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
@@ -261,56 +260,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
 
                           // FutureBuilder for hourly graph
                           if (congestionRating.camera.id != null) ...[
-                            FutureBuilder<void>(
-                              future: fetchGraphRatings(
-                                  congestionRating.camera.id,
-                                  'hour', // groupby
-                                  formatToSingaporeTime(DateTime.now().subtract(Duration(hours: 10))),
-                                  formatToSingaporeTime(DateTime.now())
-                              ),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
-                                } else if (snapshot.hasError) {
-                                  return Text("Error: ${snapshot.error}");
-                                } else {
-                                  if (historyRatings.isNotEmpty) {
-                                    return Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        CongestionGraphs.buildHourlyCongestionRatingGraph(historyRatings),
-                                        SizedBox(height: 20), // spacing between graph and images
-                                        ImageViewerWithSlider(data: historyRatings),
-                                      ],
-                                    );
-                                  } else {
-                                    return Text("No data available");
-                                  }
-                                }
-                              },
-                            ),
-                            SizedBox(height: 20),
-                            FutureBuilder<void>(
-                              future: fetchGraphRatings(
-                                  congestionRating.camera.id, // cameraID
-                                  'day', // groupby
-                                  formatToSingaporeTime(DateTime.now().subtract(Duration(days: 5))), // start time
-                                  formatToSingaporeTime(DateTime.now()) // end time
-                              ),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
-                                } else if (snapshot.hasError) {
-                                  return Text("Error: ${snapshot.error}");
-                                } else {
-                                  if (historyRatings.isNotEmpty) {
-                                    return CongestionGraphs.buildCongestionHistoryGraph(historyRatings);
-                                  } else {
-                                    return Text("No data available");
-                                  }
-                                }
-                              },
-                            ),
+                            CongestionPointView(cameraId: congestionRating.camera.id)
                           ],
                           const SizedBox(height: 20),
                           TextButton(
