@@ -113,6 +113,9 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   List<String> congestedCamera = [];
   List<RatingPoint> historyRatings = [];
 
+  // Create a Set to store unique combinations of camera.id and step.name
+  Set<String> uniqueCameraStepCombination = Set();
+
   String time = ""; // Time as a new parameter
   String distance = ""; // Distance as a new parameter
 
@@ -201,83 +204,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
       print('Exception when calling CongestionApi->congestionsGet: $e\n');
     }
   }
-/* working
-  Future<void> _fetchRoute(LatLng src, LatLng dest) async {
-    final routeApi = FlowmotionApi().getRoutingApi();
-    final routePostRequest = RoutePostRequest((b) => b
-      ..src.update((srcBuilder) => srcBuilder
-        ..kind = RoutePostRequestSrcKindEnum.location // Indicate that location lat long is provided
-        ..location.update((locationBuilder) => locationBuilder
-          ..latitude = src.latitude // Set the latitude
-          ..longitude = src.longitude // Set the longitude
-        )
-      )
-      ..dest.update((destBuilder) => destBuilder
-        ..kind = RoutePostRequestDestKindEnum.location // Indicate that location lat long is provided
-        ..location.update((locationBuilder) => locationBuilder
-          ..latitude = dest.latitude // Set the destination latitude
-          ..longitude = dest.longitude // Set the destination longitude
-        )
-      )
-    );
 
-    try {
-      final response = await routeApi.routePost(routePostRequest: routePostRequest);
-      _processRouteResponse(response.data); // Pass the index to process the response
-
-    } catch (e) {
-      print('Exception when calling RoutingApi->routePost: $e\n');
-    }
-  }
-  void _processRouteResponse(RoutePost200Response? response) {
-    List<String> congestedSteps = [];
-    List<Map<String, String>> stepInfo = []; // Store time and distance for each step
-    List<String> congestedCamera = []; // List to hold cross markers
-
-    if (response != null && response.routes!.isNotEmpty) {
-      final route = response.routes!.first;
-
-      for (var step in route.steps) {
-        List<List<num>> stepPoints = decodePolyline(step.geometry);
-
-        if(step.congestion != null) {
-          //print(step.congestion);
-          setState(() {
-            congestedSteps.add(step.name);
-            congestedCamera.add(step.congestion!.camera.id);
-          });
-        }
-
-
-        // Check for congestion and capture step info
-        for (var point in stepPoints) {
-          if (point.length >= 2) {
-            LatLng latLngPoint = LatLng(
-                point[0].toDouble(), point[1].toDouble());
-            setState(() {
-              allStepPoints.add(latLngPoint);
-            });
-          }
-        }
-        // Collect the distance and time for each step
-        stepInfo.add({
-          'time': route.duration.toString(), // Or use formatted time
-          'distance': route.distance.toString(), // Or use formatted distance
-        });
-
-        setState(() {
-          _stepPoints = allStepPoints;
-          _stepInfo = stepInfo; // Store the step info for dynamic data in marker
-          _congestedCamera = congestedCamera;
-        });
-      }
-      print(congestedCamera);
-    } else {
-      print("No routes found in the response.");
-    }
-  }
-*/
-  //testing
   Future<void> _fetchRoute(LatLng src, LatLng dest) async {
     final routeApi = FlowmotionApi().getRoutingApi();
     final routePostRequest = RoutePostRequest((b) => b
@@ -331,34 +258,41 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   void _processRouteResponse(RoutePost200Response? response, bool isSecondary) {
     List<String> congestedSteps = [];
     List<String> congestedStepsNotOpt = [];
-    List<Map<String, String>> stepInfo = [
-    ]; // Store time and distance for each step
-    if (!isSecondary){
+    List<Map<String, String>> stepInfo = []; // Store time and distance for each step
+
+    if (!isSecondary) {
       if (response != null && response.routes!.isNotEmpty) {
         final route = response.routes!.first;
 
         for (var step in route.steps) {
           List<List<num>> stepPoints = decodePolyline(step.geometry);
 
-          if (step.congestion != null) {
-            //print(step.congestion);
-            setState(() {
-              congestedSteps.add(step.name);
-              congestedCamera.add(step.congestion!.camera.id);
-            });
-          }
+          if (step.congestion != null && step.name != "") {
+            // Check if the combination of camera.id and step.name is already in the Set
+            String cameraStepCombination = '${step.congestion!.camera.id}_${step.name}';
+            if (!uniqueCameraStepCombination.contains(cameraStepCombination)) {
+              // If not, add to the list and Set
+              setState(() {
+                congestedSteps.add(step.name);
 
+                uniqueCameraStepCombination.add(cameraStepCombination);
+                if (!congestedCamera.contains(step.congestion!.camera.id)) {
+                  congestedCamera.add(step.congestion!.camera.id);
+                }
+              });
+            }
+          }
 
           // Check for congestion and capture step info
           for (var point in stepPoints) {
             if (point.length >= 2) {
-              LatLng latLngPoint = LatLng(
-                  point[0].toDouble(), point[1].toDouble());
+              LatLng latLngPoint = LatLng(point[0].toDouble(), point[1].toDouble());
               setState(() {
                 allStepPoints.add(latLngPoint);
               });
             }
           }
+
           // Collect the distance and time for each step
           stepInfo.add({
             'time': route.duration.toString(), // Or use formatted time
@@ -367,8 +301,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
 
           setState(() {
             _stepPoints = allStepPoints;
-            _stepInfo =
-                stepInfo; // Store the step info for dynamic data in marker
+            _stepInfo = stepInfo; // Store the step info for dynamic data in marker
           });
         }
       } else {
@@ -382,18 +315,21 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
           List<List<num>> stepPointsNotOpt = decodePolyline(step.geometry);
 
           if (step.congestion != null) {
-            //print(step.congestion);
-            setState(() {
-              congestedStepsNotOpt.add(step.name);
-            });
+            // Check if the combination of camera.id and step.name is already in the Set
+            String cameraStepCombination = '${step.congestion!.camera.id}_${step.name}';
+            if (!uniqueCameraStepCombination.contains(cameraStepCombination)) {
+              // If not, add to the list and Set
+              setState(() {
+                congestedStepsNotOpt.add(step.name);
+                uniqueCameraStepCombination.add(cameraStepCombination);
+              });
+            }
           }
-
 
           // Check for congestion and capture step info
           for (var point in stepPointsNotOpt) {
             if (point.length >= 2) {
-              LatLng latLngPoint = LatLng(
-                  point[0].toDouble(), point[1].toDouble());
+              LatLng latLngPoint = LatLng(point[0].toDouble(), point[1].toDouble());
               setState(() {
                 allStepPointsNotOpt.add(latLngPoint);
               });
@@ -409,6 +345,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
       }
     }
   }
+
 
   @override
   void dispose() {
@@ -460,11 +397,12 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                 SizedBox(height: 10),
                 Text(
                   widget.savedPlaceLabel,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
-                    fontFamily: 'PressStart2P'
+                    fontFamily: 'PressStart2P',
                   ),
                 ),
                 SizedBox(height: 4),

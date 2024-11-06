@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng? _currentLocationMarker;
   List<Map<String, dynamic>> savedAddresses = [];
   List<Congestion> allCongestionRatings = [];
+  Set<String> uniqueCameraStepCombination = Set();
 
   late RoutePost200Response? routeData;
   List<LatLng> destinations = [LatLng(1.3521, 103.8198), LatLng(1.3656412, 103.8726954), LatLng(1.3521, 103.8198)];
@@ -171,11 +172,15 @@ class _HomeScreenState extends State<HomeScreen> {
         // Decode the step points to List<List<num>>
         List<List<num>> stepPoints = decodePolyline(step.geometry);
 
-        if(step.congestion != null) {
-          //print(step.congestion);
-          setState(() {
-            currentRouteData.congestionPoints.add(step.name);
-          });
+        if(step.congestion != null && step.name != "") {
+          String cameraStepCombination = '${step.congestion!.camera.id}_${step.name}';
+
+          // Check if the combination is unique and process
+          if (!uniqueCameraStepCombination.contains(cameraStepCombination)) {
+            setState(() {
+              currentRouteData.congestionPoints.add(step.name);
+            });
+          }
         }
 
         // Convert each step point (List<num>) to LatLng
@@ -268,33 +273,6 @@ class _HomeScreenState extends State<HomeScreen> {
       print('No current user.');
     }
   }
-
-
-  // Helper function to check if a point is near any congestion marker
-  bool _isPointNearCongestion(LatLng stepPoint) {
-    const double proximityThreshold = 40; // Define a threshold for proximity (adjust this value based on your needs)
-
-    for (var congestionRating in allCongestionRatings) {
-      LatLng markerLocation = LatLng(
-        congestionRating.camera.location.latitude,
-        congestionRating.camera.location.longitude,
-      );
-
-      // Calculate the distance between the step point and the congestion marker
-      double distance = Distance().as(
-        LengthUnit.Meter,
-        stepPoint,
-        markerLocation,
-      );
-
-      if (distance <= proximityThreshold) {
-        return true; // Return true if the step point is near a congestion marker
-      }
-    }
-
-    return false; // Return false if no congestion marker is close enough
-  }
-
 
   Future<void> fetchAllRatings() async {
     setState(() {
