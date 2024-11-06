@@ -1,6 +1,7 @@
 import 'package:flowmotion/widgets/pdfViewer.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../core/widget_keys.dart';
 import '../widgets/navigationBar.dart';
@@ -165,10 +166,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       borderSide: BorderSide.none,
                                     ),
                                   ),
-                                  onSubmitted: (value) {
-                                    setState(() {
-                                      addresses[index]["label"] = value;
-                                    });
+                                  onChanged: (value1) {
+                                      addresses[index]["label"] = value1;
                                   },
                                 ),
                                 SizedBox(height: 8),
@@ -194,10 +193,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             borderSide: BorderSide.none,
                                           ),
                                         ),
-                                        onSubmitted: (value) {
-                                          setState(() {
-                                            addresses[index]["postalCode"] = value;
-                                          });
+                                        onChanged: (value2) {
+                                            addresses[index]["postalCode"] = value2;
                                         },
                                       ),
                                     ),
@@ -221,10 +218,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             borderSide: BorderSide.none,
                                           ),
                                         ),
-                                        onSubmitted: (value) {
-                                          setState(() {
-                                            addresses[index]["address"] = value;
-                                          });
+                                        onChanged: (value3) {
+                                            addresses[index]["address"] = value3;
                                         },
                                       ),
                                     ),
@@ -264,7 +259,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(height: 16),
                     // Save changes button
                     Center(
-                      child: ElevatedButton(
+                      child: AnimatedButton(
+                        height: 60,
+                        width: 180,
+                        text: 'SAVE',
+                        isReverse: true,
+                        selectedTextColor: Colors.red,
+                        transitionType: TransitionType.LEFT_TO_RIGHT,
+                        backgroundColor: Colors.red,
+                        borderColor: Colors.white,
+                        borderRadius: 50,
+                        borderWidth: 2,
+                        onPress: () async {
+                          // Remove empty addresses
+                          _removeEmptyAddresses();
+
+                          bool allValid = true; // Track if all postal codes are valid
+
+                          // Loop through addresses to validate postal codes and fetch coordinates
+                          print(addresses);
+                          for (var address in addresses) {
+                            if (address["postalCode"]?.isNotEmpty == true) {
+                              // Fetch coordinates for valid postal code
+                              Map<String, double?> coordinates = await _validateAndFetchCoordinates(address["postalCode"]);
+
+                              // Check if coordinates are null, indicating an invalid postal code
+                              if (coordinates['latitude'] == null || coordinates['longitude'] == null) {
+                                allValid = false;
+                                break; // Stop further processing if an invalid postal code is found
+                              } else {
+                                // Add coordinates if they were successfully retrieved
+                                address["latitude"] = coordinates['latitude'];
+                                address["longitude"] = coordinates['longitude'];
+                              }
+                            }
+                          }
+
+                          if (allValid) {
+                            // Save changes if all postal codes and coordinates are valid
+                            try {
+                              await _saveChanges(); // Call save changes method
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Addresses saved successfully!')),
+                              );
+                            } catch (error) {
+                              // Handle any errors here
+                              print('Failed to save addresses: $error');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Failed to save addresses. Please try again.')),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                      /*child: ElevatedButton(
                         onPressed: () async {
                           // Remove empty addresses
                           _removeEmptyAddresses();
@@ -316,7 +364,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                      ),
+                      ),*/
                     )
 
                   ],
