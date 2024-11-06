@@ -277,7 +277,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           bool allValid = true; // Track if all postal codes are valid
 
                           // Loop through addresses to validate postal codes and fetch coordinates
-                          print(addresses);
                           for (var address in addresses) {
                             if (address["postalCode"]?.isNotEmpty == true) {
                               // Fetch coordinates for valid postal code
@@ -312,59 +311,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }
                         },
                       ),
-                      /*child: ElevatedButton(
-                        onPressed: () async {
-                          // Remove empty addresses
-                          _removeEmptyAddresses();
-
-                          bool allValid = true; // Track if all postal codes are valid
-
-                          // Loop through addresses to validate postal codes and fetch coordinates
-                          for (var address in addresses) {
-                            if (address["postalCode"]?.isNotEmpty == true) {
-                              // Fetch coordinates for valid postal code
-                              Map<String, double?> coordinates = await _validateAndFetchCoordinates(address["postalCode"]);
-
-                              // Check if coordinates are null, indicating an invalid postal code
-                              if (coordinates['latitude'] == null || coordinates['longitude'] == null) {
-                                allValid = false;
-                                break; // Stop further processing if an invalid postal code is found
-                              } else {
-                                // Add coordinates if they were successfully retrieved
-                                address["latitude"] = coordinates['latitude'];
-                                address["longitude"] = coordinates['longitude'];
-                              }
-                            }
-                          }
-
-                          if (allValid) {
-                            // Save changes if all postal codes and coordinates are valid
-                            try {
-                              await _saveChanges(); // Call save changes method
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Addresses saved successfully!')),
-                              );
-                            } catch (error) {
-                              // Handle any errors here
-                              print('Failed to save addresses: $error');
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Failed to save addresses. Please try again.')),
-                              );
-                            }
-                          }
-                        },
-                        child: Text(
-                          'Save Changes',
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                          backgroundColor: Color(0xFFD4543C),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),*/
                     )
 
                   ],
