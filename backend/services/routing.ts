@@ -127,6 +127,10 @@ export class RoutingSvc {
 
     // Handle response failure
     if (!response.ok) {
+      if(r["code"] === "NoRoute") {
+        // no route found
+        throw new NotFoundError("Not route found between given locations.");
+      }
       throw new Error(
         `OSRM ${url.pathname} request failed with error: ${r["code"]}: ${r["message"]}`,
       );
