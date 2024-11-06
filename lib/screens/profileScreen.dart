@@ -1,5 +1,7 @@
+import 'package:flowmotion/widgets/pdfViewer.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../core/widget_keys.dart';
 import '../widgets/navigationBar.dart';
 import '../utilities/firebase_calls.dart';
@@ -85,6 +87,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           GestureDetector(
                             onTap: () {
                               // Open the user manual (implement this as per your app's requirements)
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => PdfViewer()));
+
                             },
                             child: Text(
                               'Open User Manual',
@@ -393,5 +397,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-
 }

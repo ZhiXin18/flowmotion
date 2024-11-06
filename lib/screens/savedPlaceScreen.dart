@@ -34,8 +34,8 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
   bool _termsAccepted = false;
   bool _notificationsAllowed = false;
   List<Map<String, dynamic>> savedAddresses = [
-    {'label': '','postalCode': '', 'address': '', 'city': '', 'state': '', 'countryCode': '', 'deleted': false},
-    {'label': '','postalCode': '', 'address': '', 'city': '', 'state': '', 'countryCode': '', 'deleted': false}
+    {'label': 'Home','postalCode': '', 'address': '', 'city': '', 'state': '', 'countryCode': '', 'deleted': false},
+    {'label': 'Work','postalCode': '', 'address': '', 'city': '', 'state': '', 'countryCode': '', 'deleted': false}
   ]; // Initialize with matching number of items
 
   void _addAddress() async {
