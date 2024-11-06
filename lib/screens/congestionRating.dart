@@ -1,22 +1,17 @@
-import 'package:flowmotion/widgets/congestionGraph.dart';
-import 'package:flowmotion/widgets/glowingUserMarker.dart';
+import 'package:flowmotion/models/rating_point.dart';
+import 'package:flowmotion/utilities/flowmotion_api_sgt.dart';
+import 'package:flowmotion/widgets/congestionPointView.dart';
+import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import 'package:latlong2/latlong.dart';
-import '../models/rating_point.dart';
-import '../models/route_data.dart';
+
 import '../models/congestion_rating.dart';
 import '../utilities/firebase_calls.dart';
-import 'package:flowmotion_api/flowmotion_api.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
-
-import '../widgets/imageViewer.dart';
 import '../widgets/navigationBar.dart';
 
 final FirebaseCalls firebaseCalls = FirebaseCalls();
-final api = FlowmotionApi().getCongestionApi();
 
 class CongestionRatingScreen extends StatefulWidget {
   final String savedPlaceLabel;
@@ -79,7 +74,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   }
 
   Future<void> fetchGraphRatings(String cameraId, String groupby, DateTime begin, DateTime end) async {
-    final api = FlowmotionApi().getCongestionApi();
+    final api = FlowmotionApi().getCongestionApiSgt();
     print("Fetching for camera ID: $cameraId");
     print("End time: $end");
     print("Start time: $begin");
@@ -117,7 +112,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
   }
 
   Future<void> fetchAllRatings() async {
-    final api = FlowmotionApi().getCongestionApi();
+    final api = FlowmotionApi().getCongestionApiSgt();
     try {
       final response = await api.congestionsGet();
       print(response.data!.length);
@@ -380,37 +375,33 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                       ..._buildMarkers(), // Existing markers
                     ],
                   ),
-                  PolylineLayer(
-                    polylines: [
-                      Polyline(
-                        points: _stepPointsNotOpt, // This is now correctly a List<LatLng>
-                        strokeWidth: 4.0,
-                        color: Colors.blue,
-                      ),
-                      Polyline(
-                        points: _stepPoints, // This is now correctly a List<LatLng>
-                        strokeWidth: 4.0,
-                        color: Colors.green,
-                      ),
-                    ],
-                  ),
                   if (widget.currentLocationMarker != null)
                     MarkerLayer(markers: [
                       Marker(
                         point: widget.currentLocationMarker!,
-                        width: 30,
-                        height: 30,
-                        child: GlowingUserMarker()
+                        width: 55,
+                        height: 55,
+                        child: const Icon(
+                          Icons.location_pin,
+                          size: 30,
+                          color: Colors.red,
+                        ),
                       ),
                       Marker(
                         point: _stepPoints.isNotEmpty
-                            ? LatLng(_stepPoints[4].latitude, _stepPoints[4].longitude + 0.0004) // Offset longitude to the right
+                            ? LatLng(_stepPoints[2].latitude, _stepPoints[2].longitude + 0.0003) // Offset longitude to the right
                             : widget.initialCenter,
                         width: 80, // Overall marker width
                         height: 60, // Overall marker height
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
+                            // Location pin icon
+                            const Icon(
+                              Icons.location_pin,
+                              size: 30,
+                              color: Colors.red,
+                            ),
                             // Custom time-distance label above the pin with dynamic sizing
                             Positioned(
                               top: 0, // Position above the pin
@@ -456,6 +447,9 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                           ],
                         ),
                       ),
+
+
+
                   Marker(
                         point: widget.initialDestination,
                         width: 60,
@@ -467,6 +461,20 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                         ),
                       ),
                     ]),
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: _stepPointsNotOpt, // This is now correctly a List<LatLng>
+                        strokeWidth: 4.0,
+                        color: Colors.blue,
+                      ),
+                      Polyline(
+                        points: _stepPoints, // This is now correctly a List<LatLng>
+                        strokeWidth: 4.0,
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -474,60 +482,8 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
 
             _buildCongestionAndRecommendedBoxes(widget.congestionPoints, widget.allInstructions, context),
             SizedBox(height: 20),
-            if (selectedIndex != null) ...[
-              FutureBuilder<void>(
-                future: fetchGraphRatings(
-                    congestedCamera[selectedIndex!],
-                    'hour', // groupby
-                    formatToSingaporeTime(DateTime.now().subtract(Duration(hours: 10))),
-                    formatToSingaporeTime(DateTime.now())
-                ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else {
-                    if (historyRatings.isNotEmpty) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CongestionGraphs.buildHourlyCongestionRatingGraph(historyRatings),
-                          SizedBox(height: 20), // spacing between graph and images
-                          ImageViewerWithSlider(data: historyRatings),
-                        ],
-                      );
-                    } else {
-                      return Text("No data available");
-                    }
-                  }
-                },
-              ),
-              SizedBox(height: 20),
-              FutureBuilder<void>(
-                future: fetchGraphRatings(
-                    congestedCamera[selectedIndex!], // cameraID
-                    'day', // groupby
-                    formatToSingaporeTime(DateTime.now().subtract(Duration(days: 5))), // start time
-                    formatToSingaporeTime(DateTime.now()) // end time
-                ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else {
-                    // Use historyRatings, which should contain the updated List<RatingPoint> after fetchGraphRatings completes
-                    if (historyRatings.isNotEmpty) {
-                      return CongestionGraphs.buildCongestionHistoryGraph(historyRatings);
-                    } else {
-                      return Text("No data available");
-                    }
-                  }
-                },
-              ),
-            ]
-            // Additional rows for congestion ratings and history...
+            if (selectedIndex != null) 
+              CongestionPointView(cameraId: congestedCamera[selectedIndex!])
           ],
         ),
       ),

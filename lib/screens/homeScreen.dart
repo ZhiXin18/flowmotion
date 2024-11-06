@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flowmotion/screens/fullMapScreen.dart';
+import 'package:flowmotion/utilities/flowmotion_api_sgt.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -280,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _isFetchingData = true; // Start fetching data
     });
 
-    final api = FlowmotionApi().getCongestionApi();
+    final api = FlowmotionApi().getCongestionApiSgt();
     try {
       final response = await api.congestionsGet();
 
