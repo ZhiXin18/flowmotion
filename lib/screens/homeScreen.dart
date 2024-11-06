@@ -8,9 +8,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import '../core/widget_keys.dart';
 import '../firebase_options.dart';
-import '../models/RouteData.dart';
+import '../models/route_data.dart';
 import '../utilities/firebase_calls.dart';
 import '../utilities/location_service.dart';
+import '../widgets/glowingUserMarker.dart';
 import '../widgets/navigationBar.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -396,14 +397,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   markers: [
                     Marker(
                       point: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
-                      width: 60,
-                      height: 60,
+                      width: 30,
+                      height: 30,
                       alignment: Alignment.centerLeft,
-                      child: Icon(
-                        Icons.location_pin,
-                        size: 30,
-                        color: Colors.red,
-                      ),
+                      child: GlowingUserMarker(),
                     ),
                     ..._buildMarkers(), // Add congestion markers to the map
                   ],
@@ -515,17 +512,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                     ),
+                    PolylineLayer(
+                      polylines: [
+                        Polyline(
+                          points: routeDataList[index].stepPoints, // This is now correctly a List<LatLng>
+                          strokeWidth: 4.0,
+                          color: Colors.green,
+                        ),
+                      ],
+                    ),
                     MarkerLayer(
                       markers: [
                         Marker(
                           point: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
-                          width: 60,
-                          height: 60,
-                          child: const Icon(
-                            Icons.location_pin,
-                            size: 30,
-                            color: Colors.red,
-                          ),
+                          width: 30,
+                          height: 30,
+                          child: GlowingUserMarker()
                         ),
                         Marker(
                           point: destination != null ? destination : _initialDestination,
@@ -539,15 +541,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    PolylineLayer(
-                      polylines: [
-                        Polyline(
-                          points: routeDataList[index].stepPoints, // This is now correctly a List<LatLng>
-                          strokeWidth: 4.0,
-                          color: Colors.green,
-                        ),
-                      ],
-                    ),
+
                   ],
                 ),
               ),

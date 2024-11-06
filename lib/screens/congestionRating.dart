@@ -1,14 +1,18 @@
+import 'package:flowmotion/widgets/congestionGraph.dart';
+import 'package:flowmotion/widgets/glowingUserMarker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import 'package:latlong2/latlong.dart';
-import '../models/RouteData.dart';
+import '../models/rating_point.dart';
+import '../models/route_data.dart';
 import '../models/congestion_rating.dart';
 import '../utilities/firebase_calls.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 
+import '../widgets/imageViewer.dart';
 import '../widgets/navigationBar.dart';
 
 final FirebaseCalls firebaseCalls = FirebaseCalls();
@@ -35,68 +39,6 @@ class CongestionRatingScreen extends StatefulWidget {
 
   @override
   _CongestionRatingScreenState createState() => _CongestionRatingScreenState();
-}
-
-class ImageViewerWithSlider extends StatefulWidget {
-  final List<RatingPoint> data;
-  ImageViewerWithSlider({required this.data});
-
-  @override
-  _ImageViewerWithSliderState createState() => _ImageViewerWithSliderState();
-}
-
-class _ImageViewerWithSliderState extends State<ImageViewerWithSlider> {
-  double _currentSliderValue = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.data.isEmpty) {
-      return Text("No images available");
-    }
-
-    // Get the current RatingPoint based on the slider value
-    int currentIndex = _currentSliderValue.toInt();
-    RatingPoint currentRatingPoint = widget.data[currentIndex];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Display the image
-        Container(
-          height: 200,
-          width: 200,
-          margin: EdgeInsets.all(5),
-          child: Image.network(currentRatingPoint.imageUrls, fit: BoxFit.cover),
-        ),
-
-        // Display the time
-        Text(
-          "Time: ${currentRatingPoint.ratedOn.hour}:${currentRatingPoint.ratedOn.minute}",
-          style: TextStyle(fontSize: 16),
-        ),
-
-        // Slider to change the image based on the time
-        Slider(
-          value: _currentSliderValue,
-          min: 0,
-          max: (widget.data.length - 1).toDouble(),
-          divisions: widget.data.length - 1,
-          label: "Time: ${currentRatingPoint.ratedOn.hour}:${currentRatingPoint.ratedOn.minute}",
-          onChanged: (double value) {
-            setState(() {
-              _currentSliderValue = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class RatingPoint {
-  final DateTime ratedOn;
-  final num value;
-  final String imageUrls;
-  RatingPoint({required this.ratedOn, required this.value, required this.imageUrls});
 }
 
 class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
@@ -438,33 +380,37 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                       ..._buildMarkers(), // Existing markers
                     ],
                   ),
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: _stepPointsNotOpt, // This is now correctly a List<LatLng>
+                        strokeWidth: 4.0,
+                        color: Colors.blue,
+                      ),
+                      Polyline(
+                        points: _stepPoints, // This is now correctly a List<LatLng>
+                        strokeWidth: 4.0,
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
                   if (widget.currentLocationMarker != null)
                     MarkerLayer(markers: [
                       Marker(
                         point: widget.currentLocationMarker!,
-                        width: 55,
-                        height: 55,
-                        child: const Icon(
-                          Icons.location_pin,
-                          size: 30,
-                          color: Colors.red,
-                        ),
+                        width: 30,
+                        height: 30,
+                        child: GlowingUserMarker()
                       ),
                       Marker(
                         point: _stepPoints.isNotEmpty
-                            ? LatLng(_stepPoints[2].latitude, _stepPoints[2].longitude + 0.0003) // Offset longitude to the right
+                            ? LatLng(_stepPoints[4].latitude, _stepPoints[4].longitude + 0.0004) // Offset longitude to the right
                             : widget.initialCenter,
                         width: 80, // Overall marker width
                         height: 60, // Overall marker height
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            // Location pin icon
-                            const Icon(
-                              Icons.location_pin,
-                              size: 30,
-                              color: Colors.red,
-                            ),
                             // Custom time-distance label above the pin with dynamic sizing
                             Positioned(
                               top: 0, // Position above the pin
@@ -510,9 +456,6 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                           ],
                         ),
                       ),
-
-
-
                   Marker(
                         point: widget.initialDestination,
                         width: 60,
@@ -524,20 +467,6 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                         ),
                       ),
                     ]),
-                  PolylineLayer(
-                    polylines: [
-                      Polyline(
-                        points: _stepPointsNotOpt, // This is now correctly a List<LatLng>
-                        strokeWidth: 4.0,
-                        color: Colors.blue,
-                      ),
-                      Polyline(
-                        points: _stepPoints, // This is now correctly a List<LatLng>
-                        strokeWidth: 4.0,
-                        color: Colors.green,
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -563,7 +492,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildHourlyCongestionRatingGraph(historyRatings),
+                          CongestionGraphs.buildHourlyCongestionRatingGraph(historyRatings),
                           SizedBox(height: 20), // spacing between graph and images
                           ImageViewerWithSlider(data: historyRatings),
                         ],
@@ -590,7 +519,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                   } else {
                     // Use historyRatings, which should contain the updated List<RatingPoint> after fetchGraphRatings completes
                     if (historyRatings.isNotEmpty) {
-                      return _buildCongestionHistoryGraph(historyRatings);
+                      return CongestionGraphs.buildCongestionHistoryGraph(historyRatings);
                     } else {
                       return Text("No data available");
                     }
@@ -846,130 +775,5 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         ],
       ),
     );
-  }
-
-  // Placeholder methods for graphs
-  Widget _buildHourlyCongestionRatingGraph(List<RatingPoint> data) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Today\'s Hourly Congestion Graph',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Container(
-            height: 200,
-            child: LineChart(
-              LineChartData(
-                minY: 0,
-                maxY: 1,
-                gridData: FlGridData(show: false),
-                titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: true),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        final index = value.toInt();
-                        if (index >= 0 && index < data.length) {
-                          final formattedTime = _formatToHour(data[index].ratedOn);
-                          return Text(formattedTime);
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  ),
-                ),
-                borderData: FlBorderData(show: true),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: data
-                        .asMap()
-                        .entries
-                        .map((entry) => FlSpot(entry.key.toDouble(), entry.value.value.toDouble()))
-                        .toList(),
-                    isCurved: true,
-                    color: Colors.red,
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                ],
-              ),
-            ),
-          )
-        ]
-    );
-  }
-
-  // format DateTime to Xpm/Xam for hourly graphs
-  String _formatToHour(DateTime dateTime) {
-    return DateFormat.j().format(dateTime); // e.g., "1 PM"
-  }
-
-  Widget _buildCongestionHistoryGraph(List<RatingPoint> data) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Historical Congestion Graph - Past 5 days',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Container(
-            height: 150,
-            child: BarChart(
-              BarChartData(
-                minY: 0,
-                maxY: 1,
-                barGroups: data
-                    .asMap()
-                    .entries
-                    .map((entry) => BarChartGroupData(
-                  x: entry.key,
-                  barRods: [
-                    BarChartRodData(toY: entry.value.value.toDouble(), color: Colors.blue),
-                  ],
-                ))
-                    .toList(),
-                titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: true),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        final index = value.toInt();
-                        if (index >= 0 && index < data.length) {
-                          final formattedDate = _formatToDayMonth(data[index].ratedOn);
-                          return Text(formattedDate);
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          )
-        ]
-    );
-  }
-
-  // format DateTime to X month for history graph
-  String _formatToDayMonth(DateTime dateTime) {
-    return DateFormat('d MMM').format(dateTime); // e.g., "1 Nov"
   }
 }

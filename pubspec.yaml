@@ -55,6 +55,7 @@ dependencies:
   fl_chart: ^0.69.0
   syncfusion_flutter_pdfviewer: ^27.1.58
   flutter_animated_button: ^2.0.3
+  avatar_glow: ^3.0.1
 
   flowmotion_api:
     path: ./packages/flowmotion_api

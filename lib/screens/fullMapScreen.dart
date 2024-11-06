@@ -3,7 +3,10 @@ import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
+import '../models/rating_point.dart';
 import '../utilities/location_service.dart';
+import '../widgets/congestionGraph.dart';
+import '../widgets/imageViewer.dart';
 import '../widgets/navigationBar.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
@@ -22,6 +25,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
   LatLng _initialCenter =
   LatLng(1.3402, 103.6755); // Default location (Singapore)
   LatLng? _currentLocationMarker; // To hold the user location for the marker
+  List<RatingPoint> historyRatings = [];
 
   // Add MapController
   late final MapController _mapController;
@@ -63,6 +67,45 @@ class _FullMapScreenState extends State<FullMapScreen> {
     }
   }
 
+  Future<void> fetchGraphRatings(String cameraId, String groupby, DateTime begin, DateTime end) async {
+    final api = FlowmotionApi().getCongestionApi();
+    print("Fetching for camera ID: $cameraId");
+    print("End time: $end");
+    print("Start time: $begin");
+    try {
+      final response = await api.congestionsGet(
+        cameraId: cameraId,
+        agg: 'avg',
+        groupby: groupby,
+        begin: begin,
+        end: end,
+      );
+      print("Raw response data: ${response.data}");
+
+      List<RatingPoint> ratingPoints = [];
+      if (response.data != null && response.data!.isNotEmpty) {
+        // Group the data by hour
+        Map<int, List<Map<String, dynamic>>> hourlyData = {};
+        for (var item in response.data!) {
+          DateTime ratedOn = item.rating.ratedOn;
+          num value = item.rating.value;
+          String imageUrl = item.camera.imageUrl;
+          int hour = ratedOn.hour;
+          ratingPoints.add(RatingPoint(
+            ratedOn: DateTime(begin.year, begin.month, begin.day, hour),
+            value: value,
+            imageUrls: imageUrl,
+          ));
+        };
+        historyRatings = ratingPoints;
+        print("Ratings fetched: $historyRatings");
+      }
+    } catch (e) {
+      print('Exception when calling CongestionApi->congestionsGet with parameters: $e\n');
+    }
+  }
+
+
   @override
   void dispose() {
     // Cancel the timer when the widget is disposed
@@ -95,6 +138,9 @@ class _FullMapScreenState extends State<FullMapScreen> {
         MarkerLayer(markers: _buildMarkers()),
       ],
     );
+  }
+  DateTime formatToSingaporeTime(DateTime date) {
+    return date.toUtc().add(Duration(hours: 8));
   }
 
   List<Marker> _buildMarkers() {
@@ -187,34 +233,93 @@ class _FullMapScreenState extends State<FullMapScreen> {
           height: 60,
           child: GestureDetector(
             onTap: () {
-              // Show dialog with the image URL when the marker is tapped
-              showDialog(
+              showModalBottomSheet(
                 context: context,
+                isScrollControlled: true, // Allows for a full-height modal
                 builder: (BuildContext context) {
-                  return AlertDialog(
-                    //title: Text("Congestion Rating: ${congestionRating.value}"),
-                    content: congestionRating.camera.imageUrl != null
-                        ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 10),
-                        Image.network(
-                          congestionRating.camera.imageUrl!,
-                          width: 250,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        ),
-                      ],
-                    )
-                        : Text("No image available"),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text("Close"),
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SingleChildScrollView( // Make the content scrollable
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+
+                          const SizedBox(height: 10),
+
+                          // Check if image URL is available
+                          congestionRating.camera.imageUrl != null
+                              ? Image.network(
+                            congestionRating.camera.imageUrl!,
+                            width: 250,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          )
+                              : Text("No image available"),
+                          const SizedBox(height: 10),
+
+                          // FutureBuilder for hourly graph
+                          if (congestionRating.camera.id != null) ...[
+                            FutureBuilder<void>(
+                              future: fetchGraphRatings(
+                                  congestionRating.camera.id,
+                                  'hour', // groupby
+                                  formatToSingaporeTime(DateTime.now().subtract(Duration(hours: 10))),
+                                  formatToSingaporeTime(DateTime.now())
+                              ),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  return Text("Error: ${snapshot.error}");
+                                } else {
+                                  if (historyRatings.isNotEmpty) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        CongestionGraphs.buildHourlyCongestionRatingGraph(historyRatings),
+                                        SizedBox(height: 20), // spacing between graph and images
+                                        ImageViewerWithSlider(data: historyRatings),
+                                      ],
+                                    );
+                                  } else {
+                                    return Text("No data available");
+                                  }
+                                }
+                              },
+                            ),
+                            SizedBox(height: 20),
+                            FutureBuilder<void>(
+                              future: fetchGraphRatings(
+                                  congestionRating.camera.id, // cameraID
+                                  'day', // groupby
+                                  formatToSingaporeTime(DateTime.now().subtract(Duration(days: 5))), // start time
+                                  formatToSingaporeTime(DateTime.now()) // end time
+                              ),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  return Text("Error: ${snapshot.error}");
+                                } else {
+                                  if (historyRatings.isNotEmpty) {
+                                    return CongestionGraphs.buildCongestionHistoryGraph(historyRatings);
+                                  } else {
+                                    return Text("No data available");
+                                  }
+                                }
+                              },
+                            ),
+                          ],
+                          const SizedBox(height: 20),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the modal
+                            },
+                            child: Text("Close"),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   );
                 },
               );
