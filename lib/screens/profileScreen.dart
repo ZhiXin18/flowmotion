@@ -41,8 +41,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
+    return Container(
+        decoration: BoxDecoration(
+        gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+        Colors.blue,
+        Color(0xFFEFF3F9), // Light Blue
+    Color(0xFFF2F2F2),
+    Colors.grey// Light Grey
+    ],
+    ),
+    ),
+
+    child: Scaffold(
+      backgroundColor: Colors.transparent,
       bottomNavigationBar: MyBottomNavigationBar(selectedIndexNavBar: 1),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -95,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               'Open User Manual',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.blue,
+                                color: Colors.red,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -320,6 +334,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         },
       ),
+    )
     );
   }
   // Function to remove addresses with blank fields

@@ -341,15 +341,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.blue,
+              Color(0xFFEFF3F9), // Light Blue
+              Color(0xFFF2F2F2),
+              Colors.grey// Light Grey
+            ],
+          ),
+        ),
+
+        child: Scaffold(
       key: WidgetKeys.homeScreen,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       bottomNavigationBar: MyBottomNavigationBar(selectedIndexNavBar: 0),
       body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(height: 50),
-            Text("Dashboard", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+            Text("Dashboard", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, fontFamily: 'PressStart2P')),
             SizedBox(height: 5),
             Text("Where would you like to go today?", style: TextStyle(fontSize: 16, color: Colors.black54)),
             SizedBox(height: 20),
@@ -374,6 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    )
     );
   }
 

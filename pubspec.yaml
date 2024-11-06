@@ -54,6 +54,7 @@ dependencies:
   google_polyline_algorithm: ^3.1.0
   fl_chart: ^0.69.0
   syncfusion_flutter_pdfviewer: ^27.1.58
+  flutter_animated_button: ^2.0.3
 
   flowmotion_api:
     path: ./packages/flowmotion_api
@@ -100,6 +101,14 @@ flutter:
   assets:
     - images/
     - asset/
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: fonts/Raleway-Regular.ttf
+        - asset: fonts/Raleway-Bold.ttf
+    - family: PressStart2P
+      fonts:
+        - asset: fonts/PressStart2P-Regular.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -83,6 +83,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         begin: begin,
         end: end,
       );
+      print(response.data);
       final ratings = response.data?.map((item) => item.rating as double).toList() ?? [];
       print("Ratings fetched: $ratings");
       return ratings;
@@ -256,7 +257,22 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     var time = _stepInfo.isNotEmpty ? double.parse(_stepInfo[0]['time']!) /60 : 0;
     var distance = _stepInfo.isNotEmpty ? double.parse(_stepInfo[0]['distance']!) /1000 : 0;
 
-    return Scaffold(
+    return Container(
+        decoration: BoxDecoration(
+        gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+        Colors.blue,
+        Color(0xFFEFF3F9), // Light Blue
+    Color(0xFFF2F2F2),
+    Colors.grey// Light Grey
+    ],
+    ),
+    ),
+
+    child: Scaffold(
+      backgroundColor: Colors.transparent,
       bottomNavigationBar: MyBottomNavigationBar(selectedIndexNavBar: 0),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
@@ -270,12 +286,14 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(height: 10),
                 Text(
                   widget.savedPlaceLabel,
                   style: TextStyle(
-                    fontSize: 40,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
+                    fontFamily: 'PressStart2P'
                   ),
                 ),
                 SizedBox(height: 4),
@@ -483,6 +501,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
           ],
         ),
       ),
+    )
     );
   }
 
