@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:latlong2/latlong.dart';
 
 class WidgetKeys {
   //splash screen widgets
@@ -41,9 +42,9 @@ class WidgetKeys {
   static Key addressField(int index) => Key('addressField_$index');
   static Key addressPostalCodeField(int index) => Key('addressPostalCodeField_$index');
 
-
   //home screen widgets
   static const Key homeScreen = Key('homeScreen');
   static const Key goMapButton = Key('goMapButton');
   static const Key fullMapScreen = Key('fullMapScreen');
+  static final savedPlaceCard = (int i) => Key("savedPlaceCard_${i}");
 }

@@ -45,11 +45,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Set<String> uniqueCameraStepCombination = Set();
 
   late RoutePost200Response? routeData;
-  List<LatLng> destinations = [LatLng(1.3521, 103.8198), LatLng(1.3656412, 103.8726954), LatLng(1.3521, 103.8198)];
+  List<LatLng> destinations = [
+    LatLng(1.3521, 103.8198),
+    LatLng(1.3656412, 103.8726954),
+    LatLng(1.3521, 103.8198)
+  ];
 
   late final MapController _mainMapController;
 
-  List<RouteData> routeDataList = []; // List to store route data for each destination
+  List<RouteData> routeDataList =
+      []; // List to store route data for each destination
   List<MapController> mapControllers = [];
 
   bool _isFetchingData = false; // Track if data is being fetched
@@ -60,7 +65,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _mainMapController = MapController();
     _initializeAddressesAndRoutes();
     fetchAllRatings();
-
   }
 
   // Create map controllers for each saved address
@@ -68,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Clear the list to avoid duplicates if this is called multiple times
     mapControllers.clear();
 
-    for (var address in savedAddresses) {
+    for (var _ in savedAddresses) {
       setState(() {
         mapControllers.add(MapController());
       });
@@ -81,8 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Use _initialCenter if _currentPosition is still null
     if (_currentPosition == null) {
-      print('Current position not available, using initial center: $_initialCenter');
-      _currentLocationMarker = _initialCenter; // Update the marker to the initial center
+      print(
+          'Current position not available, using initial center: $_initialCenter');
+      _currentLocationMarker =
+          _initialCenter; // Update the marker to the initial center
     } else {
       print('Current position obtained: $_currentPosition');
     }
@@ -109,53 +115,53 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } else {
       print('Failed to get location, marker will be set to initial center.');
-      _currentLocationMarker = _initialCenter; // Ensure the marker reflects the initial center
+      _currentLocationMarker =
+          _initialCenter; // Ensure the marker reflects the initial center
     }
 
     return _currentPosition;
   }
 
-
   Future<void> _fetchRoute(LatLng src, LatLng dest, int index) async {
     final routeApi = FlowmotionApi().getRoutingApi();
     final routePostRequest = RoutePostRequest((b) => b
       ..src.update((srcBuilder) => srcBuilder
-        ..kind = RoutePostRequestSrcKindEnum.location // Indicate that location lat long is provided
+        ..kind = RoutePostRequestSrcKindEnum
+            .location // Indicate that location lat long is provided
         ..location.update((locationBuilder) => locationBuilder
-          ..latitude = src.latitude // Set the latitude
-          ..longitude = src.longitude // Set the longitude
-        )
-      )
+              ..latitude = src.latitude // Set the latitude
+              ..longitude = src.longitude // Set the longitude
+            ))
       ..dest.update((destBuilder) => destBuilder
-        ..kind = RoutePostRequestDestKindEnum.location // Indicate that location lat long is provided
+        ..kind = RoutePostRequestDestKindEnum
+            .location // Indicate that location lat long is provided
         ..location.update((locationBuilder) => locationBuilder
-          ..latitude = dest.latitude // Set the destination latitude
-          ..longitude = dest.longitude // Set the destination longitude
-        )
-      )
-    );
+              ..latitude = dest.latitude // Set the destination latitude
+              ..longitude = dest.longitude // Set the destination longitude
+            )));
 
     try {
-      final response = await routeApi.routePost(routePostRequest: routePostRequest);
+      final response =
+          await routeApi.routePost(routePostRequest: routePostRequest);
       // Assuming routeDataList is defined and is an instance of a class that holds multiple RouteData
       RouteData routeData = RouteData(); // Create a new instance of RouteData
       routeData.routeResponse = response.data; // Store the entire response data
 
-      for(final route in routeData.routeResponse!.routes!) {
-        for(final step in route.steps) {
-          if(step.congestion != null) {
+      for (final route in routeData.routeResponse!.routes!) {
+        for (final step in route.steps) {
+          if (step.congestion != null) {
             //print(step.congestion);
           }
         }
-
       }
       // print(routeData.routeResponse);
       setState(() {
-        routeDataList.add(routeData); // Assuming routeDataList is a List<RouteData>
+        routeDataList
+            .add(routeData); // Assuming routeDataList is a List<RouteData>
       });
 
-      _processRouteResponse(routeData.routeResponse, index); // Pass the index to process the response
-
+      _processRouteResponse(routeData.routeResponse,
+          index); // Pass the index to process the response
     } catch (e) {
       print('Exception when calling RoutingApi->routePost: $e\n');
     }
@@ -185,12 +191,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // Convert each step point (List<num>) to LatLng
         for (var point in stepPoints) {
-          if (point.length >= 2) { // Ensure that we have enough data
+          if (point.length >= 2) {
+            // Ensure that we have enough data
             // Convert point to LatLng
-            LatLng latLngPoint = LatLng(point[0].toDouble(), point[1].toDouble());
+            LatLng latLngPoint =
+                LatLng(point[0].toDouble(), point[1].toDouble());
             setState(() {
-              currentRouteData.stepPoints.add(latLngPoint); // Add to the List<LatLng>
-
+              currentRouteData.stepPoints
+                  .add(latLngPoint); // Add to the List<LatLng>
             });
           }
 
@@ -232,7 +240,6 @@ class _HomeScreenState extends State<HomeScreen> {
             double? longitude = address['longitude'];
 
             if (latitude != null && longitude != null) {
-
               updatedAddresses.add({
                 'label': address['label'],
                 'address': address['address'],
@@ -240,7 +247,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 'coordinates': {'latitude': latitude, 'longitude': longitude},
               });
             } else {
-              print('No coordinates found for postal code: ${address['postalCode']}');
+              print(
+                  'No coordinates found for postal code: ${address['postalCode']}');
             }
           }
 
@@ -262,7 +270,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
             _fetchRoute(src, dest, i); // Call _fetchRoute
           }
-
         } else {
           print('User document does not exist.');
         }
@@ -283,9 +290,11 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final response = await api.congestionsGet();
 
-      if (mounted) { // Check if the widget is still mounted before calling setState
+      if (mounted) {
+        // Check if the widget is still mounted before calling setState
         setState(() {
-          allCongestionRatings = response.data!.toList(); // Convert Iterable to List
+          allCongestionRatings =
+              response.data!.toList(); // Convert Iterable to List
         });
       }
     } catch (e) {
@@ -302,8 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Marker> _buildMarkers() {
     // Create a list of markers
     List<Marker> markers = allCongestionRatings
-        .map((congestionRating) {
-    })
+        .map((congestionRating) {})
         .where((marker) => marker != null)
         .cast<Marker>()
         .toList(); // Filter out null markers and cast to List<Marker>
@@ -343,7 +351,8 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 50),
             Text("Dashboard", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, fontFamily: 'PressStart2P')),
             SizedBox(height: 5),
-            Text("Where would you like to go today?", style: TextStyle(fontSize: 16, color: Colors.black54)),
+            Text("Where would you like to go today?",
+                style: TextStyle(fontSize: 16, color: Colors.black54)),
             SizedBox(height: 20),
             _buildMainMapView(),
             SizedBox(height: 20),
@@ -357,7 +366,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               },
-              child: Text("View full map >", style: TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+              child: Text("View full map >",
+                  style: TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold)),
             ),
             SizedBox(height: 10),
             _buildSavedPlacesSection(),
@@ -374,7 +387,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(
+          color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
           SizedBox(height: 10),
@@ -384,7 +398,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: FlutterMap(
               mapController: _mainMapController,
               options: MapOptions(
-                initialCenter: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
+                initialCenter: _currentLocationMarker != null
+                    ? _currentLocationMarker!
+                    : _initialCenter,
                 initialZoom: 10,
               ),
               children: [
@@ -395,7 +411,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 MarkerLayer(
                   markers: [
                     Marker(
-                      point: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
+                      point: _currentLocationMarker != null
+                          ? _currentLocationMarker!
+                          : _initialCenter,
                       width: 60,
                       height: 60,
                       alignment: Alignment.centerLeft,
@@ -423,7 +441,8 @@ class _HomeScreenState extends State<HomeScreen> {
         Container(
           alignment: Alignment.centerLeft,
           margin: EdgeInsets.symmetric(horizontal: 20),
-          child: Text("Your saved places", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          child: Text("Your saved places",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
         SizedBox(height: 10),
         SingleChildScrollView(
@@ -438,8 +457,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     savedAddresses[i]['label'] ?? 'Saved Place',
                     mapControllers[i], // Use the corresponding map controller
                     LatLng(
-                      savedAddresses[i]['coordinates']?['latitude'] ?? _initialDestination.latitude,
-                      savedAddresses[i]['coordinates']?['longitude'] ?? _initialDestination.longitude,
+                      savedAddresses[i]['coordinates']?['latitude'] ??
+                          _initialDestination.latitude,
+                      savedAddresses[i]['coordinates']?['longitude'] ??
+                          _initialDestination.longitude,
                     ),
                     i,
                   ),
@@ -453,10 +474,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSavedPlaceCard(String title, MapController controller, LatLng destination, int index) {
+  Widget _buildSavedPlaceCard(
+      String title, MapController controller, LatLng destination, int index) {
     return GestureDetector(
+      key: WidgetKeys.savedPlaceCard(index),
       onTap: () {
-        print('Congestion Points for index $index: ${routeDataList[index].congestionPoints}');
+        print(
+            'Congestion Points for index $index: ${routeDataList[index].congestionPoints}');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -464,25 +488,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 savedPlaceLabel: title,
                 initialCenter: _currentPosition != null
                     ? LatLng(
-                  (_currentPosition!.latitude + _initialDestination.latitude) / 2,
-                  (_currentPosition!.longitude + _initialDestination.longitude) / 2,
-                )
+                        (_currentPosition!.latitude +
+                                _initialDestination.latitude) /
+                            2,
+                        (_currentPosition!.longitude +
+                                _initialDestination.longitude) /
+                            2,
+                      )
                     : LatLng(
-                  (_initialCenter.latitude + _initialDestination.latitude) / 2,
-                  (_initialCenter.longitude + _initialDestination.longitude) / 2,
-                ),
+                        (_initialCenter.latitude +
+                                _initialDestination.latitude) /
+                            2,
+                        (_initialCenter.longitude +
+                                _initialDestination.longitude) /
+                            2,
+                      ),
                 initialZoom: 9, // Pass the initial zoom level
-                currentLocationMarker: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
+                currentLocationMarker: _currentLocationMarker != null
+                    ? _currentLocationMarker!
+                    : _initialCenter,
                 initialDestination: destination ?? _initialDestination,
                 congestionPoints: routeDataList[index].congestionPoints,
-                allInstructions: routeDataList[index].instructions
-            ),
+                allInstructions: routeDataList[index].instructions),
           ),
         );
       },
       child: Container(
         width: 260,
-        decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(
+            color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: [
             Padding(
@@ -495,30 +529,42 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 120,
               width: double.infinity,
-              child: IgnorePointer( //make the map uninteractive
+              child: IgnorePointer(
+                //make the map uninteractive
                 child: FlutterMap(
                   mapController: controller,
                   options: MapOptions(
                     initialCenter: _currentPosition != null
                         ? LatLng(
-                      (_currentPosition!.latitude + _initialDestination.latitude) / 2,
-                      (_currentPosition!.longitude + _initialDestination.longitude) / 2,
-                    )
+                            (_currentPosition!.latitude +
+                                    _initialDestination.latitude) /
+                                2,
+                            (_currentPosition!.longitude +
+                                    _initialDestination.longitude) /
+                                2,
+                          )
                         : LatLng(
-                      (_initialCenter.latitude + _initialDestination.latitude) / 2,
-                      (_initialCenter.longitude + _initialDestination.longitude) / 2,
-                    ),
+                            (_initialCenter.latitude +
+                                    _initialDestination.latitude) /
+                                2,
+                            (_initialCenter.longitude +
+                                    _initialDestination.longitude) /
+                                2,
+                          ),
                     initialZoom: 10,
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      urlTemplate:
+                          'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                     ),
                     MarkerLayer(
                       markers: [
                         Marker(
-                          point: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
+                          point: _currentLocationMarker != null
+                              ? _currentLocationMarker!
+                              : _initialCenter,
                           width: 60,
                           height: 60,
                           child: const Icon(
@@ -528,7 +574,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Marker(
-                          point: destination != null ? destination : _initialDestination,
+                          point: destination != null
+                              ? destination
+                              : _initialDestination,
                           width: 60,
                           height: 60,
                           child: const Icon(
@@ -542,7 +590,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     PolylineLayer(
                       polylines: [
                         Polyline(
-                          points: routeDataList[index].stepPoints, // This is now correctly a List<LatLng>
+                          points: routeDataList[index]
+                              .stepPoints, // This is now correctly a List<LatLng>
                           strokeWidth: 4.0,
                           color: Colors.green,
                         ),
@@ -574,7 +623,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: "${routeDataList[index].congestionPoints.length}",
+                                  text:
+                                      "${routeDataList[index].congestionPoints.length}",
                                   style: TextStyle(
                                     fontSize: 30,
                                     fontWeight: FontWeight.bold,
@@ -632,13 +682,17 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: SingleChildScrollView(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(routeDataList[index].instructions.length, (listIndex) {
+                                  children: List.generate(
+                                      routeDataList[index].instructions.length,
+                                      (listIndex) {
                                     return Column(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
                                           child: Text(
-                                            routeDataList[index].instructions[listIndex],
+                                            routeDataList[index]
+                                                .instructions[listIndex],
                                             textAlign: TextAlign.start,
                                             style: const TextStyle(
                                               color: Colors.black,
@@ -646,13 +700,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                           ),
                                         ),
-                                        if (index < routeDataList[index].instructions.length - 1) // Avoid adding a divider after the last instruction
+                                        if (index <
+                                            routeDataList[index]
+                                                    .instructions
+                                                    .length -
+                                                1) // Avoid adding a divider after the last instruction
                                           const Divider(
-                                            color: Colors.grey, // You can customize the color
+                                            color: Colors
+                                                .grey, // You can customize the color
                                             thickness: 1,
-                                            height: 10, // Space between the text and the divider
-                                            indent: 20, // Adds padding to the left of the divider
-                                            endIndent: 20, // Adds padding to the right of the divider
+                                            height:
+                                                10, // Space between the text and the divider
+                                            indent:
+                                                20, // Adds padding to the left of the divider
+                                            endIndent:
+                                                20, // Adds padding to the right of the divider
                                           ),
                                       ],
                                     );
@@ -665,12 +727,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   )
-
                 ],
               ),
             ),
             SizedBox(height: 10),
-
           ],
         ),
       ),
