@@ -22,6 +22,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # tests are dependent on SGT timezone to run correctly
+      - uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Singapore"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
