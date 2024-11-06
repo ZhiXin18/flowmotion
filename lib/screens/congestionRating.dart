@@ -157,29 +157,12 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
           num value = item.rating.value;
           String imageUrl = item.camera.imageUrl;
           int hour = ratedOn.hour;
-
-          // Initialize an empty list for hour that don't exist
-          if (!hourlyData.containsKey(hour)) {
-            hourlyData[hour] = [];
-          }
-          hourlyData[hour]!.add({'value': value, 'imageUrl': imageUrl});
-        }
-
-        // Average for each hour + image URL
-        hourlyData.forEach((hour, entries) {
-          num totalValue = 0;
-          String firstImageUrl = entries[0]['imageUrl']; // First image URL of the hour
-          entries.forEach((entry) {
-            totalValue += entry['value'];
-          });
-          num averageValue = totalValue / entries.length; // Average value for the hour
           ratingPoints.add(RatingPoint(
             ratedOn: DateTime(begin.year, begin.month, begin.day, hour),
-            value: averageValue,
-            imageUrls: firstImageUrl,
+            value: value,
+            imageUrls: imageUrl,
           ));
-        });
-        ratingPoints.sort((a, b) => a.ratedOn.compareTo(b.ratedOn));
+        };
         historyRatings = ratingPoints;
         print("Ratings fetched: $historyRatings");
       }
