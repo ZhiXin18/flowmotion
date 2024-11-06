@@ -211,13 +211,6 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
             Expanded(
               child: TextField(
                 key: WidgetKeys.addressPostalCodeField(index),
-                onSubmitted: (value) {
-                  if (index < savedAddresses.length) {
-                    setState(() {
-                      savedAddresses[index]['postalCode'] = value;
-                    });
-                  }
-                },
                 onChanged: globals.testingActive
                     ? (value) {
                   if (index < savedAddresses.length) {
@@ -226,7 +219,10 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
                     });
                   }
                 }
-                    : null,
+                    : (value) {
+                if (index < savedAddresses.length) {
+                  savedAddresses[index]['postalCode'] = value;
+                }},
 
 
                 decoration: InputDecoration(
@@ -241,13 +237,6 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
             Expanded(
               child: TextField(
                 key: WidgetKeys.addressField(index),
-                onSubmitted: (value) {
-                  if (index < savedAddresses.length) {
-                    setState(() {
-                      savedAddresses[index]['address'] = value;
-                    });
-                  }
-                },
                 onChanged: globals.testingActive
                     ? (value) {
                   if (index < savedAddresses.length) {
@@ -256,7 +245,11 @@ class _SavedPlaceScreenState extends State<SavedPlaceScreen> {
                     });
                   }
                 }
-                    : null,
+                    : (value) {
+                  if (index < savedAddresses.length) {
+                      savedAddresses[index]['address'] = value;
+                  }
+                },
                 decoration: InputDecoration(
                   hintText: 'Building/Street/etc',
                   filled: true,
