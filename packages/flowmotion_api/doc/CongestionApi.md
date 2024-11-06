@@ -17,7 +17,7 @@ Method | HTTP request | Description
 
 Retrieve congestion data
 
-Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
+Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day. Aggregation will perform requested aggregation on `rating.value` and set `rating.rated_on` timestamp to align with groups. By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
 
 ### Example
 ```dart

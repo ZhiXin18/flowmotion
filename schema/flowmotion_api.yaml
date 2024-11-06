@@ -24,6 +24,7 @@ paths:
       summary: Retrieve congestion data
       description:
         Returns traffic congestion data inferred from traffic cameras. Optionally filter by camera ID, time range, aggregate by time, and group by hour or day.
+        Aggregation will perform requested aggregation on `rating.value` and set `rating.rated_on` timestamp to align with groups.
         By default, if no time range is specified in `begin`, `end` return only congestions ingested from the latest `updated_on` timestamp.
       parameters:
         - name: camera_id
@@ -240,7 +241,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "404":
-          description: No location found for one or more addresses.
+          description: No location found for one or more addresses or no route was found between the two given locations.a
           content:
             application/json:
               schema:
