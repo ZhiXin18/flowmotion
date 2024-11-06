@@ -1,16 +1,13 @@
 import 'package:flowmotion/models/rating_point.dart';
-import 'package:flowmotion/widgets/imageViewerWithSlider.dart';
+import 'package:flowmotion/widgets/congestionPointView.dart';
+import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import 'package:latlong2/latlong.dart';
-import '../models/RouteData.dart';
+
 import '../models/congestion_rating.dart';
 import '../utilities/firebase_calls.dart';
-import 'package:flowmotion_api/flowmotion_api.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
-
 import '../widgets/navigationBar.dart';
 
 final FirebaseCalls firebaseCalls = FirebaseCalls();
@@ -485,60 +482,8 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
 
             _buildCongestionAndRecommendedBoxes(widget.congestionPoints, widget.allInstructions, context),
             SizedBox(height: 20),
-            if (selectedIndex != null) ...[
-              FutureBuilder<void>(
-                future: fetchGraphRatings(
-                    congestedCamera[selectedIndex!],
-                    'hour', // groupby
-                    formatToSingaporeTime(DateTime.now().subtract(Duration(hours: 10))),
-                    formatToSingaporeTime(DateTime.now())
-                ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else {
-                    if (historyRatings.isNotEmpty) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildHourlyCongestionRatingGraph(historyRatings),
-                          SizedBox(height: 20), // spacing between graph and images
-                          ImageViewerWithSlider(data: historyRatings),
-                        ],
-                      );
-                    } else {
-                      return Text("No data available");
-                    }
-                  }
-                },
-              ),
-              SizedBox(height: 20),
-              FutureBuilder<void>(
-                future: fetchGraphRatings(
-                    congestedCamera[selectedIndex!], // cameraID
-                    'day', // groupby
-                    formatToSingaporeTime(DateTime.now().subtract(Duration(days: 5))), // start time
-                    formatToSingaporeTime(DateTime.now()) // end time
-                ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else {
-                    // Use historyRatings, which should contain the updated List<RatingPoint> after fetchGraphRatings completes
-                    if (historyRatings.isNotEmpty) {
-                      return _buildCongestionHistoryGraph(historyRatings);
-                    } else {
-                      return Text("No data available");
-                    }
-                  }
-                },
-              ),
-            ]
-            // Additional rows for congestion ratings and history...
+            if (selectedIndex != null) 
+              CongestionPointView(cameraId: congestedCamera[selectedIndex!])
           ],
         ),
       ),
@@ -786,130 +731,5 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
         ],
       ),
     );
-  }
-
-  // Placeholder methods for graphs
-  Widget _buildHourlyCongestionRatingGraph(List<RatingPoint> data) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Today\'s Hourly Congestion Graph',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Container(
-            height: 200,
-            child: LineChart(
-              LineChartData(
-                minY: 0,
-                maxY: 1,
-                gridData: FlGridData(show: false),
-                titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: true),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        final index = value.toInt();
-                        if (index >= 0 && index < data.length) {
-                          final formattedTime = _formatToHour(data[index].ratedOn);
-                          return Text(formattedTime);
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  ),
-                ),
-                borderData: FlBorderData(show: true),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: data
-                        .asMap()
-                        .entries
-                        .map((entry) => FlSpot(entry.key.toDouble(), entry.value.value.toDouble()))
-                        .toList(),
-                    isCurved: true,
-                    color: Colors.red,
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                ],
-              ),
-            ),
-          )
-        ]
-    );
-  }
-
-  // format DateTime to Xpm/Xam for hourly graphs
-  String _formatToHour(DateTime dateTime) {
-    return DateFormat.j().format(dateTime); // e.g., "1 PM"
-  }
-
-  Widget _buildCongestionHistoryGraph(List<RatingPoint> data) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Historical Congestion Graph - Past 5 days',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Container(
-            height: 150,
-            child: BarChart(
-              BarChartData(
-                minY: 0,
-                maxY: 1,
-                barGroups: data
-                    .asMap()
-                    .entries
-                    .map((entry) => BarChartGroupData(
-                  x: entry.key,
-                  barRods: [
-                    BarChartRodData(toY: entry.value.value.toDouble(), color: Colors.blue),
-                  ],
-                ))
-                    .toList(),
-                titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: true),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        final index = value.toInt();
-                        if (index >= 0 && index < data.length) {
-                          final formattedDate = _formatToDayMonth(data[index].ratedOn);
-                          return Text(formattedDate);
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          )
-        ]
-    );
-  }
-
-  // format DateTime to X month for history graph
-  String _formatToDayMonth(DateTime dateTime) {
-    return DateFormat('d MMM').format(dateTime); // e.g., "1 Nov"
   }
 }
