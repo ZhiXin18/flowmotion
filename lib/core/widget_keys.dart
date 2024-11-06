@@ -46,5 +46,17 @@ class WidgetKeys {
   static const Key homeScreen = Key('homeScreen');
   static const Key goMapButton = Key('goMapButton');
   static const Key fullMapScreen = Key('fullMapScreen');
-  static final savedPlaceCard = (int i) => Key("savedPlaceCard_${i}");
+  static final String savedPlaceCardPrefix = "savedPlaceCard_";
+  static final savedPlaceCard = (int i) => Key("${savedPlaceCardPrefix}${i}");
+
+  // congestion rating screen widgets
+  static const Key congestionMapScreen = Key("congestionRatingMapScreen");
+  static const Key congestionMapMarkers = Key("congestionRatingMapMarkers");
+  static const Key congestionMapRoute = Key("congestionRatingMapRoute");
+  static final String congestionMarkerPrefix = "congestionRatingCongestionMarker_";
+  static final congestionMarker = (int i) => Key("${congestionMarkerPrefix}${i}");
+  static final String congestionPointPrefix = "congestionRatingCongestionPoint_";
+  static final congestionPoint = (int i) => Key("${congestionPointPrefix}${i}");
+  static final String routeStepPrefix = "congestionRatingRouteStep_";
+  static final routeStep = (int i) => Key("${routeStepPrefix}${i}");
 }
