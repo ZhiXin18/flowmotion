@@ -93,8 +93,9 @@ app.get("/geocode/:postcode", async (req: Request, res: Response) => {
 
 // catchall error handler with json response
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error(err);
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+  // dump error and on
+  console.error("Server error: %j Caused by: %j", err, req);
   // format error
   res.status(err.status || 500).json({
     message: err.message,
