@@ -244,20 +244,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-
                           const SizedBox(height: 10),
-
-                          // Check if image URL is available
-                          congestionRating.camera.imageUrl != null
-                              ? Image.network(
-                            congestionRating.camera.imageUrl!,
-                            width: 250,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          )
-                              : Text("No image available"),
-                          const SizedBox(height: 10),
-
                           // FutureBuilder for hourly graph
                           if (congestionRating.camera.id != null) ...[
                             CongestionPointView(cameraId: congestionRating.camera.id)
