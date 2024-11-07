@@ -22,7 +22,7 @@ class GlowingUserMarker extends StatelessWidget {
                 'images/avatar.png',
                 height: 50,
               ),
-              radius: 30.0,
+              radius: 20.0,
             ),
           ),
         ),

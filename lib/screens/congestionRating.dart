@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
 import 'package:latlong2/latlong.dart';
-
 import '../models/congestion_rating.dart';
 import '../utilities/firebase_calls.dart';
+import '../widgets/glowingUserMarker.dart';
 import '../widgets/navigationBar.dart';
+import 'package:flowmotion/globals.dart' as globals;
+
 
 final FirebaseCalls firebaseCalls = FirebaseCalls();
 
@@ -401,7 +403,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                         point: widget.currentLocationMarker!,
                         width: 55,
                         height: 55,
-                        child: const Icon(
+                        child: !globals.testingActive? GlowingUserMarker() : Icon(
                           Icons.location_pin,
                           size: 30,
                           color: Colors.red,
@@ -409,7 +411,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                       ),
                       Marker(
                         point: _stepPoints.isNotEmpty
-                            ? LatLng(_stepPoints[2].latitude, _stepPoints[2].longitude + 0.0003) // Offset longitude to the right
+                            ? LatLng(_stepPoints[4].latitude, _stepPoints[4].longitude + 0.0003) // Offset longitude to the right
                             : widget.initialCenter,
                         width: 80, // Overall marker width
                         height: 60, // Overall marker height

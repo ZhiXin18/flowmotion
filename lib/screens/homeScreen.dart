@@ -417,7 +417,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 30,
                       height: 30,
                       alignment: Alignment.centerLeft,
-                      child: GlowingUserMarker(),
+                      child: !globals.testingActive? GlowingUserMarker() : Icon(Icons.location_pin, color: Colors.red,),
                     ),
                     ..._buildMarkers(), // Add congestion markers to the map
                   ],
@@ -570,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           point: _currentLocationMarker != null ? _currentLocationMarker! : _initialCenter,
                           width: 30,
                           height: 30,
-                          child: GlowingUserMarker()
+                          child: !globals.testingActive? GlowingUserMarker() : Icon(Icons.location_pin, color: Colors.red,),
                         ),
                         Marker(
                           point: destination != null

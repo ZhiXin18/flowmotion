@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flowmotion/widgets/pdfViewer.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import '../widgets/navigationBar.dart';
 import '../utilities/firebase_calls.dart';
 
 FirebaseCalls firebaseCalls = FirebaseCalls();
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 // Profile Screen
 class ProfileScreen extends StatefulWidget {
@@ -101,14 +103,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             GestureDetector(
                               onTap: () {
                                 // Open the user manual (implement this as per your app's requirements)
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => PdfViewer()));
-                              },
+                                _auth.signOut();
+                                Navigator.pushReplacementNamed(context, '/login');                              },
                               child: Text(
-                                'Open User Manual',
+                                'Logout',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.red,
-                                  decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),

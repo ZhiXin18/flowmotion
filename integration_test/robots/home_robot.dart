@@ -1,4 +1,5 @@
 import 'package:flowmotion/core/widget_keys.dart';
+import 'package:flowmotion/widgets/congestionPointView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -37,7 +38,7 @@ class HomeRobot {
   Future<void> verifyFullMapMarkers() async {
     // Check the marker count on the map screen is at least 1
     expect(find.byIcon(Icons.circle),
-        findsAtLeastNWidgets(1)); // Check for the two circle icons
+        findsAtLeastNWidgets(1));
   }
 
   Future<void> verifyMarkerPopup() async {
@@ -49,16 +50,16 @@ class HomeRobot {
     // Rebuild the widget after the state has changed
     await tester.pumpAndSettle();
 
-    // Verify if the AlertDialog shows up
-    expect(find.byType(AlertDialog), findsOneWidget);
+    // Verify that the modal bottom sheet is displayed
+    expect(find.text('Close'), findsOneWidget); // Check for the Close button
 
-    await tester.pumpAndSettle(const Duration(seconds: 6));
-    expect(find.byType(Image),
-        findsOneWidget); // Check for the presence of an Image widget
+    // Check for the presence of the CongestionPointView
+    expect(find.byType(CongestionPointView), findsOneWidget); // Check if CongestionPointView is instantiated
 
-    // Check if the Image widget is a NetworkImage
-    final imageWidget = tester.widget<Image>(find.byType(Image).first);
-    expect(imageWidget.image,
-        isInstanceOf<NetworkImage>()); // Check if it's a NetworkImage
-  }
+    // Close the modal by tapping the Close button
+    await tester.tap(find.text('Close'));
+    await tester.pumpAndSettle(); // Allow the modal to close
+
+    // Verify that the modal is no longer displayed
+    expect(find.text('Close'), findsNothing);  }
 }
