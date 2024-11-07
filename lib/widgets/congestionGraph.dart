@@ -27,7 +27,13 @@ class CongestionGraphs {
               gridData: FlGridData(show: false),
               titlesData: FlTitlesData(
                 leftTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: true),
+                  sideTitles: SideTitles(showTitles: true, interval: 0.5), // y-axis labels on left
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // No labels on right
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // No labels on top
                 ),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
@@ -43,14 +49,21 @@ class CongestionGraphs {
                   ),
                 ),
               ),
-              borderData: FlBorderData(show: true),
+              borderData: FlBorderData(
+                show: true,
+                border: Border(
+                  left: BorderSide(color: Colors.black), // Border on left
+                  bottom: BorderSide(color: Colors.black), // Border on bottom
+                  right: BorderSide.none, // No border on right
+                  top: BorderSide.none, // No border on top
+                ),
+              ),
               lineBarsData: [
                 LineChartBarData(
                   spots: data
                       .asMap()
                       .entries
-                      .map((entry) =>
-                      FlSpot(entry.key.toDouble(), entry.value.value.toDouble()))
+                      .map((entry) => FlSpot(entry.key.toDouble(), entry.value.value.toDouble()))
                       .toList(),
                   isCurved: true,
                   color: Colors.red,
@@ -95,13 +108,21 @@ class CongestionGraphs {
                 x: entry.key,
                 barRods: [
                   BarChartRodData(
-                      toY: entry.value.value.toDouble(), color: Colors.blue),
+                    toY: entry.value.value.toDouble(),
+                    color: Colors.blue,
+                  ),
                 ],
               ))
                   .toList(),
               titlesData: FlTitlesData(
                 leftTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: true),
+                  sideTitles: SideTitles(showTitles: true, interval: 0.5), // y-axis on left
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // No right y-axis labels
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // No top labels
                 ),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
@@ -115,6 +136,15 @@ class CongestionGraphs {
                       return const SizedBox.shrink();
                     },
                   ),
+                ),
+              ),
+              borderData: FlBorderData(
+                show: true,
+                border: Border(
+                  left: BorderSide(color: Colors.black), // Left border with markings
+                  bottom: BorderSide(color: Colors.black), // Bottom border with markings
+                  right: BorderSide.none, // No right border
+                  top: BorderSide.none, // No top border
                 ),
               ),
             ),
