@@ -34,7 +34,7 @@ class _ImageViewerWithSliderState extends State<ImageViewerWithSlider> {
 
         // Display the time
         Text(
-          "Time: ${currentRatingPoint.ratedOn.hour}:${currentRatingPoint.ratedOn.minute}",
+          "Time - ${currentRatingPoint.ratedOn.hour}:00",
           style: TextStyle(fontSize: 16),
         ),
 
