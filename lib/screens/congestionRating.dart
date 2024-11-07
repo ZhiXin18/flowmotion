@@ -2,6 +2,7 @@ import 'package:flowmotion/models/rating_point.dart';
 import 'package:flowmotion/utilities/flowmotion_api_sgt.dart';
 import 'package:flowmotion/widgets/congestionPointView.dart';
 import 'package:flowmotion_api/flowmotion_api.dart';
+import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_polyline_algorithm/google_polyline_algorithm.dart';
@@ -360,6 +361,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
               height: 200,
               margin: EdgeInsets.symmetric(horizontal: 16),
               child: FlutterMap(
+                key: WidgetKeys.congestionMapScreen,
                 mapController: _mapController, // Use the passed controller
                 options: MapOptions(
                   initialCenter: widget.initialCenter, // Use the passed initial center
@@ -370,27 +372,16 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                     urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                   ),
-                  PolylineLayer(
-                    polylines: [
-                      Polyline(
-                        points: _stepPointsNotOpt, // This is now correctly a List<LatLng>
-                        strokeWidth: 4.0,
-                        color: Colors.blue,
-                      ),
-                      Polyline(
-                        points: _stepPoints, // This is now correctly a List<LatLng>
-                        strokeWidth: 4.0,
-                        color: Colors.green,
-                      ),
-                    ],
-                  ),
                   MarkerLayer(
                     markers: [
                       ..._buildMarkers(), // Existing markers
                     ],
                   ),
                   if (widget.currentLocationMarker != null)
-                    MarkerLayer(markers: [
+                    MarkerLayer(
+                      key: WidgetKeys.congestionMapMarkers,
+                      markers: [
+                      
                       Marker(
                         point: widget.currentLocationMarker!,
                         width: 55,
@@ -475,7 +466,21 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                         ),
                       ),
                     ]),
-
+                  PolylineLayer(
+                    key: WidgetKeys.congestionMapRoute,
+                    polylines: [
+                      Polyline(
+                        points: _stepPointsNotOpt, // This is now correctly a List<LatLng>
+                        strokeWidth: 4.0,
+                        color: Colors.blue,
+                      ),
+                      Polyline(
+                        points: _stepPoints, // This is now correctly a List<LatLng>
+                        strokeWidth: 4.0,
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -507,13 +512,15 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
     }
 
     // Create a list of markers
-    List<Marker> markers = allCongestionRatings
-        .map((allCongestionRating) {
+    List<Marker> markers = allCongestionRatings.asMap().keys
+        .map((index) {
+      final allCongestionRating = allCongestionRatings[index];
 
       // Handle locations where congestion rating is not available
       if (allCongestionRating.rating.value == null) {
         questionMarkCount++;
         return Marker(
+          key: WidgetKeys.congestionMarker(index),
           point: LatLng(allCongestionRating.camera.location.latitude, allCongestionRating.camera.location.longitude),
           width: 60,
           height: 60,
@@ -539,6 +546,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
       }
 
       return Marker(
+          key: WidgetKeys.congestionMarker(index),
           point: LatLng(allCongestionRating.camera.location.latitude, allCongestionRating.camera.location.longitude),
           width: 60,
           height: 60,
@@ -640,6 +648,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                 children: congestionPoints != null && congestionPoints.isNotEmpty
                     ? List.generate(congestionPoints.length, (index) {
                       return GestureDetector(
+                          key: WidgetKeys.congestionPoint(index) ,
                           onTap: () {
                             setState(() {
                               selectedIndex =
@@ -703,6 +712,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
               child: Column(
                 children: List.generate(allInstructions.length, (index) {
                   return Column(
+                    key: WidgetKeys.routeStep(index),
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),

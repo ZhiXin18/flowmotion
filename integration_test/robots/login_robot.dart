@@ -13,7 +13,7 @@ class LoginRobot {
   }
 
   Future<void> verify() async {
-    final loginScreen = await find.byKey(WidgetKeys.loginScreen).wait(tester);
+    await find.byKey(WidgetKeys.loginScreen).wait(tester);
   }
 
   Future<void> enterEmail(String email) async {

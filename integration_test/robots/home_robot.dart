@@ -1,8 +1,8 @@
 import 'package:flowmotion/core/widget_keys.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../utils/common_finder.dart';
 import '../utils/polling_finder.dart';
 
 class HomeRobot {
@@ -17,19 +17,33 @@ class HomeRobot {
     await tester.pumpAndSettle();
   }
 
+  Future<int> countSavedPlaces() async {
+    final cards = find.byKeyPrefix(WidgetKeys.savedPlaceCardPrefix);
+    return cards.evaluate().length;
+  }
+
+  Future<void> tapSavedPlace(int index) async {
+    final card =
+        await find.byKey(WidgetKeys.savedPlaceCard(index)).wait(tester);
+    expect(card, findsOneWidget);
+    await tester.tap(card);
+    await tester.pumpAndSettle();
+  }
+
   Future<void> verifyFullMap() async {
     await find.byKey(WidgetKeys.fullMapScreen).wait(tester);
   }
 
   Future<void> verifyFullMapMarkers() async {
     // Check the marker count on the map screen is at least 1
-    expect(find.byIcon(Icons.circle), findsAtLeastNWidgets(1)); // Check for the two circle icons
-
+    expect(find.byIcon(Icons.circle),
+        findsAtLeastNWidgets(1)); // Check for the two circle icons
   }
 
   Future<void> verifyMarkerPopup() async {
     // Find the marker icon and tap it
-    final markerIcon = find.byIcon(Icons.circle).first; // Assuming the marker is a circle icon
+    final markerIcon =
+        find.byIcon(Icons.circle).first; // Assuming the marker is a circle icon
     await tester.tap(markerIcon);
 
     // Rebuild the widget after the state has changed
@@ -39,10 +53,12 @@ class HomeRobot {
     expect(find.byType(AlertDialog), findsOneWidget);
 
     await tester.pumpAndSettle(const Duration(seconds: 6));
-    expect(find.byType(Image), findsOneWidget); // Check for the presence of an Image widget
+    expect(find.byType(Image),
+        findsOneWidget); // Check for the presence of an Image widget
 
     // Check if the Image widget is a NetworkImage
     final imageWidget = tester.widget<Image>(find.byType(Image).first);
-    expect(imageWidget.image, isInstanceOf<NetworkImage>()); // Check if it's a NetworkImage
+    expect(imageWidget.image,
+        isInstanceOf<NetworkImage>()); // Check if it's a NetworkImage
   }
 }
