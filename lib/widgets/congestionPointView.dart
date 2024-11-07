@@ -67,47 +67,66 @@ class CongestionPointView extends StatelessWidget {
           ),
         ),
       ),
-      Container(
-        height: 200,
-        child: LineChart(
-          LineChartData(
-            minY: 0,
-            maxY: 1,
-            gridData: FlGridData(show: false),
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(showTitles: true),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    final index = value.toInt();
-                    if (index >= 0 && index < data.length) {
-                      final formattedTime = _formatToHour(data[index].ratedOn);
-                      return Text(formattedTime);
-                    }
-                    return const SizedBox.shrink();
-                  },
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Container(
+          height: 200,
+          child: LineChart(
+            LineChartData(
+              minY: 0,
+              maxY: 1,
+              gridData: FlGridData(show: false),
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 0.5,
+                    getTitlesWidget: (value, meta) {
+                      // Display y-axis values as percentages
+                      if (value == 0) return Text('0%');
+                      if (value == 0.5) return Text('50%');
+                      if (value == 1) return Text('100%');
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // Hide right y-axis labels
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // Hide top labels
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      final index = value.toInt();
+                      if (index >= 0 && index < data.length) {
+                        final formattedTime = _formatToHour(data[index].ratedOn);
+                        return Text(formattedTime);
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
               ),
+              borderData: FlBorderData(show: true),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: data
+                      .asMap()
+                      .entries
+                      .map((entry) => FlSpot(
+                      entry.key.toDouble(), entry.value.value.toDouble()))
+                      .toList(),
+                  isCurved: true,
+                  color: Colors.red,
+                  belowBarData: BarAreaData(show: false),
+                ),
+              ],
             ),
-            borderData: FlBorderData(show: true),
-            lineBarsData: [
-              LineChartBarData(
-                spots: data
-                    .asMap()
-                    .entries
-                    .map((entry) => FlSpot(
-                        entry.key.toDouble(), entry.value.value.toDouble()))
-                    .toList(),
-                isCurved: true,
-                color: Colors.red,
-                belowBarData: BarAreaData(show: false),
-              ),
-            ],
           ),
-        ),
+        )
       )
     ]);
   }
@@ -129,45 +148,64 @@ class CongestionPointView extends StatelessWidget {
           ),
         ),
       ),
-      Container(
-        height: 150,
-        child: BarChart(
-          BarChartData(
-            minY: 0,
-            maxY: 1,
-            barGroups: data
-                .asMap()
-                .entries
-                .map((entry) => BarChartGroupData(
-                      x: entry.key,
-                      barRods: [
-                        BarChartRodData(
-                            toY: entry.value.value.toDouble(),
-                            color: Colors.blue),
-                      ],
-                    ))
-                .toList(),
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(showTitles: true),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    final index = value.toInt();
-                    if (index >= 0 && index < data.length) {
-                      final formattedDate =
-                          _formatToDayMonth(data[index].ratedOn);
-                      return Text(formattedDate);
-                    }
-                    return const SizedBox.shrink();
-                  },
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Container(
+          height: 150,
+          child: BarChart(
+            BarChartData(
+              minY: 0,
+              maxY: 1,
+              barGroups: data
+                  .asMap()
+                  .entries
+                  .map((entry) => BarChartGroupData(
+                x: entry.key,
+                barRods: [
+                  BarChartRodData(
+                      toY: entry.value.value.toDouble(),
+                      color: Colors.blue),
+                ],
+              ))
+                  .toList(),
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 0.5,
+                    getTitlesWidget: (value, meta) {
+                      // Display y-axis values as percentages
+                      if (value == 0) return Text('0%');
+                      if (value == 0.5) return Text('50%');
+                      if (value == 1) return Text('100%');
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // Hide right y-axis labels
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // Hide top labels
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      final index = value.toInt();
+                      if (index >= 0 && index < data.length) {
+                        final formattedDate =
+                        _formatToDayMonth(data[index].ratedOn);
+                        return Text(formattedDate);
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        )
       )
     ]);
   }
@@ -185,7 +223,7 @@ class CongestionPointView extends StatelessWidget {
           future: fetchGraphRatings(
               cameraId,
               'hour', // groupby
-              DateTime.now().subtract(Duration(hours: 10)),
+              DateTime.now().subtract(Duration(hours: 8)),
               DateTime.now()),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
