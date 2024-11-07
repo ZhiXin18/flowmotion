@@ -44,7 +44,7 @@ class _ImageViewerWithSliderState extends State<ImageViewerWithSlider> {
           min: 0,
           max: (widget.data.length - 1).toDouble(),
           divisions: widget.data.length - 1,
-          label: "Time: ${currentRatingPoint.ratedOn.hour}:${currentRatingPoint.ratedOn.minute}",
+          label: "Time - ${currentRatingPoint.ratedOn.hour}:00",
           onChanged: (double value) {
             setState(() {
               _currentSliderValue = value;
