@@ -40,7 +40,7 @@ class CongestionPointView extends StatelessWidget {
         String imageUrl = item.camera.imageUrl;
         int hour = ratedOn.hour;
         ratingPoints.add(RatingPoint(
-          ratedOn: DateTime(begin.year, begin.month, begin.day, hour),
+          ratedOn: DateTime(ratedOn.year, ratedOn.month, ratedOn.day, hour),
           value: value,
           imageUrls: imageUrl,
         ));
