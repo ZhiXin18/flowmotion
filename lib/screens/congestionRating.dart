@@ -372,6 +372,21 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                     urlTemplate: 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                   ),
+                  PolylineLayer(
+                    key: WidgetKeys.congestionMapRoute,
+                    polylines: [
+                      Polyline(
+                        points: _stepPointsNotOpt, // This is now correctly a List<LatLng>
+                        strokeWidth: 4.0,
+                        color: Colors.blue,
+                      ),
+                      Polyline(
+                        points: _stepPoints, // This is now correctly a List<LatLng>
+                        strokeWidth: 4.0,
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
                   MarkerLayer(
                     markers: [
                       ..._buildMarkers(), // Existing markers
@@ -466,21 +481,7 @@ class _CongestionRatingScreenState extends State<CongestionRatingScreen> {
                         ),
                       ),
                     ]),
-                  PolylineLayer(
-                    key: WidgetKeys.congestionMapRoute,
-                    polylines: [
-                      Polyline(
-                        points: _stepPointsNotOpt, // This is now correctly a List<LatLng>
-                        strokeWidth: 4.0,
-                        color: Colors.blue,
-                      ),
-                      Polyline(
-                        points: _stepPoints, // This is now correctly a List<LatLng>
-                        strokeWidth: 4.0,
-                        color: Colors.green,
-                      ),
-                    ],
-                  ),
+
                 ],
               ),
             ),
