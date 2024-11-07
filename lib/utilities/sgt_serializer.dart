@@ -18,6 +18,7 @@ class SGTDateTimeSerializer implements PrimitiveSerializer<DateTime> {
   @override
   DateTime deserialize(Serializers serializers, Object? serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    return DateTime.parse(serialized as String);
+    // convert to local time.
+    return DateTime.parse(serialized as String).toLocal();
   }
 }
