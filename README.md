@@ -6,32 +6,32 @@
 
 ## Features
 
-### 1)Register Screen
+### 1) Register Screen
 - First-time users can register with their email, which is verified via a one-time password.
 - Strong password creation adhering to security guidelines.
 - Input of postal codes, labels, and street names for bookmarked destinations, with street name verification against postal codes.
 - Users can enable notifications and consent to data storage and location privacy.
 
-### Login Screen
+### 2) Login Screen
 - Returning users login using their registered credentials.
 - Password reset link is sent via email if required.
 - Access to the home screen upon successful login.
 
-### Profile Screen
+### 3) Profile Screen
 - Displays username and a list of saved addresses.
 - Swipe to remove addresses and a save button to verify postal codes.
 
-### Home Screen
+### 4) Home Screen
 - Mini Map view with a "View Full Map" button.
 - Section for saved places.
 
-### Full Map View
+### 5) Full Map View
 - All 90 traffic camera congestion markers.
 - Detailed congestion pop-ups for each camera location.
 - Last 10 hours and last 5 days congestion ratings.
 - Congestion details for saved places.
 
-### Map Features
+### 6) Map Features
 - Optimized and non-optimized routes.
 - User current location and destination markers.
 - Full list of congestion points and route instructions.
