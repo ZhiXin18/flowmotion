@@ -9,7 +9,7 @@ import * as path from "path";
 import csv from "csv-parser";
 import { components, paths } from "../api";
 import { CongestionSvc } from "./congestion";
-import { NotFoundError } from "../error";
+import { NotFoundError, ValidationError } from "../error";
 
 // routing endpoint url constants
 export const CONGEST_ROUTING_API =
@@ -130,6 +130,10 @@ export class RoutingSvc {
       if (r["code"] === "NoRoute") {
         // no route found
         throw new NotFoundError("No route found between given locations.");
+      }
+      if (r["code"] === "InvalidValue") {
+        // no route found
+        throw new ValidationError("Invalid routing parameters given.");
       }
       throw new Error(
         `OSRM ${url.pathname} request failed with error: ${r["code"]}: ${r["message"]}`,

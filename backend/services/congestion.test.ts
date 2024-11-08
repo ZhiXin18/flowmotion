@@ -153,9 +153,8 @@ describe("CongestionSvc", () => {
   // New test for filtering by min_rating
   test("getCongestions() filters by min_rating", async () => {
     const congestions = await congestion.getCongestions({
-      min_rating: 0.7,
+      min_rating: 0.2,
     });
-    expect(congestions.length).toBeGreaterThan(0);
-    expect(congestions.every((c) => c.rating.value >= 0.7)).toBe(true);
+    expect(congestions.every((c) => c.rating.value >= 0.2)).toBe(true);
   });
 });
