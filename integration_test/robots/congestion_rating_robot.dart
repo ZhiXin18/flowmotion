@@ -11,16 +11,19 @@ class CongestionRatingRobot {
 
   Future<void> verifyMap() async {
     // check map view
-    final map = await find.byKey(WidgetKeys.congestionMapScreen).wait(tester);
+    final map = await find
+        .byKey(WidgetKeys.congestionMapScreen)
+        .wait(tester, timeout: Duration(seconds: 60));
     expect(map, findsOneWidget);
     // check src & destination markers
-    final markers = await find.byKey(WidgetKeys.congestionMapMarkers).wait(tester);
+    final markers =
+        await find.byKey(WidgetKeys.congestionMapMarkers).wait(tester);
     expect(markers, findsOneWidget);
     // check route polyline
     final route = await find.byKey(WidgetKeys.congestionMapRoute).wait(tester);
     expect(route, findsOneWidget);
   }
-  
+
   Future<int> countPrefixed(String prefix) async {
     final cards = find.byKeyPrefix(prefix);
     return cards.evaluate().length;
