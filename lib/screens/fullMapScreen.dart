@@ -154,8 +154,10 @@ class _FullMapScreenState extends State<FullMapScreen> {
     questionMarkCount = 0;
 
     // Create a list of markers
-    List<Marker> markers = congestionRatings
-        .map((congestionRating) {
+    List<Marker> markers = congestionRatings.asMap().keys
+        .map((index) {
+      final congestionRating = congestionRatings[index];
+
       String coordinateKey =
           "${congestionRating.camera.location.latitude},${congestionRating.camera.location.longitude}";
 
@@ -164,6 +166,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
         if (congestionRating.rating.value == null) {
           questionMarkCount++;
           return Marker(
+              key: WidgetKeys.fullMapMarkers(index),
             point: LatLng(congestionRating.camera.location.latitude, congestionRating.camera.location.longitude),
             width: 60,
             height: 60,
@@ -229,6 +232,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
         }
 
         return Marker(
+          key: WidgetKeys.fullMapMarkers(index),
           point: LatLng(congestionRating.camera.location.latitude, congestionRating.camera.location.longitude),
           width: 60,
           height: 60,
@@ -251,6 +255,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
                           ],
                           const SizedBox(height: 20),
                           TextButton(
+                            key: WidgetKeys.congestionGraphClose,
                             onPressed: () {
                               Navigator.of(context).pop(); // Close the modal
                             },

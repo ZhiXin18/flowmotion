@@ -27,6 +27,7 @@ void main() {
 
   group('E2E Routing Tests', () {
     testWidgets("Routing Save Route Flow", (WidgetTester tester) async {
+      globals.testingActive = true; // Set testing flag before starting the app
       // Start the app
       await tester.pumpWidget(const app.MyApp());
 

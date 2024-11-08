@@ -49,6 +49,11 @@ class WidgetKeys {
   static final String savedPlaceCardPrefix = "savedPlaceCard_";
   static final savedPlaceCard = (int i) => Key("${savedPlaceCardPrefix}${i}");
 
+  //full map
+  static const Key congestionGraphClose = Key('congestionGraphClose');
+  static final String fullMapMarkerPrefix = "fullMapMarker_";
+  static final fullMapMarkers = (int i) => Key("${fullMapMarkerPrefix}${i}");
+
   // congestion rating screen widgets
   static const Key congestionMapScreen = Key("congestionRatingMapScreen");
   static const Key congestionMapMarkers = Key("congestionRatingMapMarkers");

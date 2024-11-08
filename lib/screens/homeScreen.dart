@@ -472,6 +472,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSavedPlaceCard(
       String title, MapController controller, LatLng destination, int index) {
+    print('Congestion Points for index $index: ${routeDataList[index].congestionPoints}');
     return GestureDetector(
       key: WidgetKeys.savedPlaceCard(index),
       onTap: () {
