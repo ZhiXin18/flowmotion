@@ -4,11 +4,14 @@
 // Pooling Finder Extension
 //
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Defines a extension to Finder that polls a for a nonempty result.
+typedef Predicate = bool Function(FinderResult<Element> result);
+
+/// Defines a extension to Finder that polls a for a result.
 extension PollingFinder on Finder {
-  /// Waits for the Finder to evaluate to an nonempty result.
+  /// Waits for the Finder to evaluate a result that passes given predicate.
   /// If no results match on evaluation, perform [tester]'s `.pumpAndSettle()` and poll the Finder
   /// again after waiting for [interval].
   /// Throws `Exception` Upon reaching [timeout] without evaluating to a nonempty result.
@@ -17,12 +20,14 @@ extension PollingFinder on Finder {
     WidgetTester tester, {
     Duration timeout = const Duration(seconds: 20),
     Duration interval = const Duration(milliseconds: 100),
+    Predicate? predicate = null,
   }) async {
     /// use the tester's clock
     final clock = tester.binding.clock;
     final deadline = clock.now().add(timeout);
+    final predicateFn = predicate ?? (FinderResult<Element> result) => result.isNotEmpty;
 
-    while (evaluate().isEmpty) {
+    while (!predicateFn(evaluate())) {
       if (clock.now().isAfter(deadline)) {
         throw Exception('Timed out waiting for Finder: $this');
       }

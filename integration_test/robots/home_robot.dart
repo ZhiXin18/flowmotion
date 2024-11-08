@@ -37,27 +37,30 @@ class HomeRobot {
 
   Future<void> verifyFullMapMarkers() async {
     // Check the marker count on the map screen is at least 1
-    expect(find.byKeyPrefix(WidgetKeys.fullMapMarkerPrefix),
+    expect(find.byIcon(Icons.circle),
         findsAtLeastNWidgets(1));
   }
 
   Future<void> verifyMarkerPopup() async {
     // Find the marker icon and tap it
     final markerIcon =
-        find.byKey(WidgetKeys.fullMapMarkers(0)); // Assuming the marker is a circle icon
+        find.byIcon(Icons.circle).first; // Assuming the marker is a circle icon
     await tester.tap(markerIcon);
 
     // Rebuild the widget after the state has changed
     await tester.pumpAndSettle();
+
+    // Verify that the modal bottom sheet is displayed
+    expect(find.text('Close'), findsOneWidget); // Check for the Close button
+
     // Check for the presence of the CongestionPointView
     expect(find.byType(CongestionPointView), findsOneWidget); // Check if CongestionPointView is instantiated
 
-    // Verify that the modal bottom sheet is displayed
-    expect(find.byKey(WidgetKeys.congestionGraphClose), findsOneWidget); // Check for the Close button
-
     // Close the modal by tapping the Close button
-    await tester.tap(find.byKey(WidgetKeys.congestionGraphClose));
-    await tester.pumpAndSettle(); // Allow the modal to close
+    await tester.tap(find.text('Close'));
+    // Allow the modal to close
+    await find.text("Close").wait(tester, predicate: (result) => result.isEmpty);
 
-    }
+    // Verify that the modal is no longer displayed
+    expect(find.text('Close'), findsNothing);  }
 }
