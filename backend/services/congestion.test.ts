@@ -153,7 +153,7 @@ describe("CongestionSvc", () => {
   // New test for filtering by min_rating
   test("getCongestions() filters by min_rating", async () => {
     const congestions = await congestion.getCongestions({
-      min_rating: 0.2
+      min_rating: 0.2,
     });
     expect(congestions.every((c) => c.rating.value >= 0.2)).toBe(true);
   });
