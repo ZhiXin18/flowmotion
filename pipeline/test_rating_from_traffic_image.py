@@ -53,7 +53,7 @@ def test_rating_from_invalid_traffic_image():
 
     # Try generating a Rating, expecting a ValueError due to missing data
     try:
-        rating = Rating.from_traffic_image(traffic_image)
+        Rating.from_traffic_image(traffic_image)
     except ValueError as e:
         print("Expected failure with ValueError:", e)
 
