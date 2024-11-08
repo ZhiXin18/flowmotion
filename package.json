@@ -3,6 +3,7 @@
     "firebase": "^10.13.1"
   },
   "devDependencies": {
-    "firebase-tools": "^13.22.0"
+    "firebase-tools": "^13.22.0",
+    "jest-html-reporter": "^3.10.2"
   }
 }
