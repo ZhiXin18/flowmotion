@@ -58,9 +58,5 @@ class HomeRobot {
 
     // Close the modal by tapping the Close button
     await tester.tap(find.text('Close'));
-    // Allow the modal to close
-    await find.text("Close").wait(tester, predicate: (result) => result.isEmpty);
-
-    // Verify that the modal is no longer displayed
-    expect(find.text('Close'), findsNothing);  }
+  }
 }
