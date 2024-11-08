@@ -1,6 +1,8 @@
-from datetime import datetime
-from data import TrafficImage, Rating  # Import the relevant classes
 import json
+from datetime import datetime
+
+from data import Rating, TrafficImage  # Import the relevant classes
+
 
 def format_firestore_output(rating: Rating):
     # Firestore-like formatted output
@@ -12,6 +14,7 @@ def format_firestore_output(rating: Rating):
         }
     }
     return firestore_output
+
 
 def test_rating_from_traffic_image():
     # Create a TrafficImage instance with the necessary properties
@@ -34,6 +37,7 @@ def test_rating_from_traffic_image():
     print("Formatted Firestore Output:")
     print(json.dumps(firestore_output, indent=2))
 
+
 def test_rating_from_invalid_traffic_image():
     # Create a TrafficImage instance missing required fields for processing
     traffic_image = TrafficImage(
@@ -52,6 +56,7 @@ def test_rating_from_invalid_traffic_image():
         rating = Rating.from_traffic_image(traffic_image)
     except ValueError as e:
         print("Expected failure with ValueError:", e)
+
 
 # Run the test functions
 if __name__ == "__main__":
