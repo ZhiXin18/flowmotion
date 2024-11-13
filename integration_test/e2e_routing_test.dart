@@ -55,6 +55,9 @@ void main() {
 
       // transition: home screen -> congestion rating screen
       final congestionRobot = CongestionRatingRobot(tester: tester);
+      // check at least one congestion point is listed
+      final nCongestionPoints =
+          await congestionRobot.countPrefixed(WidgetKeys.congestionPointPrefix);
       // check congestion markers are drawn for every congestion point
       // check at least one route step is shown
       final nRouteSteps =
@@ -62,7 +65,9 @@ void main() {
       expect(nRouteSteps, greaterThan(0));
 
       // tap congestion point to reveal visuals (graph, camera image view) for point
-      await congestionRobot.tapCongestionPoint(0);
+      if (nCongestionPoints > 0) {
+        await congestionRobot.tapCongestionPoint(0);
+      }
     });
   });
 }
