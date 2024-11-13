@@ -25,7 +25,7 @@ class CongestionRatingRobot {
   }
 
   Future<int> countPrefixed(String prefix) async {
-    final cards = await find.byKeyPrefix(prefix).wait(tester);
+    final cards = await find.byKeyPrefix(prefix);
     return cards.evaluate().length;
   }
 
