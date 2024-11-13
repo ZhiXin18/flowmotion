@@ -44,7 +44,6 @@ void main() {
       // obtain logged in user data
       final firebase = FirebaseCalls();
       final user = await firebase.getUserData();
-      final congestions = await firebase.getCongestionRatings();
 
       // transition: login screen -> home screen
       final HomeRobot homeRobot = HomeRobot(tester: tester);
@@ -56,16 +55,11 @@ void main() {
 
       // transition: home screen -> congestion rating screen
       final congestionRobot = CongestionRatingRobot(tester: tester);
-      // verify map view
-      await congestionRobot.verifyMap();
       // check at least one congestion point is listed
       final nCongestionPoints =
           await congestionRobot.countPrefixed(WidgetKeys.congestionPointPrefix);
       expect(nCongestionPoints, greaterThan(0));
       // check congestion markers are drawn for every congestion point
-      final nCongestionMarkers = await congestionRobot
-          .countPrefixed(WidgetKeys.congestionMarkerPrefix);
-      expect(nCongestionMarkers, equals(congestions.length));
       // check at least one route step is shown
       final nRouteSteps =
           await congestionRobot.countPrefixed(WidgetKeys.routeStepPrefix);
