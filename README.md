@@ -1,117 +1,133 @@
 # FlowMotion
 
-**FlowMotion** helps Singaporean drivers plan their commutes efficiently by providing real-time traffic congestion insights and routes to their destination. The app analyzes live images from traffic cameras across Singapore to assess congestion levels, and presents data in easy-to-read graphs to keep users updated on current conditions and traffic patterns.
+![Flowmotion Banner](asset/flowmotion_banner.png)
 
----
+Real-time traffic congestion analysis and route optimization for Singapore drivers. FlowMotion uses computer vision to analyze traffic camera feeds for live traffic congestion rating and provide intelligent routing recommendations based on inferred congestion rating.
 
 ## Features
 
-### 1) Register Screen
-- First-time users can register with their email, which is verified via a one-time password.
-- Strong password creation adhering to security guidelines.
-- Input of postal codes, labels, and street names for bookmarked destinations, with street name verification against postal codes.
-- Users can enable notifications and consent to data storage and location privacy.
+- 🚦 Real-time traffic congestion analysis using YOLOv8
+- 🗺️ Intelligent route optimization with OSRM
+- 📊 Historical traffic pattern visualization
+- 📍 Favorite locations management
+- 📱 Cross-platform mobile app (iOS & Android)
 
-### 2) Login Screen
-- Returning users login using their registered credentials.
-- Password reset link is sent via email if required.
-- Access to the home screen upon successful login.
+## Architecture
 
-### 3) Profile Screen
-- Displays username and a list of saved addresses.
-- Swipe to remove addresses and a save button to verify postal codes.
-
-### 4) Home Screen
-- Mini Map view with a "View Full Map" button.
-- Section for saved places.
-
-### 5) Full Map View
-- All 90 traffic camera congestion markers.
-- Detailed congestion pop-ups for each camera location.
-- Last 10 hours and last 5 days congestion ratings.
-- Congestion details for saved places.
-
-### 6) Map Features
-- Optimized and non-optimized routes.
-- User current location and destination markers.
-- Full list of congestion points and route instructions.
-- Detailed congestion sections and historical data visualization.
-
+```mermaid
 ---
+title: "Flowmotion System Architecture"
+---
+block-beta
+    columns 1
+    block:present_layer
+        columns 7
+        space:3 present["Presentation Layer"] space:3
+        space:2 app("Mobile App") space:1 email["Email"] space:2
+    end
 
-## Our System Design
+    block:logic_layer
+        columns 7
+        space:3 logic["Logic Layer"] space:3
+        backend["Backend"] space osrm_c["OSRM\n(congestion)"] space pipeline["Pipeline"] space model["Model"]
+        backend -- "Routes \n (congestion)" --> osrm_c
+        pipeline -- "Rating" --> model
+        osrm_c -- "Congestion \nrouting\nprofile" --> pipeline
+    end
+
+    space
+
+    block:data_layer
+        columns 7
+        space:3 data["Data Layer"] space:3
+         osrm(("OSRM API")) space db[("Firestore DB")] space auth["Firebase\nAuthentication"] space api(("Data.gov.sg\nAPI"))
+    end
+
+    app -- "User data" --> db
+    app -- "User login" --> auth
+    app -- "Routing,  Geocoding\n & Congestion" --> backend
+    email -- "Receive OTP" --> auth
+    app -- "Enter OTP" --> email
+    pipeline -- "Traffic Images" --> api
+    backend -- "Read congestion" --> db
+    backend -- "Routes\n(no congestion)" --> osrm
+    pipeline -- "Write congestion" --> db
+
+classDef Routing fill:#696
+class present,logic,data,external BT
+classDef BT stroke:transparent,fill:transparent,font-size:1.2rem;
+```
 
 ### Tech Stack
-- **Mobile**: Flutter
-- **Backend**: Express.js
-- **Database**: Firestore
-- **IDP**: Firebase Authentication
-- **Pipeline**: GitHub Actions / Python
-- **Model**: YOLOv8 / PyTorch
 
-### External APIs
-- **Traffic Data**: data.gov.sg Traffic Images API
-- **Routing**: OSRM API (non-congestion weighted routes)
+- **Frontend**: Flutter
+- **Backend**: Express.js, Firebase
+- **ML Pipeline**: YOLOv8, PyTorch
+- **Infrastructure**: Google Cloud Run, Docker
 
-### Infrastructure
-- **Google Cloud**: Firebase & Cloud Run (auto-scaling)
-- **Docker**: Streamlines deployment by encapsulating dependencies.
+## Getting Started
 
-### Design Patterns
-- **CQRS**: Separation of pipeline writes to DB from backend reads.
-- **Caching DB**: Satisfies latency requirements.
-- **Event Sourcing**: Congestion ratings stored append-only for historical data analysis.
+### Prerequisites
 
----
+- Flutter >=3.24.1
+- Node.js >=18
+- Docker
+- Firebase CLI
 
-## Routing and Traffic Analysis
+### Setup
 
-### Use Case UC-4: Display Recommendations Based on Route
-1. Model infers congestion rating from traffic images.
-2. Pipeline matches congestion points to roads.
-3. OSRM configures a congestion-weighted routing profile.
-4. Mobile app requests routing data.
-5. Backend geocodes and forwards route instructions.
-6. Mobile app displays route and data.
+1. Clone the repository
 
-## Machine Learning Model
+```bash
+git clone https://github.com/flowmotion/flowmotion.git
+cd flowmotion
+```
 
-### Custom Model Development
-- Data augmented YOLOv8n for vehicle detection and semantic segmentation of road areas.
-- Traffic image data downloaded from data.gov.sg.
-- Confusion matrices and testing shows ensure high precision.
+2. Install dependencies
 
-### Congestion Rating Calculation
-- Real-time vehicle detection and congestion scoring.
-- Integration with OSRM for route recommendations.
+- Backend
 
----
+````bash
+# Backend
+cd backend
+npm install
 
-## Performance Metrics
+- Mobile App
+```bash
+# Mobile
+flutter pub get
+````
 
-1. **Image Processing Time**: Average of 123.6 ms per image.
-2. **YOLOv8n Detection Accuracy**: mAP of 61.1% for overall detection, but 80% for cars.
-3. **Routing Precision**: Benchmarked against Google Maps for a given start and end points.
-4. **Latency**: Worst-case scenario, the route prediction uses images captured 332 seconds ago, this has been optimized for urban traffic conditions.
+- [Pipeline](pipeline/README.md)
 
----
+3. Run Development builds
 
-## Development Practices
+- Backend
 
-### Test-Driven Development (TDD)
-- Unit tests alongside code development.
-- Increased test coverage using `pytest`.
+```bash
+# Run backend locally
+cd backend
+npm run dev
+```
 
-### Continuous Integration/Continuous Deployment (CI/CD)
-- Automated builds and tests using GitHub Actions.
-- Deployment with Docker containers to Google Cloud Run.
+- Mobile App
 
-### Agile Scrum Framework
-- Sprints of 5-7 days, with weekly stand-ups and retrospectives.
+```bash
+# Run Flutter app
+flutter run
+```
 
-### Key Learnings
-- Improved data storage and aggregation strategies.
-- Use of OpenAPI for backend-mobile synchronization.
-- Vectorization for performance optimizations.
-- Collaboration and best practices in team environments.
+- [Pipeline](pipeline/README.md)
 
+## Performance
+
+- Image Processing: ~124ms/image
+- ML Model Accuracy: 80% (vehicles)
+- Route Update Latency: &lt;332s
+
+## Acknowledgments
+
+- [data.gov.sg](https://data.gov.sg) for traffic camera feeds
+- [OSRM](http://project-osrm.org/) for route optimization engine
+- [YOLOv8](https://github.com/ultralytics/yolov8) for computer vision model
+- Singapore Land Transport Authority for traffic data
