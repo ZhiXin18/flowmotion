@@ -1,8 +1,7 @@
-# FlowMotion
-
 ![Flowmotion Banner](asset/flowmotion_banner.png)
 
-Real-time traffic congestion analysis and route optimization app for Singaporean drivers. FlowMotion uses computer vision to analyze traffic camera feeds for live traffic congestion rating and provide intelligent routing recommendations based on inferred congestion rating.
+# Flowmotion
+Real-time traffic congestion analysis and route optimization app for Singaporean drivers. Flowmotion uses computer vision to analyze traffic camera feeds for live traffic congestion rating and provide intelligent routing recommendations based on inferred congestion rating.
 
 ## Features
 
